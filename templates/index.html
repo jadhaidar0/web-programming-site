@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Programming Portfolio</title>
+</head>
+<body>
+    <header>
+        <h1>Web Programming Portfolio — Jad Haidar</h1>
+        <p>A live site that grows one page or feature every week.</p>
+    </header>
+
+    <main>
+        <section>
+            <h2>Weekly Work</h2>
+            <!-- Each week you add a link here to that week's page or feature. -->
+            <ul>
+                {% for item in weekly_work %}
+                    <li><a href="{{ item.url }}">Week {{ item.week }} — {{ item.title }}</a></li>
+                {% else %}
+                    <li>Week 1 — live site launched.</li>
+                {% endfor %}
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>Web Programming — built with Flask and deployed on gin446.eye.digital.</p>
+    </footer>
+</body>
+</html>
