@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>History of the World Wide Web — Jad Haidar, GIN446</title>
+  <meta name="description" content="A verified, sourced timeline of the history of the World Wide Web and the three key technologies behind it. GIN446 Web Programming, Week 2.">
+  <meta name="author" content="Jad Haidar">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+
+  <!-- Shared stylesheet. If these pages are rendered through Jinja,
+       use href="{{ url_for('static', filename='style.css') }}" instead. -->
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <nav class="site-nav" aria-label="Page sections">
+    <div class="wrap">
+      <a href="/">Home</a>
+      <a class="home" href="#top">History of the World Wide Web</a>
+      <a href="#milestones">Milestones</a>
+      <a href="#technologies">Key technologies</a>
+      <a href="#sources">Sources</a>
+      <a href="/internet-history-ai">Back: the Internet</a>
+    </div>
+  </nav>
+
+  <main id="main">
+
+    <!-- ============================================================
+         HERO
+         ============================================================ -->
+    <header class="hero wrap" id="top">
+      <p class="course">GIN446 Web Programming, Week 2, Part 3</p>
+      <h1>History of the World Wide Web</h1>
+      <p class="byline">Jad Haidar</p>
+
+      <figure class="first-words">
+        <p class="quote" aria-hidden="true">Vague but exciting...</p>
+        <figcaption>
+          <p class="lead">Three words written on the cover of the proposal.</p>
+          <p>In March 1989, Tim Berners-Lee handed his manager at CERN, Mike Sendall, a document called "Information Management: A Proposal". Sendall did not formally approve it, but he wrote this on the front and let him keep going. Everything on this page follows from that.</p>
+        </figcaption>
+      </figure>
+    </header>
+
+    <!-- ============================================================
+         OVERVIEW, MILESTONES (one <article> each), KEY TECHNOLOGIES
+         ============================================================ -->
+    <section class="topic" id="overview">
+      <div class="wrap">
+        <header>
+          <p class="intro">A lot of people mix up the Web and the Internet, but they're different. The Internet is the network. The Web is something that runs on top of it, the same way email or online games do. The Internet had already existed for about twenty years before the Web came along. The Web was made by one person, Tim Berners-Lee, while he was working at CERN, and he wrote his first proposal for it in 1989. He had a simple problem: the scientists there kept their work on different computers that couldn't talk to each other, and things got lost whenever people moved on. CERN was already running on TCP/IP by then, so he didn't have to build a network. He only had to come up with a way to link documents together over the one they already had.</p>
+        </header>
+
+        <h2 class="subhead" id="milestones">Twelve verified milestones</h2>
+
+        <div class="timeline">
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1980</span>
+            </p>
+            <div>
+              <h3>ENQUIRE</h3>
+              <p><span class="label">What.</span>On a six-month contract at CERN, Tim Berners-Lee wrote ENQUIRE, a personal note-keeping program in which documents linked to one another. It was never released.</p>
+              <p><span class="label">Why it mattered.</span>It was the conceptual seed of the Web, linked records rather than a rigid hierarchy, nine years before the proposal.</p>
+              <p class="source">Source: <a href="https://home.cern/resources/faqs/birth-web">CERN FAQ, "The birth of the Web"</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1984</span>
+              <span class="detail">to 1989</span>
+            </p>
+            <div>
+              <h3>CERN standardises on TCP/IP</h3>
+              <p><span class="label">What.</span>Berners-Lee returned to CERN as a fellow in 1984. CERN, previously running a mix of DECnet and other protocols, standardised internally on TCP/IP and by 1989 was the largest Internet site in Europe.</p>
+              <p><span class="label">Why it mattered.</span>A global open network already existed for the Web to run on. Berners-Lee did not have to invent transport, only the document layer. This is where <a href="/internet-history-ai">the history of the Internet</a> and the history of the Web join.</p>
+              <p class="source">Source: <a href="https://home.cern/science/computing/the-birth-of-the-web/short-history-web/">CERN, "A short history of the Web"</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1989</span>
+              <span class="detail"><time datetime="1989-03">March</time></span>
+            </p>
+            <div>
+              <h3>"Information Management: A Proposal"</h3>
+              <p><span class="label">What.</span>Berners-Lee submitted the founding document to his manager, Mike Sendall, who annotated the cover "Vague but exciting...". It was not formally approved, but he was allowed to work on it. Nothing was built yet.</p>
+              <p><span class="label">Why it mattered.</span>It named a problem specific to CERN, with thousands of physicists rotating through, documentation scattered across incompatible machines, and knowledge lost when people left, and proposed distributed hypertext over the existing network as the answer.</p>
+              <p class="source">Sources: <a href="https://www.w3.org/History/1989/proposal.html">the proposal itself, hosted by W3C</a>; <a href="https://timeline.web.cern.ch/sir-tim-berners-lee-submitted-his-first-proposal-what-became-world-wide-web">CERN timeline</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1990</span>
+              <span class="detail"><time datetime="1990-05">May</time> and <time datetime="1990-11-12">12 November</time></span>
+            </p>
+            <div>
+              <h3>The refined proposal, and the name</h3>
+              <p><span class="label">What.</span>Berners-Lee resubmitted a lightly edited version in May 1990. In November 1990 he and Robert Cailliau submitted the formal management proposal, "WorldWideWeb: Proposal for a HyperText Project", which is where the project got its name. He was given a NeXT computer, whose object-oriented toolkit is why a browser could be built in a few months.</p>
+              <p><span class="label">Why it mattered.</span>The project was named, approved and resourced.</p>
+              <aside class="note">
+                <p><span class="label">Chronology.</span> In May 1990 the 1989 proposal was recirculated. In September, Sendall approved the NeXT purchase. In October, Berners-Lee began coding, chose the name "WorldWideWeb", and Cailliau joined as co-author. The document cited here is dated 12 November 1990.</p>
+              </aside>
+              <p class="source">Sources: <a href="https://www.w3.org/Proposal.html">the joint proposal itself</a>; <a href="https://home.cern/science/computing/the-birth-of-the-web/short-history-web/">CERN, "A short history of the Web"</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1990</span>
+              <span class="detail">by Christmas</span>
+            </p>
+            <div>
+              <h3>The three core technologies are built</h3>
+              <p><span class="label">What.</span>By Christmas 1990, Berners-Lee had defined and implemented HTML (borrowing from SGML), HTTP and URLs, and had written the first browser (WorldWideWeb, which was also an editor) and the first web server, running on <code>info.cern.ch</code>.</p>
+              <p><span class="label">Why it mattered.</span>The Web went from proposal to working system. Everything on the Web today descends from those three specifications, which were kept deliberately simple so that anyone could implement them.</p>
+              <aside class="note">
+                <p><span class="label">On the date.</span> The specific 25 December date that circulates is not in any primary source. W3C and CERN both say only "by Christmas".</p>
+              </aside>
+              <p class="source">Sources: <a href="https://www.w3.org/Protocols/HTTP/AsImplemented.html">original HTTP/0.9 specification as implemented</a>; <a href="https://www.w3.org/History/19921103-hypertext/hypertext/WWW/MarkUp/Tags.html">earliest HTML tag list (c. 1991–92)</a>; <a href="https://www.w3.org/People/Berners-Lee/WorldWideWeb.html">Berners-Lee on the first browser</a>; <a href="https://home.cern/science/computing/the-birth-of-the-web/">CERN, "The birth of the Web"</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1991</span>
+              <span class="detail"><time datetime="1991-08-06">6 August</time></span>
+            </p>
+            <div>
+              <h3>The line-mode browser and the public announcement</h3>
+              <p><span class="label">What.</span>Nicola Pellow wrote the line-mode browser, a text-only client that ran on any terminal. On 6 August 1991 Berners-Lee posted the software to the alt.hypertext newsgroup. In December 1991, SLAC in California ran the first web server outside Europe.</p>
+              <p><span class="label">Why it mattered.</span>The line-mode browser made the Web usable off NeXT machines, and the newsgroup post was the moment it left CERN.</p>
+              <p class="source">Sources: <a href="https://www.w3.org/People/Berners-Lee/1991/08/art-6484.txt">the post itself (primary source, plain text)</a>; <a href="https://home.cern/science/computing/the-birth-of-the-web/short-history-web/">CERN, "A short history of the Web"</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1992</span>
+              <span class="detail">to 1993</span>
+            </p>
+            <div>
+              <h3>Spread, then Mosaic</h3>
+              <p><span class="label">What.</span>Roughly 26 web servers existed at the end of 1992 and about 500 by the end of 1993. NCSA released Mosaic in 1993, not a CERN product, with inline images and Windows and Mac versions.</p>
+              <p><span class="label">Why it mattered.</span>Mosaic turned the Web from a physicists' tool into something the general public wanted to use.</p>
+              <p class="source">Sources: <a href="https://www.w3.org/History.html">W3C, "A Little History of the World Wide Web"</a>; <a href="https://web30.web.cern.ch/web-history.html">CERN Web@30, web history</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1993</span>
+              <span class="detail"><time datetime="1993-04-30">30 April</time></span>
+            </p>
+            <div>
+              <h3>CERN puts the Web in the public domain</h3>
+              <p><span class="label">What.</span>CERN formally waived all rights to the World Wide Web software. Anyone could build servers, browsers or sites without paying or asking.</p>
+              <p><span class="label">Why it mattered.</span>This is the most consequential decision in the story. Compare Gopher: earlier in 1993 the University of Minnesota announced it might charge licence fees, and Gopher adoption collapsed almost immediately. Openness is why the Web won, and why it is a public commons rather than a product.</p>
+              <p class="source">Sources: <a href="https://timeline.web.cern.ch/cern-puts-world-wide-web-public-domain">CERN timeline, Web put in the public domain</a>; <a href="https://home.cern/news/news/computing/twenty-years-free-open-web">CERN, "Twenty years of a free and open Web"</a>; <a href="https://cerncourier.com/a/cerns-ultimate-act-of-openness/">CERN Courier on the legal side of the release</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1994</span>
+              <span class="detail"><time datetime="1994-05">May</time></span>
+            </p>
+            <div>
+              <h3>The first International WWW Conference, at CERN</h3>
+              <p><span class="label">What.</span>Held at CERN and heavily oversubscribed, with around 400 attendees. It was nicknamed the "Woodstock of the Web".</p>
+              <p><span class="label">Why it mattered.</span>This was the point at which the Web community became larger than CERN itself.</p>
+              <p class="source">Source: <a href="https://web30.web.cern.ch/web-history.html">CERN Web@30, web history</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1994</span>
+              <span class="detail"><time datetime="1994-10-01">1 October</time> and <time datetime="1994-12-16">16 December</time></span>
+            </p>
+            <div>
+              <h3>Handover to W3C</h3>
+              <p><span class="label">What.</span>Berners-Lee left CERN for MIT in October 1994 and founded the World Wide Web Consortium. In December, CERN's council decided to concentrate its resources on the Large Hadron Collider and transferred Web development to W3C and INRIA.</p>
+              <p><span class="label">Why it mattered.</span>It put Web standards in a neutral, vendor-independent body exactly as the browser wars began, rather than leaving them with one physics lab or one company.</p>
+              <aside class="note">
+                <p><span class="label">Two separate events.</span> W3C was founded on 1 October 1994. CERN Council approved the LHC under tight budget conditions on 16 December 1994, which is when Web development passed to W3C and INRIA.</p>
+              </aside>
+              <p class="source">Sources: <a href="https://www.w3.org/about/history/">W3C, its own founding history</a>; <a href="https://www.w3.org/History.html">W3C, "A Little History of the World Wide Web"</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1995</span>
+              <span class="detail">to 1996</span>
+            </p>
+            <div>
+              <h3>The standards are written down</h3>
+              <p><span class="label">What.</span>HTML 2.0 was published as RFC 1866 (November 1995); HTTP/1.0 as RFC 1945 (May 1996); URL syntax as RFC 1738 (December 1994). CSS Level 1 became a W3C Recommendation in December 1996.</p>
+              <p><span class="label">Why it mattered.</span>It turned informal practice into written standards that independent browser makers could implement consistently.</p>
+              <p class="source">Sources: <a href="https://www.rfc-editor.org/rfc/rfc1866.html">RFC 1866</a>; <a href="https://www.rfc-editor.org/rfc/rfc1945.html">RFC 1945</a>; <a href="https://www.rfc-editor.org/rfc/rfc1738.html">RFC 1738</a>.</p>
+            </div>
+          </article>
+
+          <article class="event">
+            <p class="when">
+              <span class="year">1997</span>
+              <span class="detail">to <time datetime="1999-06">June 1999</time></span>
+            </p>
+            <div>
+              <h3>HTTP/1.1</h3>
+              <p><span class="label">What.</span>HTTP/1.1 was published as RFC 2068 in 1997 and revised as RFC 2616 in June 1999.</p>
+              <p><span class="label">Why it mattered.</span>It added persistent connections and the Host header, letting many websites share one IP address. It remained dominant for around fifteen years.</p>
+              <p class="source">Source: <a href="https://www.rfc-editor.org/rfc/rfc2616.html">RFC 2616</a>.</p>
+            </div>
+          </article>
+
+        </div>
+
+        <p class="footnote">In 2013, for the twentieth anniversary of the public-domain release, CERN restored the first website at its original address: <a href="https://first-website.web.cern.ch/">first-website.web.cern.ch</a> and <a href="http://info.cern.ch/">info.cern.ch</a>.</p>
+
+        <h2 class="subhead" id="technologies">Three key technologies</h2>
+
+        <p class="tech-intro">These three map onto the three things any hypertext system needs: a way to <em>write</em> a document, a way to <em>name</em> it, and a way to <em>fetch</em> it. Everything else, from browsers and servers to Mosaic and the W3C, is implementation or governance built on top of them.</p>
+
+        <ul class="tech">
+          <li>
+            <h3>HTML</h3>
+            <p class="role">HyperText Markup Language: how you write the document</p>
+            <p>Berners-Lee based it on SGML, which CERN already used for documentation, and kept it minimal: a handful of tags, the most important being the anchor tag that creates a link.</p>
+            <p><span class="label">Why it mattered.</span> A plain-text format anyone could write by hand on any machine, so publishing a page required no special software.</p>
+          </li>
+          <li>
+            <h3>URI / URL</h3>
+            <p class="role">Uniform Resource Identifier / Locator: how you name it</p>
+            <p>A single global naming scheme, <code>scheme://host/path</code>, so that any document anywhere could be pointed at unambiguously.</p>
+            <p><span class="label">Why it mattered.</span> Berners-Lee considered this the most important of the three. One universal address format is what let the Web wrap around systems that already existed, such as FTP, Gopher and news, instead of having to replace them. Without it, links could not cross machines and the Web would just be isolated documents.</p>
+          </li>
+          <li>
+            <h3>HTTP</h3>
+            <p class="role">HyperText Transfer Protocol: how you fetch it</p>
+            <p>The protocol a browser uses to ask a server for a document and receive it. The original version was tiny: a single request line, <code>GET /path</code>, and the server returns the file.</p>
+            <p><span class="label">Why it mattered.</span> Simple enough that a working server was a few hundred lines of code, which is a large part of why servers spread so quickly between 1991 and 1993.</p>
+          </li>
+        </ul>
+
+        <p class="source" style="margin-top: 1.5rem;">Sources for this section: <a href="https://www.w3.org/2004/Talks/w3c10-HowItAllStarted/">Berners-Lee, "How It All Started", W3C 10th anniversary talk, 1 December 2004</a> (slide deck; the link opens on the cover slide); <a href="https://home.cern/science/computing/the-birth-of-the-web/short-history-web/">CERN, "A short history of the Web"</a>.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SOURCES
+         ============================================================ -->
+    <section class="topic sources" id="sources" aria-labelledby="sources-title">
+      <div class="wrap">
+        <header>
+          <h2 id="sources-title">Sources</h2>
+          <p class="intro" style="font-size: 1rem;">Every link below was opened and checked before publication. Entries marked <span class="primary">primary</span> are original documents rather than histories written about them.</p>
+        </header>
+        <div class="columns">
+          <div>
+            <h3 class="subhead" style="margin-top: 0;">The World Wide Web</h3>
+            <ul>
+              <li><a href="https://home.cern/science/computing/the-birth-of-the-web/">CERN, The birth of the Web</a><span class="url">https://home.cern/science/computing/the-birth-of-the-web/</span></li>
+              <li><a href="https://home.cern/science/computing/the-birth-of-the-web/short-history-web/">CERN, A short history of the Web</a><span class="url">https://home.cern/science/computing/the-birth-of-the-web/short-history-web/</span></li>
+              <li><a href="https://timeline.web.cern.ch/sir-tim-berners-lee-submitted-his-first-proposal-what-became-world-wide-web">CERN timeline, first proposal</a><span class="url">https://timeline.web.cern.ch/sir-tim-berners-lee-submitted-his-first-proposal-what-became-world-wide-web</span></li>
+              <li><span class="primary">primary</span><a href="https://www.w3.org/History/1989/proposal.html">Berners-Lee (1989), Information Management: A Proposal</a><span class="url">https://www.w3.org/History/1989/proposal.html</span></li>
+              <li><a href="https://home.cern/resources/faqs/birth-web">CERN FAQ, the birth of the web</a><span class="url">https://home.cern/resources/faqs/birth-web</span></li>
+              <li><a href="https://www.w3.org/Consortium/facts.html">W3C, Consortium facts (founding date)</a><span class="url">https://www.w3.org/Consortium/facts.html</span></li>
+              <li><a href="https://first-website.web.cern.ch/">CERN, the restored first website</a><span class="url">https://first-website.web.cern.ch/</span></li>
+              <li><a href="https://home.cern/news/news/computing/twenty-years-free-open-web">CERN, Twenty years of a free and open Web</a><span class="url">https://home.cern/news/news/computing/twenty-years-free-open-web</span></li>
+              <li><a href="https://worldwideweb.cern.ch/history/">CERN, WorldWideWeb NeXT application history</a><span class="url">https://worldwideweb.cern.ch/history/</span></li>
+              <li><span class="primary">primary</span><a href="http://info.cern.ch/hypertext/WWW/TheProject.html">The first website, still online</a><span class="url">http://info.cern.ch/hypertext/WWW/TheProject.html</span></li>
+              <li><a href="https://web30.web.cern.ch/web-history.html">CERN Web@30, web history</a><span class="url">https://web30.web.cern.ch/web-history.html</span></li>
+              <li><a href="https://www.w3.org/History.html">W3C, A Little History of the World Wide Web (by Cailliau)</a><span class="url">https://www.w3.org/History.html</span></li>
+              <li><a href="https://www.w3.org/about/history/">W3C, own founding history</a><span class="url">https://www.w3.org/about/history/</span></li>
+              <li><span class="primary">primary</span><a href="https://www.w3.org/Proposal.html">Berners-Lee &amp; Cailliau (12 Nov 1990), WorldWideWeb: Proposal for a HyperText Project</a><span class="url">https://www.w3.org/Proposal.html</span></li>
+              <li><span class="primary">primary</span><a href="https://www.w3.org/People/Berners-Lee/1991/08/art-6484.txt">The 6 Aug 1991 alt.hypertext announcement post</a><span class="url">https://www.w3.org/People/Berners-Lee/1991/08/art-6484.txt</span></li>
+              <li><span class="primary">primary</span><a href="https://www.w3.org/Protocols/HTTP/AsImplemented.html">Original HTTP/0.9 specification as implemented</a><span class="url">https://www.w3.org/Protocols/HTTP/AsImplemented.html</span></li>
+              <li><span class="primary">primary</span><a href="https://www.w3.org/History/19921103-hypertext/hypertext/WWW/MarkUp/Tags.html">Earliest HTML tag list (c. 1991–92)</a><span class="url">https://www.w3.org/History/19921103-hypertext/hypertext/WWW/MarkUp/Tags.html</span></li>
+              <li><a href="https://www.w3.org/People/Berners-Lee/WorldWideWeb.html">Berners-Lee on the first browser</a><span class="url">https://www.w3.org/People/Berners-Lee/WorldWideWeb.html</span></li>
+              <li><a href="https://timeline.web.cern.ch/cern-puts-world-wide-web-public-domain">CERN timeline, Web put in the public domain</a><span class="url">https://timeline.web.cern.ch/cern-puts-world-wide-web-public-domain</span></li>
+              <li><a href="https://cerncourier.com/a/cerns-ultimate-act-of-openness/">CERN Courier, CERN's ultimate act of openness</a><span class="url">https://cerncourier.com/a/cerns-ultimate-act-of-openness/</span></li>
+              <li><a href="https://www.w3.org/2004/Talks/w3c10-HowItAllStarted/">Berners-Lee, How It All Started (W3C 10th anniversary talk, 2004)</a><span class="url">https://www.w3.org/2004/Talks/w3c10-HowItAllStarted/</span></li>
+              <li><a href="https://www.w3.org/People/Berners-Lee/1996/ppf.html">Tim Berners-Lee, personal FAQ / longer bio (W3C)</a><span class="url">https://www.w3.org/People/Berners-Lee/1996/ppf.html</span></li>
+              <li><span class="primary">primary</span><a href="https://www.rfc-editor.org/rfc/rfc1630">RFC 1630, Universal Resource Identifiers, June 1994</a><span class="url">https://www.rfc-editor.org/rfc/rfc1630</span></li>
+              <li><span class="primary">primary</span><a href="https://www.rfc-editor.org/rfc/rfc1738.html">RFC 1738, URL syntax, December 1994</a><span class="url">https://www.rfc-editor.org/rfc/rfc1738.html</span></li>
+              <li><span class="primary">primary</span><a href="https://www.rfc-editor.org/rfc/rfc1866.html">RFC 1866, HTML 2.0, November 1995</a><span class="url">https://www.rfc-editor.org/rfc/rfc1866.html</span></li>
+              <li><span class="primary">primary</span><a href="https://www.rfc-editor.org/rfc/rfc1945.html">RFC 1945, HTTP/1.0, May 1996</a><span class="url">https://www.rfc-editor.org/rfc/rfc1945.html</span></li>
+              <li><span class="primary">primary</span><a href="https://www.rfc-editor.org/rfc/rfc2616.html">RFC 2616, HTTP/1.1, June 1999</a><span class="url">https://www.rfc-editor.org/rfc/rfc2616.html</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>This website is created for educational purposes only, as part of the GIN446 - Web Programming course, School of Engineering, USEK.</p>
+    </div>
+  </footer>
+</body>
+</html>

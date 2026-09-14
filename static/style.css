@@ -1,0 +1,359 @@
+/* style.css — shared stylesheet for the GIN446 history pages
+   (internet-history-ai.html and web-history-ai.html).
+   Serve from Flask's static/ folder. */
+
+/* ------------------------------------------------------------
+   Design tokens
+   The accent is the original hyperlink blue (#0000EE) and the
+   original visited-link purple (#551A8B): the two colours the
+   first graphical browsers gave the Web. Blue on this page
+   always means "this is a link".
+   ------------------------------------------------------------ */
+:root {
+  --paper:   #ffffff;
+  --ink:     #13213b;
+  --muted:   #5b6577;
+  --rule:    #d9dee6;
+  --wash:    #f3f5fa;
+  --link:    #0000ee;
+  --visited: #551a8b;
+
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans:  "Archivo", "Helvetica Neue", Arial, sans-serif;
+
+  --measure: 66ch;      /* max line length for running text */
+  --gutter:  1.25rem;   /* horizontal page padding */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Links ---------- */
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+a:visited { color: var(--visited); }
+a:hover { text-decoration-thickness: 2px; }
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--link);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  background: var(--ink);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--sans);
+  z-index: 20;
+}
+.skip:focus { top: 1rem; }
+
+/* ---------- Type scale ---------- */
+h1, h2, h3, h4 {
+  font-family: var(--sans);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+h1 { font-size: clamp(2.25rem, 5vw, 3.75rem); letter-spacing: -0.025em; max-width: 18ch; }
+h2 { font-size: clamp(1.75rem, 3.5vw, 2.5rem); letter-spacing: -0.02em; }
+h3 { font-size: 1.3125rem; }
+h4 { font-size: 1.0625rem; }
+
+p { margin: 0 0 1em; max-width: var(--measure); }
+p:last-child { margin-bottom: 0; }
+
+small, .small { font-size: 0.9rem; }
+code { font-size: 0.875em; }
+
+/* ---------- Layout containers ---------- */
+.wrap {
+  width: min(100% - 2 * var(--gutter), 64rem);
+  margin-inline: auto;
+}
+
+/* ---------- Sticky section navigation ---------- */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+}
+.site-nav .wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding: 0.75rem 0;
+  overflow-x: auto;          /* on narrow screens the links scroll sideways */
+  white-space: nowrap;
+  scrollbar-width: none;
+}
+.site-nav .wrap::-webkit-scrollbar { display: none; }
+.site-nav .home {
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  margin-right: auto;
+}
+.site-nav a:not(.home) { color: var(--ink); text-decoration: none; }
+.site-nav a:not(.home):hover { text-decoration: underline; }
+
+/* ---------- Hero ---------- */
+.hero { padding: 4rem 0 3rem; }
+.hero .course {
+  font-family: var(--sans);
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+.hero .byline {
+  font-family: var(--sans);
+  margin-top: 1rem;
+  color: var(--muted);
+}
+
+/* The first two letters ever sent over ARPANET. */
+.first-words {
+  margin: 3rem 0 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: end;
+  gap: 0 2.5rem;
+  border-top: 1px solid var(--rule);
+  padding-top: 1.5rem;
+}
+.first-words .letters {
+  font-family: var(--sans);
+  font-weight: 900;
+  font-stretch: 62%;
+  font-size: clamp(7rem, 30vw, 22rem);
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  color: var(--link);
+  margin: 0;
+  transform: translateY(0.06em);
+}
+.first-words figcaption {
+  max-width: 40ch;
+  padding-bottom: 0.5rem;
+}
+.first-words figcaption p { margin: 0; }
+.first-words figcaption .lead {
+  font-family: var(--sans);
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+@media (max-width: 40rem) {
+  .first-words { grid-template-columns: 1fr; gap: 1rem; }
+}
+
+/* ---------- Topic sections ---------- */
+.topic { padding: 4rem 0 2rem; border-top: 1px solid var(--ink); }
+.topic > .wrap > header { margin-bottom: 2rem; }
+.topic .kicker {
+  font-family: var(--sans);
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.intro {
+  font-size: 1.1875rem;
+  line-height: 1.6;
+  margin-top: 1.5rem;
+}
+
+.subhead {
+  margin: 3.5rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ---------- Timeline ---------- */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.event {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr);
+  gap: 0.25rem 2.5rem;
+  padding: 1.75rem 0;
+  border-top: 1px solid var(--rule);
+}
+.event:first-child { border-top: 0; }
+.event .when {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin: 0.15rem 0 0;
+}
+.event .when .year {
+  display: block;
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+.event .when .detail {
+  display: block;
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+.event h3 { margin-bottom: 0.75rem; }
+.event .label {
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 0.9375rem;
+}
+.event .label::after { content: " "; }
+
+.note {
+  max-width: var(--measure);
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  background: var(--wash);
+  border-left: 3px solid var(--ink);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+.note .label { font-family: var(--sans); font-weight: 700; }
+
+.source {
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 0.75rem;
+}
+.source a { overflow-wrap: anywhere; }
+
+@media (max-width: 48rem) {
+  .event { grid-template-columns: 1fr; gap: 0.5rem; padding: 1.5rem 0; }
+  .event .when { display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap; }
+  .event .when .year { font-size: 1.5rem; margin: 0; }
+}
+
+.footnote {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+/* ---------- Key technologies ---------- */
+.tech-intro { margin-bottom: 1.5rem; }
+.tech {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tech li {
+  border-top: 3px solid var(--ink);
+  padding-top: 1rem;
+}
+.tech h3 { margin-bottom: 0.25rem; }
+.tech .role {
+  font-family: var(--sans);
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+}
+.tech p { font-size: 1rem; }
+@media (max-width: 56rem) {
+  .tech { grid-template-columns: 1fr; gap: 2rem; }
+}
+
+/* ---------- Sources ---------- */
+.sources .columns {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+@media (max-width: 56rem) {
+  .sources .columns { grid-template-columns: 1fr; }
+}
+.sources ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.sources li {
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--rule);
+}
+.sources li:first-child { border-top: 0; }
+.sources .url {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.sources .primary {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: 0 0.35rem;
+  margin-right: 0.35rem;
+  vertical-align: 0.1em;
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  margin-top: 3rem;
+  border-top: 1px solid var(--ink);
+  padding: 2rem 0 3rem;
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+  
+/* Web page hero: Mike Sendall's note on the 1989 proposal */
+.first-words .quote {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(2.5rem, 8vw, 5.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--link);
+  margin: 0;
+  max-width: 12ch;
+}
+/* Section headings inside a single-topic page */
+h2.subhead { font-size: 1.5rem; }
+.topic > .wrap > header { margin-bottom: 0; }
