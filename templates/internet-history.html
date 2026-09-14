@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History of the Internet — Jad Haidar</title>
+</head>
+<body>
+
+  <header>
+    <h1>History of the Internet</h1>
+  </header>
+
+  <nav>
+    <a href="/">Home</a>
+  </nav>
+
+  <main>
+
+    <section>
+      <h2>Introduction</h2>
+      <p>The Internet is basically the cables, machines and protocols that connect computers around the world and let them send data to each other. It doesn't have one inventor or one start date. It came together slowly, with different people adding pieces over the years. Some say it started in 1969, when the first two computers were linked on ARPANET. Others say 1974, when Cerf and Kahn published the idea of connecting different networks together. I think 1983 makes the most sense, because that's when everything switched over to TCP/IP, which is still what the Internet runs on today.</p>
+    </section>
+
+    <section>
+      <h2>Timeline</h2>
+
+      <article>
+        <h3>1960–1966 — Packet switching invented</h3>
+        <p>Paul Baran at RAND (1960–1964) and Donald Davies at NPL in the UK (1965–1966) independently worked out how to break data into small addressed packets that travel independently instead of reserving a dedicated circuit. Davies coined the word "packet". Leonard Kleinrock's 1961–62 MIT work on queueing theory is often listed as a third origin, but whether it actually proposed packet switching is contested; the historian Janet Abbate credits only Baran and Davies.</p>
+        <p>This made a shared data network both efficient and resilient. Computer traffic is bursty, so dedicated circuits sit idle; packets let many conversations share one line, and any node failure just reroutes traffic.</p>
+        <p>Source: <a href="https://mitpress.mit.edu/9780262511155/inventing-the-internet/">Abbate, Inventing the Internet (MIT Press, 1999), ch. 1</a></p>
+      </article>
+
+      <article>
+        <h3>29 October 1969 — First ARPANET message</h3>
+        <p>At 22:30, Charley Kline at UCLA attempted a login to Bill Duvall at Stanford Research Institute. The letters "l" and "o" transmitted, then the system crashed. The full login succeeded about an hour later. By December 1969 there were four nodes: UCLA, SRI, UC Santa Barbara and Utah.</p>
+        <p>This was the first operational packet-switched network and the direct ancestor of the Internet.</p>
+        <p>Source: <a href="https://www.lk.cs.ucla.edu/internet_first_words.html">UCLA / Kleinrock, Internet first words (original IMP log)</a></p>
+      </article>
+
+      <article>
+        <h3>1971 (approx.) — First network email</h3>
+        <p>Ray Tomlinson sent the first email across a network and chose the "@" symbol to separate the user from the host. The date is approximate: Tomlinson said he never recorded it, and it may have been early 1972.</p>
+        <p>Email became ARPANET's dominant use within a couple of years, proving the network was for people communicating, not just for sharing computer time.</p>
+        <p>Source: <a href="https://www.internetsociety.org/internet/history-internet/brief-history-internet/">Internet Society, A Brief History of the Internet</a></p>
+      </article>
+
+      <article>
+        <h3>May 1974 — The Cerf–Kahn paper</h3>
+        <p>Vint Cerf and Bob Kahn published "A Protocol for Packet Network Intercommunication" in IEEE Transactions on Communications, Vol. COM-22, No. 5. It is the paper that introduced the term "internetworking".</p>
+        <p>This is the founding design document. Its key principle is to keep the network simple and put intelligence in the end hosts, so any network can join without being redesigned.</p>
+        <p>Source: <a href="https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf">Cerf &amp; Kahn (1974), A Protocol for Packet Network Intercommunication (PDF)</a></p>
+      </article>
+
+      <article>
+        <h3>1 January 1983 — Flag Day: NCP to TCP/IP</h3>
+        <p>ARPANET switched completely from NCP to TCP/IP on one day. The changeover plan is set out in RFC 801, written by Jon Postel in November 1981.</p>
+        <p>This date is widely cited as the birthday of the Internet proper. From this point on, any TCP/IP network could interconnect.</p>
+        <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc801.html">RFC 801, NCP/TCP Transition Plan</a></p>
+      </article>
+
+      <article>
+        <h3>November 1983 — The Domain Name System</h3>
+        <p>Paul Mockapetris at ISI specified DNS in RFC 882 and RFC 883, later revised in 1987 as RFC 1034 and RFC 1035. The first .com domain, symbolics.com, was registered on 15 March 1985.</p>
+        <p>DNS replaced a single hosts.txt file maintained by hand at SRI and downloaded by every machine, which was already failing at a few hundred hosts. It made naming distributed and scalable.</p>
+        <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc882.html">RFC 882, Domain Names: Concepts and Facilities</a></p>
+      </article>
+
+      <article>
+        <h3>1986 — The NSFNET backbone</h3>
+        <p>The NSFNET backbone became operational in 1986 at 56 kbit/s and was later upgraded to T1 and T3. It connected around 2,000 computers in 1986, growing to more than 2 million by 1993.</p>
+        <p>It opened the Internet to universities and research centres broadly, not just defence contractors, and traffic exploded.</p>
+        <p>Source: <a href="https://www.nsf.gov/impacts/internet">National Science Foundation, NSFNET</a></p>
+      </article>
+
+      <article>
+        <h3>30 April 1995 — NSFNET decommissioned</h3>
+        <p>The NSFNET backbone was shut down and the Internet backbone was handed over entirely to commercial providers. ARPANET itself had already been decommissioned in February 1990.</p>
+        <p>This was full privatisation: the point at which the Internet stopped being a government research project and became commercial infrastructure.</p>
+        <p>Source: <a href="https://www.internetsociety.org/blog/2015/04/happy-birthday-backbone/">Internet Society, Happy Birthday Backbone</a></p>
+      </article>
+
+    </section>
+
+    <section>
+      <h2>References</h2>
+      <ul>
+        <li><a href="https://mitpress.mit.edu/9780262511155/inventing-the-internet/">Janet Abbate, Inventing the Internet (MIT Press, 1999)</a></li>
+        <li><a href="https://www.lk.cs.ucla.edu/internet_first_words.html">UCLA / Kleinrock, Internet first words (original IMP log)</a></li>
+        <li><a href="https://www.internetsociety.org/internet/history-internet/brief-history-internet/">Internet Society, A Brief History of the Internet</a></li>
+        <li><a href="https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf">Cerf &amp; Kahn (1974), A Protocol for Packet Network Intercommunication</a></li>
+        <li><a href="https://www.rfc-editor.org/rfc/rfc801.html">RFC 801, NCP/TCP Transition Plan, November 1981</a></li>
+        <li><a href="https://www.rfc-editor.org/rfc/rfc882.html">RFC 882, Domain Names: Concepts and Facilities, November 1983</a></li>
+        <li><a href="https://www.nsf.gov/impacts/internet">National Science Foundation, NSFNET</a></li>
+        <li><a href="https://www.internetsociety.org/blog/2015/04/happy-birthday-backbone/">Internet Society, Happy Birthday Backbone (NSFNET shutdown)</a></li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>This website is created for educational purposes only, as part of the GIN446 - Web Programming course, School of Engineering, USEK.</p>
+  </footer>
+
+</body>
+</html>
