@@ -1,21 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>History of the World Wide Web — Jad Haidar</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}History of the World Wide Web{% endblock %}
+{% block description %}A verified, sourced timeline of the history of the World Wide Web, from ENQUIRE at CERN to the encrypted web of 2026.{% endblock %}
 
-  <header>
+{% block content %}
     <h1>History of the World Wide Web</h1>
-  </header>
-
-  <nav>
-    <a href="/">Home</a>
-  </nav>
-
-  <main>
 
     <section>
       <h2>Introduction</h2>
@@ -178,11 +166,5 @@
       </ul>
     </section>
 
-  </main>
-
-  <footer>
-    <p>This website is created for educational purposes only, as part of the GIN446 - Web Programming course, School of Engineering, USEK.</p>
-  </footer>
-
-</body>
-</html>
+  
+{% endblock %}
