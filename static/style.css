@@ -357,3 +357,61 @@ code { font-size: 0.875em; }
 /* Section headings inside a single-topic page */
 h2.subhead { font-size: 1.5rem; }
 .topic > .wrap > header { margin-bottom: 0; }
+
+/* ------------------------------------------------------------------
+   Shared shell (base.html) — interim rules.
+   The old .site-nav block above expects a .wrap div from the previous
+   markup; these target the new header/menu built in Part 1 and will be
+   superseded when Part 2 regenerates this stylesheet.
+   ------------------------------------------------------------------ */
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  width: min(100% - 2.5rem, 64rem);
+  margin-inline: auto;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.site-title { margin: 0; }
+.site-title a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--sans);
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+.site-logo { height: 2.25rem; width: auto; }
+
+.site-header .site-nav {
+  position: static;
+  border-bottom: 0;
+  background: none;
+}
+.site-header .site-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-header .site-nav a {
+  font-family: var(--sans);
+  font-size: 0.9375rem;
+  color: var(--ink);
+  text-decoration: none;
+}
+.site-header .site-nav a:hover { text-decoration: underline; }
+
+.site-footer {
+  width: min(100% - 2.5rem, 64rem);
+  margin-inline: auto;
+}
+
+main#main { width: min(100% - 2.5rem, 64rem); margin-inline: auto; }
