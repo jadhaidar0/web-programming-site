@@ -4,10 +4,11 @@ Serves the portfolio home page and the Week 2 history pages (hand-made and AI).
 """
 
 import html
+import os
 import re
 from urllib.parse import urlparse
 
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
 
 app = Flask(__name__)
 
@@ -72,6 +73,25 @@ def related_pages(endpoint):
         elif info["author"] == page["author"]:
             other_topic = other
     return counterpart, other_topic
+
+
+@app.context_processor
+def asset_version():
+    """Add a ?v= stamp to static files, taken from the file's own timestamp.
+
+    Browsers and CDNs cache /static/style.css for a long time, so a redeploy
+    would otherwise still serve the old file. Changing the file changes the
+    stamp, which makes it a new address that nothing has cached yet.
+    """
+
+    def static_url(filename):
+        try:
+            stamp = int(os.path.getmtime(os.path.join(app.static_folder, filename)))
+        except OSError:
+            stamp = 0
+        return url_for("static", filename=filename, v=stamp)
+
+    return {"static_url": static_url}
 
 
 @app.context_processor
