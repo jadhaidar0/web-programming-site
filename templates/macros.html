@@ -1,0 +1,62 @@
+{#
+  Shared building blocks for the history pages.
+
+  decade(label)
+    One decade of the timeline:
+      <li class="decade" id="y1960s">
+        <h3>1960s</h3>
+        <ol> ...this decade's entries... </ol>
+      </li>
+
+  event(title, year, detail, datetime, major)
+    One timeline entry, identical in structure on every page:
+      <li class="event" id="e-1969-..." data-year="1969">
+        <article>                      the card
+          <p class="event-date">       year badge (gold on navy) + detail,
+                                       in <time datetime> when the date is exact
+          <h4>                         the entry's title
+          <div class="event-body">     paragraphs, notes, sources
+    title     heading text
+    year      shown in the badge, e.g. "1969" or "1978–1981"
+    detail    optional text beside it, e.g. "29 October, 22:30"
+    datetime  optional ISO 8601 value, only for a single point in time
+    major     true for a landmark entry (full-width navy card)
+
+  reference(href, title, primary, show_url)
+    One numbered source. Under the title it shows where the source lives:
+    the full address (show_url) or just its domain.
+#}
+
+{% macro decade(label) -%}
+<li class="decade" id="y{{ label }}">
+  <h3 class="decade-title">{{ label }}</h3>
+  <ol class="decade-events">
+    {{- caller() -}}
+  </ol>
+</li>
+{%- endmacro %}
+
+{% macro event(title, year, detail=none, datetime=none, major=false) -%}
+<li class="event{% if major %} event--major{% endif %}" id="e-{{ year[:4] }}-{{ title|slug }}" data-year="{{ year[:4] }}">
+  <article class="event-card">
+    <p class="event-date">
+      {%- if datetime %}<time datetime="{{ datetime }}">{% endif -%}
+      <span class="event-year">{{ year }}</span>
+      {%- if detail %} <span class="event-detail">{{ detail }}</span>{% endif -%}
+      {%- if datetime %}</time>{% endif -%}
+    </p>
+    <h4 class="event-title">{{ title }}</h4>
+    <div class="event-body">
+      {{- caller() -}}
+    </div>
+  </article>
+</li>
+{%- endmacro %}
+
+{% macro reference(href, title, primary=false, show_url=false) -%}
+<li>
+  {%- if primary %}<span class="primary">primary</span>{% endif -%}
+  <a href="{{ href }}">{{ title }}</a>
+  <span class="ref-where">{{ href if show_url else href|domain }}</span>
+</li>
+{%- endmacro %}

@@ -1,0 +1,126 @@
+{#
+  Layout shared by all four history pages (hand-made and AI).
+
+  base.html  ->  history.html  ->  internet-history.html, web-history.html,
+                                   internet-history-ai.html, web-history-ai.html
+
+  The page's title and description come from HISTORY_PAGES in app.py.
+  A page sets these variables at the top:
+    page_heading   the <h1>
+    headings       dict of section headings: intro, timeline, sources,
+                   and (optional) technologies
+    decades        the decades in its timeline, for "On this page"
+    kicker, byline optional lines around the <h1>
+
+  and fills these blocks:
+    hero             optional figure under the page title
+    intro            the introduction
+    timeline         decade() groups of event() entries (macros.html)
+    after_timeline   optional note under the timeline
+    technologies     optional; the section only appears if headings has it
+    sources          reference() entries (macros.html)
+#}
+{% extends "base.html" %}
+
+{% set page = history_pages[request.endpoint] %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block description %}{{ page.description }}{% endblock %}
+
+{% block content %}
+<div class="history">
+
+  <header class="page-header panel">
+    {% if kicker %}<p class="kicker">{{ kicker }}</p>{% endif %}
+    <h1>{{ page_heading }}</h1>
+    {% if byline %}<p class="byline">{{ byline }}</p>{% endif %}
+    {% block hero %}{% endblock %}
+
+    {# Time ruler: one gold tick per entry, built from the timeline itself. #}
+    <nav class="ruler" aria-label="Timeline at a glance">
+      <ol class="ruler-ticks">
+        {% for tick in self.timeline()|ruler_ticks %}
+          <li style="--at: {{ tick.left }}%; --stack: {{ tick.stack }}; --tick: {{ 1.25 + tick.stack * 0.5 }}rem">
+            <a href="#{{ tick.anchor }}"><span class="visually-hidden">{{ tick.year }}: {{ tick.title }}</span></a>
+          </li>
+        {% endfor %}
+      </ol>
+      <p class="ruler-axis" aria-hidden="true">
+        {% for year in range(1960, 2030, 10) %}<span style="--at: {{ ((year - 1960) / 66 * 100)|round(2) }}%">{{ year }}</span>{% endfor %}
+      </p>
+    </nav>
+  </header>
+
+  <div class="history-grid">
+
+    <nav class="toc panel" aria-label="On this page">
+      <p class="toc-title">On this page</p>
+      <ol>
+        <li><a href="#introduction">{{ headings.intro }}</a></li>
+        <li>
+          <a href="#timeline">{{ headings.timeline }}</a>
+          <ol class="toc-decades">
+            {% for decade in decades %}
+              <li><a href="#y{{ decade }}">{{ decade }}</a></li>
+            {% endfor %}
+          </ol>
+        </li>
+        {% if headings.technologies %}
+          <li><a href="#technologies">{{ headings.technologies }}</a></li>
+        {% endif %}
+        <li><a href="#sources">{{ headings.sources }}</a></li>
+      </ol>
+    </nav>
+
+    <div class="history-body">
+
+      <section class="page-section panel prose" id="introduction" aria-labelledby="introduction-title">
+        <h2 id="introduction-title">{{ headings.intro }}</h2>
+        {% block intro %}{% endblock %}
+      </section>
+
+      <section class="page-section page-section--timeline" id="timeline" aria-labelledby="timeline-title">
+        <h2 id="timeline-title" class="section-chip">{{ headings.timeline }}</h2>
+        <ol class="timeline">
+          {% block timeline %}{% endblock %}
+        </ol>
+        {% set after %}{% block after_timeline %}{% endblock %}{% endset %}
+        {% if after|trim %}<div class="panel after-timeline">{{ after }}</div>{% endif %}
+      </section>
+
+      {% if headings.technologies %}
+      <section class="page-section panel" id="technologies" aria-labelledby="technologies-title">
+        <h2 id="technologies-title">{{ headings.technologies }}</h2>
+        {% block technologies %}{% endblock %}
+      </section>
+      {% endif %}
+
+      <section class="page-section panel sources" id="sources" aria-labelledby="sources-title">
+        <h2 id="sources-title">{{ headings.sources }}</h2>
+        {% block sources %}{% endblock %}
+      </section>
+
+      {# Related pages: this page's counterpart and the other topic. #}
+      {% set counterpart, other_topic = related_pages(request.endpoint) %}
+      <nav class="related" aria-label="Related history pages">
+        <ul>
+          <li>
+            <a class="related-card" href="{{ url_for(counterpart) }}">
+              <span class="related-kind">Compare with the {{ "AI-generated" if history_pages[counterpart].author == "ai" else "hand-made" }} version</span>
+              <span class="related-title">{{ history_pages[counterpart].title }}</span>
+              <span class="related-text">{{ history_pages[counterpart].description }}</span>
+            </a>
+          </li>
+          <li>
+            <a class="related-card" href="{{ url_for(other_topic) }}">
+              <span class="related-kind">Other topic</span>
+              <span class="related-title">{{ history_pages[other_topic].title }}</span>
+              <span class="related-text">{{ history_pages[other_topic].description }}</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
