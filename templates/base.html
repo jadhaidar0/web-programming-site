@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&display=swap" rel="stylesheet">
 
   {# Tab icon. #}
-  <link rel="icon" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="icon" href="{{ static_url('favicon.png') }}">
 
   {# Preview card shown when the link is shared on WhatsApp, Slack, etc.
      og:image needs a full address, which _external=True gives us. #}
@@ -22,7 +22,7 @@
   <meta property="og:image" content="{{ url_for('static', filename='favicon.png', _external=True) }}">
   <meta name="twitter:card" content="summary">
 
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ static_url('style.css') }}">
 </head>
 <body>
 
