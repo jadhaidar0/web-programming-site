@@ -3,18 +3,45 @@
 {% block description %}Web Programming portfolio for the GIN446 course at USEK. A live site that grows one page or feature every week.{% endblock %}
 
 {% block content %}
-    <h1>Web Programming Portfolio — Jad Haidar</h1>
-    <p>A live site that grows one page or feature every week.</p>
+<div class="home">
 
-    <section>
-      <h2>Weekly Work</h2>
-      <!-- Each week you add a link here to that week's page or feature. -->
-      <ul>
-        {% for item in weekly_work %}
-          <li><a href="{{ item.url }}">Week {{ item.week }} — {{ item.title }}</a></li>
-        {% else %}
-          <li>Week 1 — live site launched.</li>
-        {% endfor %}
-      </ul>
-    </section>
+  <header class="home-hero">
+    <div class="home-hero-text">
+      <h1>Web Programming Portfolio — Jad Haidar</h1>
+      <p class="lead">A live site that grows one page or feature every week.</p>
+    </div>
+    <img class="home-hero-mark" src="{{ url_for('static', filename='logo-white.png') }}"
+         alt="" width="767" height="392">
+  </header>
+
+  <section class="page-section panel" aria-labelledby="history-pages-title">
+    <h2 id="history-pages-title">History pages</h2>
+    <ul class="page-cards">
+      {% for endpoint, info in history_pages.items() %}
+        <li>
+          <a class="page-card" href="{{ url_for(endpoint) }}">
+            <span class="page-card-title">{{ info.title }}</span>
+            <span class="page-card-text">{{ info.description }}</span>
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="page-section panel" aria-labelledby="weekly-work-title">
+    <h2 id="weekly-work-title">Weekly Work</h2>
+    <!-- Each week you add a link here to that week's page or feature. -->
+    <ol class="weekly-list">
+      {% for item in weekly_work %}
+        <li>
+          <span class="weekly-week">Week {{ item.week }}</span>
+          <a href="{{ url_for(item.endpoint) }}">{{ item.title }}</a>
+        </li>
+      {% else %}
+        <li>Week 1 — live site launched.</li>
+      {% endfor %}
+    </ol>
+  </section>
+
+</div>
 {% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Page not found{% endblock %}
+{% block description %}That page doesn't exist on this site.{% endblock %}
+
+{% block content %}
+  <div class="notfound">
+    <p class="notfound-code">404</p>
+    <h1>That page doesn't exist</h1>
+    <p>The address you followed isn't a page on this site. It may have been
+       mistyped, or the link that brought you here may be out of date.</p>
+
+    <h2>Try one of these</h2>
+    <ul class="notfound-links">
+      {% for endpoint, label in menu %}
+        <li><a href="{{ url_for(endpoint) }}">{{ label }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

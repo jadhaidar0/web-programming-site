@@ -3,20 +3,138 @@ Web Programming — Flask application.
 Serves the portfolio home page and the Week 2 history pages (hand-made and AI).
 """
 
+import html
+import re
+from urllib.parse import urlparse
+
 from flask import Flask, render_template
 
 app = Flask(__name__)
 
 
+# ---------------------------------------------------------------------------
+# Site data, defined once and shared by every template
+# ---------------------------------------------------------------------------
+
+# Main menu: (endpoint, label). Used by the header and the footer.
+MENU = [
+    ("home", "Home"),
+    ("internet_history", "Internet"),
+    ("web_history", "Web"),
+    ("internet_history_ai", "Internet (AI)"),
+    ("web_history_ai", "Web (AI)"),
+]
+
+# The four history pages. Titles and descriptions live here so the pages,
+# the home page cards and the related-page links all use the same text.
+HISTORY_PAGES = {
+    "internet_history": {
+        "title": "History of the Internet",
+        "description": "A verified, sourced timeline of the history of the Internet, "
+                       "from packet switching to IPv6 reaching the majority in 2026.",
+        "topic": "internet",
+        "author": "hand",
+    },
+    "web_history": {
+        "title": "History of the World Wide Web",
+        "description": "A verified, sourced timeline of the history of the World Wide Web, "
+                       "from ENQUIRE at CERN to the encrypted web of 2026.",
+        "topic": "web",
+        "author": "hand",
+    },
+    "internet_history_ai": {
+        "title": "History of the Internet (AI-generated)",
+        "description": "An AI-generated timeline of the history of the Internet, "
+                       "built from verified research for GIN446.",
+        "topic": "internet",
+        "author": "ai",
+    },
+    "web_history_ai": {
+        "title": "History of the World Wide Web (AI-generated)",
+        "description": "An AI-generated timeline of the history of the World Wide Web, "
+                       "built from verified research for GIN446.",
+        "topic": "web",
+        "author": "ai",
+    },
+}
+
+
+def related_pages(endpoint):
+    """For a history page: its counterpart (same topic, other author) and the
+    other topic by the same author."""
+    page = HISTORY_PAGES[endpoint]
+    counterpart = other_topic = None
+    for other, info in HISTORY_PAGES.items():
+        if other == endpoint:
+            continue
+        if info["topic"] == page["topic"]:
+            counterpart = other
+        elif info["author"] == page["author"]:
+            other_topic = other
+    return counterpart, other_topic
+
+
+@app.context_processor
+def site_data():
+    return {"menu": MENU, "history_pages": HISTORY_PAGES, "related_pages": related_pages}
+
+
+# ---------------------------------------------------------------------------
+# Template filters
+# ---------------------------------------------------------------------------
+
+@app.template_filter("slug")
+def slug(text):
+    """'"Flag Day": NCP to TCP/IP' -> 'flag-day-ncp-to-tcp-ip'"""
+    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+@app.template_filter("domain")
+def domain(url):
+    """'https://www.rfc-editor.org/rfc/rfc791.html' -> 'rfc-editor.org'"""
+    host = urlparse(url).netloc
+    return host[4:] if host.startswith("www.") else host
+
+
+RULER_START, RULER_END = 1960, 2026
+EVENT_PATTERN = re.compile(
+    r'<li class="event[^"]*" id="([^"]+)" data-year="(\d{4})".*?'
+    r'<h4 class="event-title">(.*?)</h4>', re.S)
+
+
+@app.template_filter("ruler_ticks")
+def ruler_ticks(timeline_html):
+    """Read the rendered timeline and return one tick per entry for the
+    time ruler: its anchor, year, title and position along the axis."""
+    ticks, per_year = [], {}
+    for anchor, year, title in EVENT_PATTERN.findall(str(timeline_html)):
+        year = int(year)
+        stack = per_year.get(year, 0)
+        per_year[year] = stack + 1
+        ticks.append({
+            "anchor": anchor,
+            "year": year,
+            "title": html.unescape(title),
+            "left": round((year - RULER_START) / (RULER_END - RULER_START) * 100, 2),
+            "stack": stack,
+        })
+    return ticks
+
+
+# ---------------------------------------------------------------------------
+# Routes
+# ---------------------------------------------------------------------------
+
 @app.route("/")
 def home():
     """Serve the portfolio home page."""
+    # Each entry names a Flask endpoint; the template builds the link with url_for().
     weekly_work = [
-        {"week": 1, "title": "Live site launched", "url": "/"},
-        {"week": 2, "title": "History of the Internet", "url": "/internet-history"},
-        {"week": 2, "title": "History of the Web", "url": "/web-history"},
-        {"week": 2, "title": "History of the Internet (AI)", "url": "/internet-history-ai"},
-        {"week": 2, "title": "History of the Web (AI)", "url": "/web-history-ai"},
+        {"week": 1, "title": "Live site launched", "endpoint": "home"},
+        {"week": 2, "title": "History of the Internet", "endpoint": "internet_history"},
+        {"week": 2, "title": "History of the Web", "endpoint": "web_history"},
+        {"week": 2, "title": "History of the Internet (AI)", "endpoint": "internet_history_ai"},
+        {"week": 2, "title": "History of the Web (AI)", "endpoint": "web_history_ai"},
     ]
     return render_template("index.html", weekly_work=weekly_work)
 
@@ -39,6 +157,17 @@ def internet_history_ai():
 @app.route("/web-history-ai")
 def web_history_ai():
     return render_template("web-history-ai.html")
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    """Flask calls this whenever no route matches the address requested.
+
+    Returning a tuple of (html, status) keeps the 404 status code, which
+    matters: a "not found" page that answers 200 tells search engines the
+    page exists.
+    """
+    return render_template("404.html"), 404
 
 
 if __name__ == "__main__":

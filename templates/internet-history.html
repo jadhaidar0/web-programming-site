@@ -1,172 +1,147 @@
-{% extends "base.html" %}
-{% block title %}History of the Internet{% endblock %}
-{% block description %}A verified, sourced timeline of the history of the Internet, from packet switching to IPv6 reaching the majority in 2026.{% endblock %}
+{% extends "history.html" %}
+{% from "macros.html" import decade, event, reference %}
 
-{% block content %}
-    <h1>History of the Internet</h1>
+{% set page_heading = "History of the Internet" %}
+{% set headings = {"intro": "Introduction", "timeline": "Timeline", "sources": "References"} %}
+{% set decades = ["1960s", "1970s", "1980s", "1990s", "2010s", "2020s"] %}
 
-    <section>
-      <h2>Introduction</h2>
-      <p>The Internet is basically the cables, machines and protocols that connect computers around the world and let them send data to each other. It doesn't have one inventor or one start date. It came together slowly, with different people adding pieces over the years. Some say it started in 1969, when the first two computers were linked on ARPANET. Others say 1974, when Cerf and Kahn published the idea of connecting different networks together. I think 1983 makes the most sense, because that's when everything switched over to TCP/IP, which is still what the Internet runs on today.</p>
-    </section>
+{% block intro %}
+  <p>The Internet is basically the cables, machines and protocols that connect computers around the world and let them send data to each other. It doesn't have one inventor or one start date. It came together slowly, with different people adding pieces over the years. Some say it started in 1969, when the first two computers were linked on ARPANET. Others say 1974, when Cerf and Kahn published the idea of connecting different networks together. I think 1983 makes the most sense, because that's when everything switched over to TCP/IP, which is still what the Internet runs on today.</p>
+{% endblock %}
 
-    <section>
-      <h2>Timeline</h2>
+{% block timeline %}
+  {% call decade("1960s") %}
+    {% call event("Packet switching invented", "1960–1966") %}
+      <p>Paul Baran at RAND (1960–1964) and Donald Davies at NPL in the UK (1965–1966) independently worked out how to break data into small addressed packets that travel independently instead of reserving a dedicated circuit. Davies coined the word "packet". Leonard Kleinrock's 1961–62 MIT work on queueing theory is often listed as a third origin, but whether it actually proposed packet switching is contested; the historian Janet Abbate credits only Baran and Davies.</p>
+      <p>This made a shared data network both efficient and resilient. Computer traffic is bursty, so dedicated circuits sit idle; packets let many conversations share one line, and any node failure just reroutes traffic.</p>
+      <p class="source">Source: <a href="https://mitpress.mit.edu/9780262511155/inventing-the-internet/">Abbate, Inventing the Internet (MIT Press, 1999), ch. 1</a></p>
+    {% endcall %}
+    {% call event("First ARPANET message", "1969", detail="29 October", datetime="1969-10-29", major=true) %}
+      <p>At 22:30, Charley Kline at UCLA attempted a login to Bill Duvall at Stanford Research Institute. The letters "l" and "o" transmitted, then the system crashed. The full login succeeded about an hour later. By December 1969 there were four nodes: UCLA, SRI, UC Santa Barbara and Utah.</p>
+      <p>This was the first operational packet-switched network and the direct ancestor of the Internet.</p>
+      <p class="source">Source: <a href="https://www.lk.cs.ucla.edu/internet_first_words.html">UCLA / Kleinrock, Internet first words (original IMP log)</a></p>
+    {% endcall %}
+  {% endcall %}
 
-      <article>
-        <h3>1960–1966 — Packet switching invented</h3>
-        <p>Paul Baran at RAND (1960–1964) and Donald Davies at NPL in the UK (1965–1966) independently worked out how to break data into small addressed packets that travel independently instead of reserving a dedicated circuit. Davies coined the word "packet". Leonard Kleinrock's 1961–62 MIT work on queueing theory is often listed as a third origin, but whether it actually proposed packet switching is contested; the historian Janet Abbate credits only Baran and Davies.</p>
-        <p>This made a shared data network both efficient and resilient. Computer traffic is bursty, so dedicated circuits sit idle; packets let many conversations share one line, and any node failure just reroutes traffic.</p>
-        <p>Source: <a href="https://mitpress.mit.edu/9780262511155/inventing-the-internet/">Abbate, Inventing the Internet (MIT Press, 1999), ch. 1</a></p>
-      </article>
-
-      <article>
-        <h3>29 October 1969 — First ARPANET message</h3>
-        <p>At 22:30, Charley Kline at UCLA attempted a login to Bill Duvall at Stanford Research Institute. The letters "l" and "o" transmitted, then the system crashed. The full login succeeded about an hour later. By December 1969 there were four nodes: UCLA, SRI, UC Santa Barbara and Utah.</p>
-        <p>This was the first operational packet-switched network and the direct ancestor of the Internet.</p>
-        <p>Source: <a href="https://www.lk.cs.ucla.edu/internet_first_words.html">UCLA / Kleinrock, Internet first words (original IMP log)</a></p>
-      </article>
-
-      <article>
-        <h3>1971 (approx.) — First network email</h3>
-        <p>Ray Tomlinson sent the first email across a network and chose the "@" symbol to separate the user from the host. The date is approximate: Tomlinson said he never recorded it, and it may have been early 1972.</p>
-        <p>Email became ARPANET's dominant use within a couple of years, proving the network was for people communicating, not just for sharing computer time.</p>
-        <p>Source: <a href="https://www.internetsociety.org/internet/history-internet/brief-history-internet/">Internet Society, A Brief History of the Internet</a></p>
-      </article>
-
-    <article>
-      <h3>1973 — First international connections</h3>
+  {% call decade("1970s") %}
+    {% call event("First network email", "1971", detail="approx.") %}
+      <p>Ray Tomlinson sent the first email across a network and chose the "@" symbol to separate the user from the host. The date is approximate: Tomlinson said he never recorded it, and it may have been early 1972.</p>
+      <p>Email became ARPANET's dominant use within a couple of years, proving the network was for people communicating, not just for sharing computer time.</p>
+      <p class="source">Source: <a href="https://www.internetsociety.org/internet/history-internet/brief-history-internet/">Internet Society, A Brief History of the Internet</a></p>
+    {% endcall %}
+    {% call event("First international connections", "1973", datetime="1973") %}
       <p>NORSAR in Norway and University College London joined ARPANET. Peter Kirstein led the UCL connection. In the same year, Vint Cerf and Bob Kahn began designing TCP.</p>
       <p>It showed the network could cross oceans, and it exposed the real problem: connecting different networks, such as ARPANET, satellite and packet radio, to one another.</p>
-      <p>Source: <a href="https://www.ucl.ac.uk/news/2003/nov/ucl-celebrates-internet-pioneers">UCL, UCL celebrates internet pioneers</a></p>
-    </article>
-
-      <article>
-        <h3>May 1974 — The Cerf–Kahn paper</h3>
-        <p>Vint Cerf and Bob Kahn published "A Protocol for Packet Network Intercommunication" in IEEE Transactions on Communications, Vol. COM-22, No. 5. It is the paper that introduced the term "internetworking".</p>
-        <p>This is the founding design document. Its key principle is to keep the network simple and put intelligence in the end hosts, so any network can join without being redesigned.</p>
-        <p>Source: <a href="https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf">Cerf &amp; Kahn (1974), A Protocol for Packet Network Intercommunication (PDF)</a></p>
-      </article>
-
-    <article>
-      <h3>1978–1981 — TCP is split into TCP and IP</h3>
+      <p class="source">Source: <a href="https://www.ucl.ac.uk/news/2003/nov/ucl-celebrates-internet-pioneers">UCL, UCL celebrates internet pioneers</a></p>
+    {% endcall %}
+    {% call event("The Cerf–Kahn paper", "1974", detail="May", datetime="1974-05") %}
+      <p>Vint Cerf and Bob Kahn published "A Protocol for Packet Network Intercommunication" in IEEE Transactions on Communications, Vol. COM-22, No. 5. It is the paper that introduced the term "internetworking".</p>
+      <p>This is the founding design document. Its key principle is to keep the network simple and put intelligence in the end hosts, so any network can join without being redesigned.</p>
+      <p class="source">Source: <a href="https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf">Cerf &amp; Kahn (1974), A Protocol for Packet Network Intercommunication (PDF)</a></p>
+    {% endcall %}
+    {% call event("TCP is split into TCP and IP", "1978–1981") %}
       <p>The decision to split the protocol came in 1978. The standards were published in September 1981 as RFC 791 for IP and RFC 793 for TCP.</p>
       <p>The layered TCP/IP model is still exactly how the Internet works today.</p>
-      <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc791.html">RFC 791, Internet Protocol</a> and <a href="https://www.rfc-editor.org/rfc/rfc793.html">RFC 793, Transmission Control Protocol</a></p>
-    </article>
+      <p class="source">Source: <a href="https://www.rfc-editor.org/rfc/rfc791.html">RFC 791, Internet Protocol</a> and <a href="https://www.rfc-editor.org/rfc/rfc793.html">RFC 793, Transmission Control Protocol</a></p>
+    {% endcall %}
+  {% endcall %}
 
-      <article>
-        <h3>1 January 1983 — Flag Day: NCP to TCP/IP</h3>
-        <p>ARPANET switched completely from NCP to TCP/IP on one day. The changeover plan is set out in RFC 801, written by Jon Postel in November 1981.</p>
-        <p>This date is widely cited as the birthday of the Internet proper. From this point on, any TCP/IP network could interconnect.</p>
-        <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc801.html">RFC 801, NCP/TCP Transition Plan</a></p>
-      </article>
-
-      <article>
-        <h3>November 1983 — The Domain Name System</h3>
-        <p>Paul Mockapetris at ISI specified DNS in RFC 882 and RFC 883, later revised in 1987 as RFC 1034 and RFC 1035. The first .com domain, symbolics.com, was registered on 15 March 1985.</p>
-        <p>DNS replaced a single hosts.txt file maintained by hand at SRI and downloaded by every machine, which was already failing at a few hundred hosts. It made naming distributed and scalable.</p>
-        <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc882.html">RFC 882, Domain Names: Concepts and Facilities</a></p>
-      </article>
-
-      <article>
-        <h3>1986 — The NSFNET backbone</h3>
-        <p>The NSFNET backbone became operational in 1986 at 56 kbit/s and was later upgraded to T1 and T3. It connected around 2,000 computers in 1986, growing to more than 2 million by 1993.</p>
-        <p>It opened the Internet to universities and research centres broadly, not just defence contractors, and traffic exploded.</p>
-        <p>Source: <a href="https://www.nsf.gov/impacts/internet">National Science Foundation, NSFNET</a></p>
-      </article>
-
-    <article>
-      <h3>2 November 1988 — The Morris worm</h3>
+  {% call decade("1980s") %}
+    {% call event("Flag Day: NCP to TCP/IP", "1983", detail="1 January", datetime="1983-01-01", major=true) %}
+      <p>ARPANET switched completely from NCP to TCP/IP on one day. The changeover plan is set out in RFC 801, written by Jon Postel in November 1981.</p>
+      <p>This date is widely cited as the birthday of the Internet proper. From this point on, any TCP/IP network could interconnect.</p>
+      <p class="source">Source: <a href="https://www.rfc-editor.org/rfc/rfc801.html">RFC 801, NCP/TCP Transition Plan</a></p>
+    {% endcall %}
+    {% call event("The Domain Name System", "1983", detail="November", datetime="1983-11") %}
+      <p>Paul Mockapetris at ISI specified DNS in RFC 882 and RFC 883, later revised in 1987 as RFC 1034 and RFC 1035. The first .com domain, symbolics.com, was registered on 15 March 1985.</p>
+      <p>DNS replaced a single hosts.txt file maintained by hand at SRI and downloaded by every machine, which was already failing at a few hundred hosts. It made naming distributed and scalable.</p>
+      <p class="source">Source: <a href="https://www.rfc-editor.org/rfc/rfc882.html">RFC 882, Domain Names: Concepts and Facilities</a></p>
+    {% endcall %}
+    {% call event("The NSFNET backbone", "1986", datetime="1986") %}
+      <p>The NSFNET backbone became operational in 1986 at 56 kbit/s and was later upgraded to T1 and T3. It connected around 2,000 computers in 1986, growing to more than 2 million by 1993.</p>
+      <p>It opened the Internet to universities and research centres broadly, not just defence contractors, and traffic exploded.</p>
+      <p class="source">Source: <a href="https://www.nsf.gov/impacts/internet">National Science Foundation, NSFNET</a></p>
+    {% endcall %}
+    {% call event("The Morris worm", "1988", detail="2 November", datetime="1988-11-02") %}
       <p>A self-replicating program written by Robert Morris spread across the network, infecting an estimated 6,000 machines. CERT was created weeks later. The commonly quoted figure of 10% of the Internet was a contemporary estimate rather than a measurement.</p>
       <p>It was the first major Internet security incident, and it made security a permanent concern of network design.</p>
-      <p>Source: <a href="https://www.cs.cornell.edu/courses/cs1110/2009sp/assignments/a1/p706-eisenberg.pdf">Cornell Commission report, Communications of the ACM, June 1989</a></p>
-    </article>
+      <p class="source">Source: <a href="https://www.cs.cornell.edu/courses/cs1110/2009sp/assignments/a1/p706-eisenberg.pdf">Cornell Commission report, Communications of the ACM, June 1989</a></p>
+    {% endcall %}
+  {% endcall %}
 
-      <article>
-        <h3>30 April 1995 — NSFNET decommissioned</h3>
-        <p>The NSFNET backbone was shut down and the Internet backbone was handed over entirely to commercial providers. ARPANET itself had already been decommissioned in February 1990.</p>
-        <p>This was full privatisation: the point at which the Internet stopped being a government research project and became commercial infrastructure.</p>
-        <p>Source: <a href="https://www.internetsociety.org/blog/2015/04/happy-birthday-backbone/">Internet Society, Happy Birthday Backbone</a></p>
-      </article>
-
-    <article>
-      <h3>30 September 1998 — ICANN is incorporated</h3>
+  {% call decade("1990s") %}
+    {% call event("NSFNET decommissioned", "1995", detail="30 April", datetime="1995-04-30") %}
+      <p>The NSFNET backbone was shut down and the Internet backbone was handed over entirely to commercial providers. ARPANET itself had already been decommissioned in February 1990.</p>
+      <p>This was full privatisation: the point at which the Internet stopped being a government research project and became commercial infrastructure.</p>
+      <p class="source">Source: <a href="https://www.internetsociety.org/blog/2015/04/happy-birthday-backbone/">Internet Society, Happy Birthday Backbone</a></p>
+    {% endcall %}
+    {% call event("ICANN is incorporated", "1998", detail="30 September", datetime="1998-09-30") %}
       <p>The Internet Corporation for Assigned Names and Numbers was incorporated on 30 September 1998 to manage domain names and the allocation of IP addresses. Its interim board met for the first time on 25 October.</p>
       <p>It moved governance of the namespace out of direct US government control and into a non-profit body, settling who decides what a domain name is.</p>
-      <p>Source: <a href="https://www.icann.org/resources/pages/history-resources-early-days-2017-10-16-en">ICANN, history resources: the early days</a></p>
-    </article>
+      <p class="source">Source: <a href="https://www.icann.org/resources/pages/history-resources-early-days-2017-10-16-en">ICANN, history resources: the early days</a></p>
+    {% endcall %}
+  {% endcall %}
 
-    <article>
-      <h3>2011–2012 — IPv4 runs out and IPv6 launches</h3>
+  {% call decade("2010s") %}
+    {% call event("IPv4 runs out and IPv6 launches", "2011–2012") %}
       <p>IANA allocated its final IPv4 blocks to the regional registries on 3 February 2011. World IPv6 Launch took place on 6 June 2012. IPv6 itself was first specified in RFC 1883 in December 1995, revised as RFC 2460 in 1998, and only became a full Internet Standard as RFC 8200 in 2017.</p>
       <p>It confirmed that the original 32-bit addressing scheme had run out, and began a migration that is still going on.</p>
-      <p>Source: <a href="https://www.nro.net/ipv4-free-pool-depleted/">Number Resource Organization, IPv4 free pool depleted</a></p>
-    </article>
-
-    <article>
-      <h3>May 2015 — HTTP/2</h3>
+      <p class="source">Source: <a href="https://www.nro.net/ipv4-free-pool-depleted/">Number Resource Organization, IPv4 free pool depleted</a></p>
+    {% endcall %}
+    {% call event("HTTP/2", "2015", detail="May", datetime="2015-05") %}
       <p>HTTP/2 was published as RFC 7540. It kept the meaning of HTTP identical but changed how it travels: one connection now carries many requests at once, and headers are compressed.</p>
       <p>HTTP/1.1 had stood for sixteen years. Pages had grown from a few files to hundreds, and opening a separate connection for each one had become the bottleneck.</p>
-      <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc7540.html">RFC 7540, HTTP/2</a></p>
-    </article>
-
-    <article>
-      <h3>2016 onwards — The web becomes encrypted by default</h3>
+      <p class="source">Source: <a href="https://www.rfc-editor.org/rfc/rfc7540.html">RFC 7540, HTTP/2</a></p>
+    {% endcall %}
+    {% call event("The web becomes encrypted by default", "2016", detail="onwards", datetime="2016") %}
       <p>Let's Encrypt, a free automated certificate authority, left beta in 2016. It has since issued more than seven billion certificates and serves over 760 million websites.</p>
       <p>HTTPS had been a paid, manual configuration that only experts bothered with. Making certificates free and automatic flipped the default, and around 95% of page loads in the United States are now encrypted.</p>
-      <p>Source: <a href="https://letsencrypt.org/stats/">Let's Encrypt statistics</a></p>
-    </article>
-
-    <article>
-      <h3>August 2018 — TLS 1.3</h3>
+      <p class="source">Source: <a href="https://letsencrypt.org/stats/">Let's Encrypt statistics</a></p>
+    {% endcall %}
+    {% call event("TLS 1.3", "2018", detail="August", datetime="2018-08") %}
       <p>TLS 1.3 was published as RFC 8446. It removed the older algorithms that had accumulated over two decades and cut the handshake down to a single round trip.</p>
       <p>Encryption stopped being the slow option, and removing the legacy ciphers closed off a class of downgrade attacks that had been exploited repeatedly.</p>
-      <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc8446.html">RFC 8446, TLS 1.3</a></p>
-    </article>
+      <p class="source">Source: <a href="https://www.rfc-editor.org/rfc/rfc8446.html">RFC 8446, TLS 1.3</a></p>
+    {% endcall %}
+  {% endcall %}
 
-    <article>
-      <h3>2021–2022 — QUIC and HTTP/3</h3>
+  {% call decade("2020s") %}
+    {% call event("QUIC and HTTP/3", "2021–2022") %}
       <p>QUIC was published as RFC 9000 in May 2021, and HTTP/3, which runs HTTP over QUIC, as RFC 9114 in June 2022. QUIC replaces TCP with a protocol built on UDP, with encryption built in rather than layered on top.</p>
       <p>This is the first time the Web has moved off TCP, the transport that had carried it since the 1983 flag day. By 2026 HTTP/3 is supported by more than 95% of browsers in use.</p>
-      <p>Source: <a href="https://www.rfc-editor.org/rfc/rfc9000.html">RFC 9000, QUIC</a> and <a href="https://www.rfc-editor.org/rfc/rfc9114.html">RFC 9114, HTTP/3</a></p>
-    </article>
-
-    <article>
-      <h3>28 March 2026 — IPv6 reaches the majority</h3>
+      <p class="source">Source: <a href="https://www.rfc-editor.org/rfc/rfc9000.html">RFC 9000, QUIC</a> and <a href="https://www.rfc-editor.org/rfc/rfc9114.html">RFC 9114, HTTP/3</a>; browser support figure from <a href="https://caniuse.com/http3">Can I Use, HTTP/3 browser support</a></p>
+    {% endcall %}
+    {% call event("IPv6 reaches the majority", "2026", detail="28 March", datetime="2026-03-28") %}
       <p>On 28 March 2026, IPv6 traffic to Google exceeded 50% for the first time, measured at 50.10%. This is the share of users reaching Google over IPv6, not the share of the Internet as a whole.</p>
-      <p>It closes the thread that opened when IANA ran out of IPv4 addresses in 2011. The transition took eighteen years, and it is still very uneven: France is above 70% while Italy is near 17%.</p>
-      <p>Source: <a href="https://www.google.com/intl/en/ipv6/statistics.html">Google IPv6 adoption statistics</a> and <a href="https://blog.apnic.net/2026/04/28/google-hits-50-ipv6/">APNIC, Google hits 50% IPv6</a></p>
-    </article>
+      <p>It closes the thread that opened when IANA ran out of IPv4 addresses in 2011. It came fifteen years after that, and eighteen years after Google started measuring IPv6 in 2008, and it is still very uneven: France is above 70% while Italy is near 17%.</p>
+      <p class="source">Source: <a href="https://www.google.com/intl/en/ipv6/statistics.html">Google IPv6 adoption statistics</a> and <a href="https://blog.apnic.net/2026/04/28/google-hits-50-ipv6/">APNIC, Google hits 50% IPv6</a></p>
+    {% endcall %}
+  {% endcall %}
+{% endblock %}
 
-    </section>
-
-    <section>
-      <h2>References</h2>
-      <ul>
-        <li><a href="https://mitpress.mit.edu/9780262511155/inventing-the-internet/">Janet Abbate, Inventing the Internet (MIT Press, 1999)</a></li>
-        <li><a href="https://www.lk.cs.ucla.edu/internet_first_words.html">UCLA / Kleinrock, Internet first words (original IMP log)</a></li>
-        <li><a href="https://www.internetsociety.org/internet/history-internet/brief-history-internet/">Internet Society, A Brief History of the Internet</a></li>
-        <li><a href="https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf">Cerf &amp; Kahn (1974), A Protocol for Packet Network Intercommunication</a></li>
-        <li><a href="https://www.rfc-editor.org/rfc/rfc801.html">RFC 801, NCP/TCP Transition Plan, November 1981</a></li>
-        <li><a href="https://www.rfc-editor.org/rfc/rfc882.html">RFC 882, Domain Names: Concepts and Facilities, November 1983</a></li>
-        <li><a href="https://www.nsf.gov/impacts/internet">National Science Foundation, NSFNET</a></li>
-        <li><a href="https://www.internetsociety.org/blog/2015/04/happy-birthday-backbone/">Internet Society, Happy Birthday Backbone (NSFNET shutdown)</a></li>
-      <li><a href="https://www.ucl.ac.uk/news/2003/nov/ucl-celebrates-internet-pioneers">University College London, UCL celebrates internet pioneers</a></li>
-      <li><a href="https://www.rfc-editor.org/rfc/rfc791.html">RFC 791, Internet Protocol, September 1981</a></li>
-      <li><a href="https://www.rfc-editor.org/rfc/rfc793.html">RFC 793, Transmission Control Protocol, September 1981</a></li>
-      <li><a href="https://www.cs.cornell.edu/courses/cs1110/2009sp/assignments/a1/p706-eisenberg.pdf">Cornell Commission report on the Morris worm (CACM, 1989)</a></li>
-      <li><a href="https://www.icann.org/resources/pages/history-resources-early-days-2017-10-16-en">ICANN, history resources: the early days</a></li>
-      <li><a href="https://www.nro.net/ipv4-free-pool-depleted/">Number Resource Organization, IPv4 free pool depleted</a></li>
-      <li><a href="https://www.rfc-editor.org/rfc/rfc7540.html">RFC 7540, HTTP/2, May 2015</a></li>
-      <li><a href="https://letsencrypt.org/stats/">Let's Encrypt statistics</a></li>
-      <li><a href="https://www.rfc-editor.org/rfc/rfc8446.html">RFC 8446, TLS 1.3, August 2018</a></li>
-      <li><a href="https://www.rfc-editor.org/rfc/rfc9000.html">RFC 9000, QUIC, May 2021</a></li>
-      <li><a href="https://www.rfc-editor.org/rfc/rfc9114.html">RFC 9114, HTTP/3, June 2022</a></li>
-      <li><a href="https://www.google.com/intl/en/ipv6/statistics.html">Google IPv6 adoption statistics</a></li>
-      <li><a href="https://blog.apnic.net/2026/04/28/google-hits-50-ipv6/">APNIC, Google hits 50% IPv6</a></li>
-      </ul>
-    </section>
-
-  
+{% block sources %}
+  <ol class="reference-list">
+    {{ reference("https://mitpress.mit.edu/9780262511155/inventing-the-internet/", "Janet Abbate, Inventing the Internet (MIT Press, 1999)") }}
+    {{ reference("https://www.lk.cs.ucla.edu/internet_first_words.html", "UCLA / Kleinrock, Internet first words (original IMP log)") }}
+    {{ reference("https://www.internetsociety.org/internet/history-internet/brief-history-internet/", "Internet Society, A Brief History of the Internet") }}
+    {{ reference("https://www.cs.princeton.edu/courses/archive/fall06/cos561/papers/cerf74.pdf", "Cerf & Kahn (1974), A Protocol for Packet Network Intercommunication") }}
+    {{ reference("https://www.rfc-editor.org/rfc/rfc801.html", "RFC 801, NCP/TCP Transition Plan, November 1981") }}
+    {{ reference("https://www.rfc-editor.org/rfc/rfc882.html", "RFC 882, Domain Names: Concepts and Facilities, November 1983") }}
+    {{ reference("https://www.nsf.gov/impacts/internet", "National Science Foundation, NSFNET") }}
+    {{ reference("https://www.internetsociety.org/blog/2015/04/happy-birthday-backbone/", "Internet Society, Happy Birthday Backbone (NSFNET shutdown)") }}
+    {{ reference("https://www.ucl.ac.uk/news/2003/nov/ucl-celebrates-internet-pioneers", "University College London, UCL celebrates internet pioneers") }}
+    {{ reference("https://www.rfc-editor.org/rfc/rfc791.html", "RFC 791, Internet Protocol, September 1981") }}
+    {{ reference("https://www.rfc-editor.org/rfc/rfc793.html", "RFC 793, Transmission Control Protocol, September 1981") }}
+    {{ reference("https://www.cs.cornell.edu/courses/cs1110/2009sp/assignments/a1/p706-eisenberg.pdf", "Cornell Commission report on the Morris worm (CACM, 1989)") }}
+    {{ reference("https://www.icann.org/resources/pages/history-resources-early-days-2017-10-16-en", "ICANN, history resources: the early days") }}
+    {{ reference("https://www.nro.net/ipv4-free-pool-depleted/", "Number Resource Organization, IPv4 free pool depleted") }}
+    {{ reference("https://www.rfc-editor.org/rfc/rfc7540.html", "RFC 7540, HTTP/2, May 2015") }}
+    {{ reference("https://letsencrypt.org/stats/", "Let's Encrypt statistics") }}
+    {{ reference("https://www.rfc-editor.org/rfc/rfc8446.html", "RFC 8446, TLS 1.3, August 2018") }}
+    {{ reference("https://www.rfc-editor.org/rfc/rfc9000.html", "RFC 9000, QUIC, May 2021") }}
+    {{ reference("https://www.rfc-editor.org/rfc/rfc9114.html", "RFC 9114, HTTP/3, June 2022") }}
+    {{ reference("https://caniuse.com/http3", "Can I Use, HTTP/3 browser support") }}
+    {{ reference("https://www.google.com/intl/en/ipv6/statistics.html", "Google IPv6 adoption statistics") }}
+    {{ reference("https://blog.apnic.net/2026/04/28/google-hits-50-ipv6/", "APNIC, Google hits 50% IPv6") }}
+  </ol>
 {% endblock %}
