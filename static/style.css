@@ -5,10 +5,10 @@
      2. Base and type            9. Major entries
      3. Background glow         10. Technologies, sources, related
      4. Links, focus, panels    11. Home page
-     5. Floating header         12. Footer
-     6. Mobile sidebar          13. Scroll-linked motion
+     5. Side rail               12. Footer
+     6. Mobile menu             13. Scroll-linked motion
      7. Page header, ruler,     14. Print
-        history layout
+        history layout          15. Bento tiles
    ================================================================== */
 
 
@@ -39,12 +39,22 @@
   --on-navy:      #C5D0E8;
   --page:         #EDF1F9;   /* tinted page behind the panels */
 
+  /* Tile fills for the bento wall. Each one is pale enough that --text
+     (11:1 or better), --muted (5.2:1 or better) and --blue (6.4:1 or
+     better) all clear WCAG AA on top of it. */
+  --sand: #F6EEDD;           /* warm cream  */
+  --sky:  #DDE6FF;           /* pale blue   */
+  --mist: #E3EEE9;           /* pale green  */
+
   --font: "Poppins", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --measure: 42rem;
   --container: 90rem;
+  --rail: 15rem;             /* width of the fixed side rail */
+  --gap: 1.25rem;            /* the one gap used by every bento grid */
   --spine: 8rem;             /* width of the timeline's centre column */
   --stagger: 7rem;           /* how far each card tucks up beside the last */
   --radius: 1.25rem;
+  --radius-lg: 1.75rem;      /* the bigger corner used on bento tiles */
   --shadow: 0 1px 2px rgb(11 29 69 / 0.05), 0 14px 34px -22px rgb(11 29 69 / 0.35);
 }
 
@@ -54,13 +64,13 @@
    ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: no-preference) {
   .event-card,
-  .related-card {
+  .tile--page {
     transition: transform 0.18s ease, box-shadow 0.18s ease;
   }
 }
 .event-card:hover,
-.related-card:hover,
-.related-card:focus-within {
+.tile--page:hover,
+.tile--page:focus-visible {
   transform: translateY(-3px);
   box-shadow: 0 6px 12px rgb(11 29 69 / 0.10), 0 22px 46px -20px rgb(11 29 69 / 0.45);
 }
@@ -74,12 +84,16 @@
 html {
   background: var(--page);
   scroll-behavior: smooth;
-  scroll-padding-top: 7.5rem;      /* in-page links land below the header */
+  scroll-padding-top: 2rem;        /* in-page links land clear of the top */
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
+  /* The side rail is position: fixed, so it is out of the normal flow and
+     nothing would move aside for it. This padding is what keeps the page
+     content clear of it. */
+  padding-left: calc(var(--rail) + 2rem);
   color: var(--text);
   font-family: var(--font);
   font-size: 1.0625rem;
@@ -199,95 +213,129 @@ button:focus-visible {
 }
 
 main#main {
-  width: min(100% - 3rem, var(--container));
+  width: min(100% - 2.5rem, var(--container));
   margin-inline: auto;
-  padding-top: 2rem;
+  padding-top: 1.25rem;
 }
 
 
-/* ---------- 5. Floating header ---------- */
-.site-header {
-  position: sticky;
-  top: 0.75rem;
+/* ---------- 5. Side rail ----------
+   One tall navy card pinned down the left of the window. It holds the
+   brand, the menu (written once in base.html) and a rotated wordmark.
+   Under 64rem it flattens into a bar across the top — see section 6. */
+.rail {
+  position: fixed;
+  top: 1rem;
+  bottom: 1rem;
+  left: 1rem;
   z-index: 50;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem 2rem;
-  width: min(100% - 1.5rem, var(--container) + 2rem);
-  margin: 0.75rem auto 0;
-  padding: 0.875rem 1.75rem;
+  flex-direction: column;
+  gap: 2rem;
+  width: var(--rail);
+  padding: 1.75rem 1.25rem 1.5rem;
+  overflow: hidden;                /* keeps the progress bar inside the corners */
   background: var(--navy);
-  border: 1px solid rgb(255 255 255 / 0.08);
-  border-radius: 999px;
-  box-shadow: 0 18px 38px -18px rgb(11 29 69 / 0.6);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 50px -28px rgb(11 29 69 / 0.7);
 }
-.site-header a:focus-visible,
-.site-header button:focus-visible { outline-color: var(--paper); }
+.rail a:focus-visible,
+.rail button:focus-visible { outline-color: var(--paper); }
 
-/* Reading progress: a gold line along the bottom of the header that
-   grows as the page is scrolled (shown only where supported). */
-.site-header::after {
+/* Reading progress: a gold bar down the left edge of the rail that grows
+   as the page is scrolled (only where scroll-driven animations work). */
+.rail::after {
   content: "";
   position: absolute;
-  left: 2.5rem;
-  right: 2.5rem;
+  top: 0;
   bottom: 0;
-  height: 3px;
-  border-radius: 3px;
+  left: 0;
+  width: 4px;
   background: var(--gold);
-  transform-origin: left;
-  transform: scaleX(0);
+  transform-origin: top;
+  transform: scaleY(0);
 }
 
 .brand,
 .brand:visited {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 0.875rem;
   flex-shrink: 0;
   color: var(--paper);
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.0625rem;
+  font-weight: 700;
   line-height: 1.2;
+  letter-spacing: -0.01em;
   text-decoration: none;
 }
-.brand-logo { display: block; height: 2.75rem; width: auto; }
+.brand-logo { display: block; width: 6.5rem; height: auto; }
+.brand-name { display: block; }
+.brand-sub {
+  display: block;
+  margin-top: 0.15rem;
+  color: var(--on-navy);
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
 
+/* The menu itself. One item per row, numbered. */
+.nav-label {
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgb(255 255 255 / 0.15);
+  color: var(--on-navy);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 .site-nav ul {
   display: flex;
-  gap: 0.375rem;
+  flex-direction: column;
+  gap: 0.125rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .site-nav a,
 .site-nav a:visited {
-  display: block;
-  padding: 0.625rem 1.125rem;
-  border-radius: 999px;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.7rem;
   color: var(--on-navy);
   font-size: 1rem;
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1.25;
   text-decoration: none;
-  white-space: nowrap;
+}
+.nav-index {
+  color: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 .site-nav a:hover { background: var(--navy-2); color: var(--paper); }
 .site-nav a[aria-current="page"] {
+  background: var(--navy-2);
   color: var(--paper);
-  box-shadow: inset 0 0 0 2px var(--gold);
+  box-shadow: inset 3px 0 0 var(--gold);
 }
 
-@media (max-width: 68rem) {
-  .brand-name {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
+/* The rotated wordmark at the foot of the rail. writing-mode turns the
+   line on its side; margin-top:auto pushes it to the bottom. */
+.rail-mark {
+  margin: auto 0 0;
+  color: rgb(255 255 255 / 0.35);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
 }
 
 
@@ -338,8 +386,9 @@ main#main {
 .close-icon::before { transform: rotate(45deg); }
 .close-icon::after  { transform: rotate(-45deg); }
 
-/* Wider screens: the popover nav is an ordinary inline nav. */
-@media (min-width: 40.0625rem) {
+/* Wide screens: the popover nav is just an ordinary block inside the rail.
+   Resetting popover's own styles is what lets one element be both. */
+@media (min-width: 64.0625rem) {
   .site-nav[popover] {
     display: block;
     position: static;
@@ -355,10 +404,39 @@ main#main {
   }
 }
 
-/* Small screens: logo left, hamburger right, menu slides in from the right. */
-@media (max-width: 40rem) {
-  .site-header { padding: 0.625rem 0.625rem 0.625rem 1.25rem; }
-  .brand-logo { height: 2.25rem; }
+/* Narrow screens: the rail lies down as a bar across the top, and the
+   menu slides in from the right as a panel. */
+@media (max-width: 64rem) {
+  body { padding-left: 0; }
+  html { scroll-padding-top: 6rem; }
+
+  .rail {
+    position: sticky;
+    inset: 0.75rem auto auto;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: min(100% - 1.5rem, var(--container));
+    margin: 0.75rem auto 0;
+    padding: 0.625rem 0.75rem 0.625rem 1.25rem;
+    border-radius: 999px;
+  }
+  .rail::after {                   /* progress runs along the bottom instead */
+    top: auto;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: 3px;
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+  .rail-mark { display: none; }
+
+  .brand { flex-direction: row; align-items: center; gap: 0.75rem; }
+  .brand-logo { width: 3.5rem; }
+  .brand-sub { display: none; }
+
   .menu-toggle { display: grid; }
 
   .site-nav {
@@ -414,25 +492,17 @@ main#main {
 
 
 /* ---------- 7. Page header, ruler, history layout ---------- */
-.page-header {
-  margin-bottom: 2rem;
-  padding: clamp(1.75rem, 4vw, 3rem);
-}
-.kicker,
-.byline { color: var(--muted); font-size: 1rem; font-weight: 500; }
-.kicker { margin-bottom: 0.75rem; }
-.byline { margin-top: 0.75rem; }
+.byline { margin-top: 0.75rem; color: var(--muted); font-size: 1rem; font-weight: 500; }
 .lead { font-size: 1.25rem; font-weight: 500; line-height: 1.55; }
 
 /* Hero figures on the AI pages — unchanged from the previous design. */
+.page-hero { margin-bottom: var(--gap); padding: clamp(1.5rem, 4vw, 2.75rem); }
 .first-words {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   align-items: end;
   gap: 1.25rem 3rem;
-  margin: 3rem 0 0;
-  padding-top: 2rem;
-  border-top: 1px solid var(--rule);
+  margin: 0;
 }
 .first-words .letters {
   margin: 0;
@@ -466,7 +536,6 @@ main#main {
 
 /* Time ruler: 1960 to 2026, one gold tick per entry. Hover or focus a
    tick to see which entry it is. */
-.ruler { margin-top: 2.5rem; }
 .ruler-ticks {
   position: relative;
   height: 2.5rem;
@@ -532,13 +601,14 @@ main#main {
 
 .history-grid {
   display: grid;
-  grid-template-columns: 14rem minmax(0, 1fr);
-  gap: 2rem;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: var(--gap);
   align-items: start;
+  margin-top: var(--gap);
 }
 .history-body { min-width: 0; }
 
-.page-section { margin-bottom: 2rem; }
+.page-section { margin-bottom: var(--gap); }
 .page-section.panel { padding: clamp(1.5rem, 3.5vw, 2.75rem); }
 .page-section > h2 { margin-bottom: 1.5rem; }
 .page-section > h2::before {        /* the gold rule that opens each section */
@@ -554,10 +624,11 @@ main#main {
 
 .toc {
   position: sticky;
-  top: 7.25rem;
-  max-height: calc(100vh - 8.5rem);
+  top: 1.25rem;
+  max-height: calc(100vh - 2.5rem);
   overflow-y: auto;
   padding: 1.5rem;
+  border-radius: var(--radius-lg);
   font-size: 1rem;
   line-height: 1.4;
 }
@@ -939,106 +1010,23 @@ main#main {
   vertical-align: 0.1em;
 }
 
-/* Related pages: counterpart and other topic. */
+/* Related pages: counterpart and other topic, as two bento tiles. */
 .related ul {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
-  gap: 1.5rem;
-  margin: 0 0 1rem;
-  padding: 0;
-  list-style: none;
-}
-.related-card,
-.related-card:visited {
-  display: block;
-  height: 100%;
-  padding: 1.5rem 1.75rem;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-top: 4px solid var(--gold);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  color: var(--text);
-  text-decoration: none;
-}
-.related-kind { display: block; color: var(--muted); font-size: 1rem; font-weight: 600; }
-.related-title {
-  display: block;
-  margin: 0.25rem 0 0.5rem;
-  color: var(--blue);
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 1.3;
-}
-.related-text { display: block; font-size: 1rem; line-height: 1.6; }
-.related-card:hover .related-title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.2em; }
-
-
-/* ---------- 11. Home page ---------- */
-.home-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 2rem 3rem;
-  margin-bottom: 2rem;
-  padding: clamp(2rem, 5vw, 4rem);
-  border-radius: 1.5rem;
-  background: var(--navy);
-  box-shadow: 0 24px 50px -28px rgb(11 29 69 / 0.7);
-}
-.home-hero h1 { max-width: 20ch; color: var(--paper); }
-.home-hero h1::before {
-  content: "";
-  display: block;
-  width: 3.5rem;
-  height: 5px;
-  margin-bottom: 1.5rem;
-  border-radius: 3px;
-  background: var(--gold);
-}
-.home-hero .lead { margin-top: 1.25rem; color: var(--on-navy); }
-.home-hero-mark { width: clamp(10rem, 24vw, 22rem); }
-@media (max-width: 48rem) {
-  .home-hero { grid-template-columns: 1fr; }
-  .home-hero-mark { width: 10rem; order: -1; }
-}
-
-.page-cards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: var(--gap);
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.page-card,
-.page-card:visited {
-  display: block;
-  height: 100%;
-  padding: 1.5rem 1.75rem;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-top: 4px solid var(--gold);
-  border-radius: 1rem;
-  color: var(--text);
-  text-decoration: none;
-}
-.page-card:hover { box-shadow: var(--shadow); }
-.page-card-title {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--blue);
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: 1.3;
-}
-@media (max-width: 48rem) {
-  .page-cards { grid-template-columns: 1fr; }
-}
-.page-card:hover .page-card-title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.2em; }
-.page-card-text { display: block; font-size: 1rem; line-height: 1.6; }
+.related li { display: grid; }        /* lets the tile fill the row height */
 
-/* Weekly work as a small timeline. */
+
+/* ---------- 11. Home page ----------
+   The tiles themselves live in section 15; this is only the weekly log
+   that sits inside one of them.
+
+   Weekly work as a small timeline. */
 .weekly-list {
   position: relative;
   margin: 0;
@@ -1085,38 +1073,28 @@ main#main {
 .weekly-list a { font-size: 1.125rem; font-weight: 600; }
 
 
-/* ---------- 12. Footer ---------- */
+/* ---------- 12. Footer ----------
+   The menu is NOT repeated down here. It is written once, in the rail. */
 .site-footer {
-  margin-top: 3rem;
-  padding: 2.75rem max(1.5rem, (100% - var(--container)) / 2);
-  border-top: 4px solid var(--gold);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem 2.5rem;
+  width: min(100% - 2.5rem, var(--container));
+  margin: var(--gap) auto 1.25rem;
+  padding: 2rem clamp(1.5rem, 3vw, 2.75rem);
   background: var(--navy);
+  border-radius: var(--radius-lg);
   color: var(--on-navy);
   font-size: 1rem;
   line-height: 1.6;
 }
-.footer-inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
-  gap: 2rem 3rem;
-  align-items: start;
-}
-.footer-note { max-width: 44ch; margin: 0; }
-.footer-nav ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.site-footer a,
-.site-footer a:visited { color: var(--blue-on-navy); }
-.site-footer a[aria-current="page"] { color: var(--paper); text-decoration-color: var(--gold); text-decoration-thickness: 2px; }
+.footer-note { max-width: 62ch; margin: 0; }
 .site-footer a:focus-visible { outline-color: var(--paper); }
 .site-footer .back-to-top,
 .site-footer .back-to-top:visited {
-  display: inline-block;
+  flex-shrink: 0;
   padding: 0.5rem 1.1rem;
   border: 2px solid var(--gold);
   border-radius: 999px;
@@ -1126,9 +1104,6 @@ main#main {
   white-space: nowrap;
 }
 .back-to-top:hover { background: var(--navy-2); }
-@media (max-width: 56rem) {
-  .footer-inner { grid-template-columns: 1fr; }
-}
 
 
 /* ---------- 13. Scroll-linked motion ----------
@@ -1136,9 +1111,15 @@ main#main {
    visitor has not asked for reduced motion. Elsewhere everything shows
    in its finished state. */
 @supports (animation-timeline: scroll()) {
-  .site-header::after {
-    animation: grow-x linear both;
+  /* scroll(root block) ties the animation's progress to how far down the
+     document has been scrolled, so the gold bar is a reading progress
+     meter: 0% at the top, 100% at the bottom. */
+  .rail::after {
+    animation: grow-y linear both;
     animation-timeline: scroll(root block);
+  }
+  @media (max-width: 64rem) {
+    .rail::after { animation-name: grow-x; }
   }
 }
 
@@ -1200,12 +1181,13 @@ main#main {
 
 /* ---------- 14. Print ---------- */
 @media print {
-  html, body { background: #fff; color: #000; font-size: 11pt; }
+  html, body { background: #fff; color: #000; font-size: 11pt; padding: 0; }
   body::before, body::after,
-  .site-header, .skip, .toc, .ruler, .related, .footer-nav, .back-to-top,
-  .home-hero-mark { display: none !important; }
+  .rail, .skip, .toc, .ruler, .related, .back-to-top,
+  .tile--mark, .tile--figure, .tile--cover { display: none !important; }
   main#main { width: auto; padding: 0; }
-  .panel, .event-card, .page-card, .home-hero {
+  .bento { display: block; }
+  .panel, .event-card, .tile {
     border: 0 !important;
     box-shadow: none !important;
     background: #fff !important;
@@ -1213,9 +1195,10 @@ main#main {
     padding: 0 !important;
     animation: none !important;
   }
+  .tile::before, .tile::after { display: none !important; }
   .history-grid { display: block; }
-  h1, h2, h3, h4, .home-hero h1 { color: #000; }
-  .page-section > h2::before, .home-hero h1::before { display: none; }
+  h1, h2, h3, h4, .tile h1, .tile-title { color: #000; }
+  .page-section > h2::before, .tile--hero h1::after { display: none; }
 
   /* Timeline as a plain single column. */
   .timeline::before, .timeline::after, .event::before { display: none; }
@@ -1256,26 +1239,262 @@ main#main {
   .site-footer { border: 0; background: none; color: #000; padding: 1rem 0 0; }
 }
 
-/* ---------- 404 ---------- */
-.notfound {
-  max-width: var(--measure);
-  margin: 3rem auto 5rem;
-  padding: 2.5rem;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-top: 4px solid var(--gold);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+/* ==================================================================
+   15. Bento tiles
+   ------------------------------------------------------------------
+   A "bento" wall: one grid of four equal columns, and tiles that each
+   claim a number of columns and rows with grid-column / grid-row: span.
+   Because every grid on the page uses the same four columns and the
+   same --gap, several stacked grids still read as one wall.
+   ================================================================== */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap);
+  margin: 0 0 var(--gap);
+  padding: 0;
+  list-style: none;
 }
-.notfound-code {
-  margin: 0;
+
+/* A section title sitting on the wall, not in a tile. */
+.bento-heading {
+  grid-column: 1 / -1;
+  margin: 1.25rem 0 0;
+  font-size: 1.5rem;
+}
+.bento-heading::before {
+  content: "";
+  display: block;
+  width: 3rem;
+  height: 4px;
+  margin-bottom: 0.9rem;
+  border-radius: 2px;
+  background: var(--gold);
+}
+
+/* ---- The tile itself ---- */
+.tile {
+  --pad: clamp(1.25rem, 2.2vw, 1.75rem);
+  --bracket: var(--navy);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;                    /* lets a tile shrink inside its column */
+  padding: var(--pad);
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;                /* clips full-bleed images to the corners */
+}
+
+/* Corner brackets. Each is a square with two of its four borders
+   removed, so what is left is an L in the corner. */
+.tile::before,
+.tile::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 2px solid var(--bracket);
+  opacity: 0.28;
+  pointer-events: none;            /* never swallows a click on the tile */
+}
+.tile::before {
+  top: 0.7rem;
+  left: 0.7rem;
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 0.4rem 0 0 0;
+}
+.tile::after {
+  right: 0.7rem;
+  bottom: 0.7rem;
+  border-left: 0;
+  border-top: 0;
+  border-radius: 0 0 0.4rem 0;
+}
+
+/* ---- Colour ---- */
+.tile--navy { background: var(--navy); color: var(--paper); --bracket: var(--gold); }
+.tile--sand { background: var(--sand); }
+.tile--sky  { background: var(--sky); }
+.tile--mist { background: var(--mist); }
+
+.tile--navy h1,
+.tile--navy h2,
+.tile--navy .tile-title { color: var(--paper); }
+.tile--navy .tile-kicker,
+.tile--navy .byline,
+.tile--navy .tile-text,
+.tile--navy .lead { color: var(--on-navy); }
+.tile--navy a,
+.tile--navy a:visited { color: var(--blue-on-navy); }
+
+/* ---- Text inside a tile ---- */
+.tile-kicker {
+  margin: 0 0 0.65rem;
   color: var(--muted);
-  font-size: 3.5rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.tile-title {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--navy);
+  font-size: 1.75rem;
   font-weight: 800;
-  line-height: 1;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.tile-text { display: block; font-size: 1rem; line-height: 1.6; }
+
+/* A full-bleed picture at the top of a tile. The negative margins pull it
+   out to the tile's edges, cancelling the padding on three sides. */
+.tile-image {
+  width: calc(100% + 2 * var(--pad));
+  margin: calc(-1 * var(--pad)) calc(-1 * var(--pad)) 1.1rem;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* ---- Link tiles ---- */
+.tile--page,
+.tile--page:visited { color: var(--text); text-decoration: none; }
+.tile-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  align-self: flex-start;
+  margin-top: auto;                /* auto margin pushes it to the bottom */
+  padding-top: 1rem;
+  color: var(--blue);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tile-go::after { content: "→"; transition: translate 0.18s ease; }
+.tile--page:hover .tile-go::after { translate: 0.25rem 0; }
+.tile--page:hover .tile-title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.15em; }
+.tile--navy .tile-go { color: var(--blue-on-navy); }
+
+/* ---- Picture-only tiles ---- */
+.tile--mark,
+.tile--figure,
+.tile--cover { padding: 0; background: var(--navy); }
+.tile--mark::before, .tile--mark::after,
+.tile--figure::before, .tile--figure::after,
+.tile--cover::before, .tile--cover::after { --bracket: var(--paper); opacity: 0.4; }
+.tile--mark img,
+.tile--figure img,
+.tile--cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* cover fills the box and crops the overflow; contain fits the whole
+   picture inside it. The square illustrations use contain so their
+   circle is never clipped — the navy behind them matches the artwork. */
+.tile--cover img { object-fit: cover; }
+.tile--mark img,
+.tile--figure img { object-fit: contain; }
+
+/* ---- Sizes: which tile claims how much of the wall ---- */
+.tile--hero   { grid-column: span 2; grid-row: span 2; }
+.tile--mark   { grid-row: span 2; }
+.tile--weekly { grid-column: span 3; }
+.tile--head   { grid-column: span 2; }
+.tile--cover  { grid-column: span 2; }
+.tile--ruler  { grid-column: 1 / -1; overflow: visible; }  /* tick tooltips escape */
+
+/* ---- The home hero ---- */
+.tile--hero {
+  justify-content: center;
+  padding: clamp(1.75rem, 3.5vw, 3rem);
+  background: var(--navy);
+  color: var(--paper);
+  --bracket: var(--gold);
+}
+.tile--hero h1 {
+  color: var(--paper);
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+.tile--hero h1 em { color: var(--gold); font-style: normal; }
+.tile--hero .lead { margin: 1.25rem 0 0; color: var(--on-navy); }
+.tile--hero .tile-kicker { color: var(--on-navy); }
+.tile-sign {
+  margin: 1.5rem 0 0;
+  padding-top: 1.1rem;
+  border-top: 1px solid rgb(255 255 255 / 0.18);
+  color: var(--paper);
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+/* ---- The small facts tiles ---- */
+.stat-number {
+  margin: 0;
+  color: var(--navy);
+  font-size: clamp(3.5rem, 7vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+}
+.stat-label { margin: 0.75rem 0 0; color: var(--muted); font-size: 1rem; line-height: 1.5; }
+.meta-line { margin: 0 0 0.35rem; font-size: 1rem; font-weight: 600; line-height: 1.5; }
+.meta-line:last-child { color: var(--muted); font-weight: 500; }
+
+/* ---- The page header tiles ---- */
+.tile--head {
+  justify-content: center;
+  min-height: 18rem;
+  padding: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+.tile--head h1 { font-size: clamp(2rem, 3.6vw, 3rem); }
+.tile--ruler { padding-bottom: 1.1rem; }
+.tile--ruler .tile-kicker { margin-bottom: 1.25rem; }
+
+/* ---- Narrower screens: fewer columns ---- */
+@media (max-width: 68rem) {
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tile--hero,
+  .tile--weekly,
+  .tile--meta,
+  .tile--figure { grid-column: span 2; }
+  .tile--hero { grid-row: auto; }
+  .tile--mark { grid-row: auto; aspect-ratio: 1 / 1; }
+  .tile--head,
+  .tile--cover { grid-column: span 2; }
+  .tile--cover { aspect-ratio: 16 / 9; }
+}
+@media (max-width: 44rem) {
+  .bento { grid-template-columns: minmax(0, 1fr); }
+  .tile--hero,
+  .tile--mark,
+  .tile--weekly,
+  .tile--meta,
+  .tile--figure,
+  .tile--head,
+  .tile--cover,
+  .tile--ruler { grid-column: span 1; }
+}
+
+
+/* ---------- 404 ---------- */
+.notfound-code {
+  margin: 0 0 0.75rem;
+  color: var(--gold);
+  font-size: clamp(4rem, 9vw, 7rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
   font-variant-numeric: tabular-nums;
 }
-.notfound h1 { margin: 0.5rem 0 1rem; }
-.notfound h2 { margin: 2rem 0 0.75rem; font-size: 1.125rem; }
-.notfound-links { margin: 0; padding-left: 1.25rem; }
-.notfound-links li { margin-bottom: 0.35rem; }
+.notfound h1 { font-size: clamp(1.75rem, 3.5vw, 2.75rem); }

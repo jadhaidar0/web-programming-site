@@ -28,34 +28,59 @@ MENU = [
 
 # The four history pages. Titles and descriptions live here so the pages,
 # the home page cards and the related-page links all use the same text.
+#
+#   short   the two-word label printed large on the home page tile
+#   image   the cover picture in static/img/, with the alt text that
+#           describes it for screen readers and when images fail to load
+#   tint    which colour the tile is painted (see the .tile--* rules in CSS)
 HISTORY_PAGES = {
     "internet_history": {
         "title": "History of the Internet",
+        "short": "The Internet",
         "description": "A verified, sourced timeline of the history of the Internet, "
                        "from packet switching to IPv6 reaching the majority in 2026.",
         "topic": "internet",
         "author": "hand",
+        "tint": "navy",
+        "image": "img/internet-cover.webp",
+        "alt": "Paper-craft illustration: a globe laced with network lines, "
+               "linked to four early computer terminals.",
     },
     "web_history": {
         "title": "History of the World Wide Web",
+        "short": "The Web",
         "description": "A verified, sourced timeline of the history of the World Wide Web, "
                        "from ENQUIRE at CERN to the encrypted web of 2026.",
         "topic": "web",
         "author": "hand",
+        "tint": "sand",
+        "image": "img/web-cover.webp",
+        "alt": "Paper-craft illustration: stacked browser windows joined by "
+               "golden hyperlink threads.",
     },
     "internet_history_ai": {
         "title": "History of the Internet (AI-generated)",
+        "short": "Internet, by AI",
         "description": "An AI-generated timeline of the history of the Internet, "
                        "built from verified research for GIN446.",
         "topic": "internet",
         "author": "ai",
+        "tint": "sky",
+        "image": "img/internet-ai-cover.webp",
+        "alt": "Paper-craft illustration: undersea fibre-optic cables rising to "
+               "a coastline, with a satellite and server racks.",
     },
     "web_history_ai": {
         "title": "History of the World Wide Web (AI-generated)",
+        "short": "Web, by AI",
         "description": "An AI-generated timeline of the history of the World Wide Web, "
                        "built from verified research for GIN446.",
         "topic": "web",
         "author": "ai",
+        "tint": "mist",
+        "image": "img/web-ai-cover.webp",
+        "alt": "Paper-craft illustration: a web page pulled apart into floating "
+               "layers, threaded together with gold ribbons.",
     },
 }
 

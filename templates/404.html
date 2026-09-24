@@ -3,17 +3,19 @@
 {% block description %}That page doesn't exist on this site.{% endblock %}
 
 {% block content %}
-  <div class="notfound">
-    <p class="notfound-code">404</p>
-    <h1>That page doesn't exist</h1>
-    <p>The address you followed isn't a page on this site. It may have been
-       mistyped, or the link that brought you here may be out of date.</p>
+  {# No list of links here: the menu is in the rail, on every page. #}
+  <div class="bento">
+    <div class="tile tile--hero notfound">
+      <p class="notfound-code" aria-hidden="true">404</p>
+      <h1>That page doesn't exist</h1>
+      <p class="lead">The address you followed isn't a page on this site. It may have
+         been mistyped, or the link that brought you here may be out of date.</p>
+      <p class="tile-sign"><a href="{{ url_for('home') }}">Go to the home page</a></p>
+    </div>
 
-    <h2>Try one of these</h2>
-    <ul class="notfound-links">
-      {% for endpoint, label in menu %}
-        <li><a href="{{ url_for(endpoint) }}">{{ label }}</a></li>
-      {% endfor %}
-    </ul>
+    <div class="tile tile--mark">
+      <img src="{{ static_url('img/home-mark.webp') }}"
+           alt="" width="1000" height="1000" decoding="async">
+    </div>
   </div>
 {% endblock %}
