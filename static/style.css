@@ -1,99 +1,95 @@
 /* ==================================================================
    style.css — GIN446 Web Programming portfolio (Jad Haidar)
    One stylesheet for every page.
-     1. Design tokens            8. Timeline (centre spine)
-     2. Base and type            9. Major entries
-     3. Background glow         10. Technologies, sources, related
-     4. Links, focus, panels    11. Home page
-     5. Side rail               12. Footer
-     6. Mobile menu             13. Scroll-linked motion
-     7. Page header, ruler,     14. Print
-        history layout          15. Bento tiles
+
+     1. Design tokens            9. Timeline (centre spine)
+     2. Base and type           10. Major entries
+     3. The shell               11. Technologies, sources, related
+     4. Links, focus, panels    12. Footer
+     5. Side rail               13. Scroll-linked motion
+     6. Mobile menu             14. Print
+     7. Bento tiles             15. 404
+     8. Page header, ruler,
+        history layout
    ================================================================== */
 
 
 /* ---------- 1. Design tokens ----------
-   Every piece of text sits on an opaque surface: white (--paper),
-   --wash, or --navy. The animated glow only shows in the gaps between
-   those surfaces, so it never touches text. Ratios (WCAG 2.2):
-     on --paper #FFFFFF   --navy 16.46  --text 13.95  --muted 6.58  --blue 7.52
-     on --wash  #F2F5FB   --text 12.78  --muted 6.03  --blue 6.89
-     on --navy  #0B1D45   white 16.46  --on-navy 10.63  --blue-on-navy 9.22
-                          --gold 4.98
-     on --navy-note #1C2D52   white 13.58  --on-navy 8.77  --blue-on-navy 7.60
-   Non-text: --gold on white 3.30 (rules, card edges, ruler ticks).
-   Never used: --blue on navy (2.19), --gold as text on white or on
-   --navy-note (4.11). */
-:root {
-  --navy:         #0B1D45;
-  --navy-2:       #14295C;   /* hover on navy */
-  --navy-note:    #1C2D52;   /* note panels inside navy cards */
-  --text:         #1B2B4F;
-  --muted:        #4E5D7E;
-  --blue:         #2346C9;   /* links on light surfaces */
-  --blue-on-navy: #A9C1FF;   /* links on navy */
-  --gold:         #B3862A;
-  --paper:        #FFFFFF;
-  --wash:         #F2F5FB;
-  --rule:         #D5DDEC;
-  --on-navy:      #C5D0E8;
-  --page:         #EDF1F9;   /* tinted page behind the panels */
+   The page is grey, the site sits on a white card, and the colour comes
+   from the tiles. Every pairing below clears WCAG 2.2 AA (4.5:1 for
+   normal text, 3:1 for large text and for non-text edges).
 
-  /* Tile fills for the bento wall. Each one is pale enough that --text
-     (11:1 or better), --muted (5.2:1 or better) and --blue (6.4:1 or
-     better) all clear WCAG AA on top of it. */
-  --sand: #F6EEDD;           /* warm cream  */
-  --sky:  #DDE6FF;           /* pale blue   */
-  --mist: #E3EEE9;           /* pale green  */
+     --ink on --paper        19.1      --ink on --mint      12.3
+     --ink on --yellow       11.8      --ink on --lilac-2   11.1
+     --muted on --paper       6.7      --link on --paper     7.8
+     --paper on --ink        19.1      --paper on --lilac    5.5
+     --paper on --coal        8.8      --on-ink on --ink    11.3
+     --link-on-ink on --ink   9.8      --lilac on --paper    5.5
+   Non-text only: --lilac on --ink 3.4 (the timeline spine and arms). */
+:root {
+  --ink:         #111113;    /* near-black: display type and dark tiles */
+  --ink-2:       #26262C;    /* hover on ink */
+  --ink-note:    #2A2A32;    /* note panels inside dark cards */
+  --text:        #1A1A1F;
+  --muted:       #5B5B63;
+  --link:        #4B37C9;
+  --link-on-ink: #BDB2FF;
+
+  --lilac:       #6A56CF;    /* the signature colour — matches the artwork */
+  --lilac-2:     #C9C1F5;    /* the pale version, for dark text */
+  --mint:        #A9DCC9;
+  --yellow:      #FBC463;
+  --pink:        #E9A3E2;
+  --coal:        #4A4A4E;
+
+  --paper:       #FFFFFF;
+  --wash:        #F4F3F8;
+  --rule:        #E4E2EC;
+  --on-ink:      #C9C7D4;
+  --page:        #E7E6EA;    /* the grey behind the white shell */
 
   --font: "Poppins", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --measure: 42rem;
-  --container: 90rem;
-  --rail: 15rem;             /* width of the fixed side rail */
-  --gap: 1.25rem;            /* the one gap used by every bento grid */
+  --rail: 4.75rem;           /* width of the rotated side rail */
+  --gap: 0.9rem;             /* the one gap used by every bento grid */
   --spine: 8rem;             /* width of the timeline's centre column */
   --stagger: 7rem;           /* how far each card tucks up beside the last */
-  --radius: 1.25rem;
-  --radius-lg: 1.75rem;      /* the bigger corner used on bento tiles */
-  --shadow: 0 1px 2px rgb(11 29 69 / 0.05), 0 14px 34px -22px rgb(11 29 69 / 0.35);
+  --radius: 1.25rem;         /* tiles */
+  --radius-lg: 2.25rem;      /* the shell */
+  --shadow: 0 1px 2px rgb(17 17 19 / 0.04), 0 12px 30px -20px rgb(17 17 19 / 0.25);
 }
 
-/* ------------------------------------------------------------------
-   Cards lift slightly under the pointer. transition tells the browser
-   to animate the change over 0.18s instead of snapping to it.
-   ------------------------------------------------------------------ */
+/* Cards lift slightly under the pointer. transition tells the browser to
+   animate the change over 0.2s instead of snapping to it. */
 @media (prefers-reduced-motion: no-preference) {
   .event-card,
-  .tile--page {
-    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  a.tile {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 }
 .event-card:hover,
-.tile--page:hover,
-.tile--page:focus-visible {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgb(11 29 69 / 0.10), 0 22px 46px -20px rgb(11 29 69 / 0.45);
+a.tile:hover,
+a.tile:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgb(17 17 19 / 0.10), 0 28px 50px -24px rgb(17 17 19 / 0.4);
 }
 
 
 /* ---------- 2. Base and type ----------
-   Scale: ratio 1.25. Body 17px, h4 19px, h3 20px, h2 32px, h1 48–56px.
-   No running text is smaller than 16px. */
+   One family, two jobs: 800 with tight negative tracking for the big
+   display words, 300–600 for everything that is read as text. */
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
   background: var(--page);
   scroll-behavior: smooth;
-  scroll-padding-top: 2rem;        /* in-page links land clear of the top */
+  scroll-padding-top: 2rem;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  /* The side rail is position: fixed, so it is out of the normal flow and
-     nothing would move aside for it. This padding is what keeps the page
-     content clear of it. */
-  padding-left: calc(var(--rail) + 2rem);
+  padding: clamp(0.5rem, 1.4vw, 1.25rem);
   color: var(--text);
   font-family: var(--font);
   font-size: 1.0625rem;
@@ -103,31 +99,68 @@ body {
 
 h1, h2, h3, h4 {
   margin: 0;
-  color: var(--navy);
-  font-family: var(--font);
+  color: var(--ink);
   line-height: 1.15;
   text-wrap: balance;
 }
 h1 {
-  font-size: clamp(3rem, 2.2rem + 2vw, 3.5rem);
+  font-size: clamp(2.25rem, 4.5vw, 3.5rem);
   font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  letter-spacing: -0.035em;
+  line-height: 1;
 }
-h2 { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; }
-h3 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
-h4 { font-size: 1.1875rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.3; }
-
-@media (max-width: 40rem) {
-  h1 { font-size: 2.25rem; }
-  h2 { font-size: 1.75rem; }
-  main#main { width: min(100% - 1.5rem, var(--container)); }
-}
+h2 { font-size: 1.875rem; font-weight: 800; letter-spacing: -0.025em; }
+h3 { font-size: 1.1875rem; font-weight: 700; letter-spacing: -0.01em; }
+h4 { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.35; }
 
 p { margin: 0 0 1em; }
 p:last-child { margin-bottom: 0; }
 code { font-size: 0.9em; }
 img { max-width: 100%; height: auto; }
+
+.lead { font-size: 1.1875rem; font-weight: 400; line-height: 1.6; }
+
+/* The giant word at the top of every page — the loudest thing on it. */
+.display {
+  margin: 0 0 var(--gap);
+  color: var(--ink);
+  font-size: clamp(2.75rem, 8.5vw, 8rem);
+  font-weight: 800;
+  letter-spacing: -0.055em;
+  line-height: 0.85;
+  text-wrap: balance;
+}
+/* The thin bracket hooked onto the end of the word. Sizing it in em
+   keeps it in proportion however large the heading gets. */
+.bracket {
+  display: inline-block;
+  width: 0.2em;
+  height: 0.2em;
+  margin-left: 0.1em;
+  vertical-align: 0.6em;
+  border-top: 0.035em solid currentColor;
+  border-right: 0.035em solid currentColor;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: 0 0 1.25rem;
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.eyebrow::before {                 /* the little lilac dot */
+  content: "";
+  flex-shrink: 0;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-top: 0.45em;              /* lines it up with the first line of text */
+  border-radius: 50%;
+  background: var(--lilac);
+}
 
 .visually-hidden {
   position: absolute;
@@ -139,44 +172,58 @@ img { max-width: 100%; height: auto; }
 }
 
 
-/* ---------- 3. Background glow ----------
-   Two very large, soft glows (royal blue, gold) drift slowly behind
-   the page. Fixed, behind everything, never under text. */
+/* ---------- 3. The shell ----------
+   The whole site is one white card floating on the grey page, with the
+   rail as its left column. Two soft coloured glows drift behind it. */
+.shell {
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr);
+  width: min(100%, 108rem);
+  margin-inline: auto;
+  background: var(--paper);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 4px rgb(17 17 19 / 0.04), 0 40px 90px -50px rgb(17 17 19 / 0.45);
+}
+.shell-body {
+  min-width: 0;
+  padding: clamp(1.25rem, 2.2vw, 2.25rem) clamp(1.25rem, 2.6vw, 2.5rem) 1.25rem;
+}
+
 body::before,
 body::after {
   content: "";
   position: fixed;
   z-index: -1;
-  width: 80vmax;
-  height: 80vmax;
+  width: 70vmax;
+  height: 70vmax;
   border-radius: 50%;
 }
 body::before {
-  top: -32vmax;
-  left: -24vmax;
-  background: radial-gradient(closest-side, rgb(35 70 201 / 0.16), rgb(35 70 201 / 0));
+  top: -30vmax;
+  left: -22vmax;
+  background: radial-gradient(closest-side, rgb(111 95 216 / 0.30), rgb(111 95 216 / 0));
   animation: drift-a 80s ease-in-out infinite alternate;
 }
 body::after {
-  right: -26vmax;
-  bottom: -36vmax;
-  background: radial-gradient(closest-side, rgb(179 134 42 / 0.16), rgb(179 134 42 / 0));
+  right: -24vmax;
+  bottom: -32vmax;
+  background: radial-gradient(closest-side, rgb(251 196 99 / 0.35), rgb(251 196 99 / 0));
   animation: drift-b 95s ease-in-out infinite alternate;
 }
 @keyframes drift-a {
   from { translate: 0 0;        scale: 1; }
-  to   { translate: 22vw 18vh;  scale: 1.15; }
+  to   { translate: 20vw 16vh;  scale: 1.18; }
 }
 @keyframes drift-b {
   from { translate: 0 0;         scale: 1.1; }
-  to   { translate: -24vw -20vh; scale: 0.95; }
+  to   { translate: -22vw -18vh; scale: 0.92; }
 }
 
 
 /* ---------- 4. Links, focus, panels ---------- */
 a,
 a:visited {
-  color: var(--blue);
+  color: var(--link);
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
@@ -185,9 +232,9 @@ a:hover { text-decoration-thickness: 2px; }
 
 a:focus-visible,
 button:focus-visible {
-  outline: 3px solid var(--blue);
+  outline: 3px solid var(--lilac);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 .skip {
@@ -197,149 +244,107 @@ button:focus-visible {
   z-index: 60;
   padding: 0.5rem 0.9rem;
   border-radius: 0.5rem;
-  background: var(--navy);
+  background: var(--ink);
   font-weight: 600;
 }
 .skip,
 .skip:visited { color: var(--paper); text-decoration: none; }
 .skip:focus { top: 1rem; }
 
-/* An opaque white surface. All text outside navy areas sits on one. */
+/* A plain bordered surface, used by the long reading sections. */
 .panel {
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-main#main {
-  width: min(100% - 2.5rem, var(--container));
-  margin-inline: auto;
-  padding-top: 1.25rem;
 }
 
 
 /* ---------- 5. Side rail ----------
-   One tall navy card pinned down the left of the window. It holds the
-   brand, the menu (written once in base.html) and a rotated wordmark.
-   Under 64rem it flattens into a bar across the top — see section 6. */
+   A narrow column down the left of the shell. The menu items are turned
+   on their side with writing-mode, so they read bottom to top. */
 .rail {
-  position: fixed;
-  top: 1rem;
-  bottom: 1rem;
-  left: 1rem;
-  z-index: 50;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  width: var(--rail);
-  padding: 1.75rem 1.25rem 1.5rem;
-  overflow: hidden;                /* keeps the progress bar inside the corners */
-  background: var(--navy);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 24px 50px -28px rgb(11 29 69 / 0.7);
+  align-items: center;
+  gap: 1.75rem;
+  padding: 1.5rem 0 1.75rem;
+  border-right: 1px solid var(--rule);
 }
-.rail a:focus-visible,
-.rail button:focus-visible { outline-color: var(--paper); }
 
-/* Reading progress: a gold bar down the left edge of the rail that grows
-   as the page is scrolled (only where scroll-driven animations work). */
+.brand {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.brand-logo { width: 1.65rem; height: auto; }
+
+/* Reading progress: a lilac bar growing down the rail's right edge. */
 .rail::after {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0;
-  width: 4px;
-  background: var(--gold);
+  left: calc(var(--rail) - 2px);
+  width: 2px;
+  background: var(--lilac);
   transform-origin: top;
   transform: scaleY(0);
 }
+/* overflow: clip (not hidden) keeps the rounded corners tidy WITHOUT
+   turning the shell into a scroll container, which would stop the
+   sticky table of contents from sticking. */
+.shell { position: relative; overflow: clip; }
 
-.brand,
-.brand:visited {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.875rem;
-  flex-shrink: 0;
-  color: var(--paper);
-  font-size: 1.0625rem;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  text-decoration: none;
-}
-.brand-logo { display: block; width: 6.5rem; height: auto; }
-.brand-name { display: block; }
-.brand-sub {
-  display: block;
-  margin-top: 0.15rem;
-  color: var(--on-navy);
-  font-size: 0.9375rem;
-  font-weight: 500;
-}
-
-/* The menu itself. One item per row, numbered. */
-.nav-label {
-  margin: 0 0 0.75rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid rgb(255 255 255 / 0.15);
-  color: var(--on-navy);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
 .site-nav ul {
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
+  align-items: center;
+  gap: 1.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
+/* vertical-rl stacks the letters top-to-bottom; rotating the element a
+   half turn flips that so the line reads bottom-to-top, the way side
+   tabs normally do. */
 .site-nav a,
 .site-nav a:visited {
-  display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
-  padding: 0.55rem 0.7rem;
-  border-radius: 0.7rem;
-  color: var(--on-navy);
-  font-size: 1rem;
+  display: block;
+  padding: 0.85rem 0.35rem;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.9375rem;
   font-weight: 500;
-  line-height: 1.25;
+  line-height: 1;
   text-decoration: none;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
 }
-.nav-index {
-  color: var(--gold);
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-.site-nav a:hover { background: var(--navy-2); color: var(--paper); }
+.site-nav a:hover { color: var(--ink); }
 .site-nav a[aria-current="page"] {
-  background: var(--navy-2);
+  background: var(--lilac);
   color: var(--paper);
-  box-shadow: inset 3px 0 0 var(--gold);
+  font-weight: 600;
 }
 
-/* The rotated wordmark at the foot of the rail. writing-mode turns the
-   line on its side; margin-top:auto pushes it to the bottom. */
 .rail-mark {
   margin: auto 0 0;
-  color: rgb(255 255 255 / 0.35);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.35em;
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   writing-mode: vertical-rl;
   rotate: 180deg;
 }
 
 
-/* ---------- 6. Mobile sidebar ---------- */
+/* ---------- 6. Mobile menu ---------- */
 .menu-toggle,
 .menu-close {
   display: none;
@@ -350,11 +355,12 @@ main#main {
   border: 0;
   border-radius: 999px;
   background: none;
-  color: var(--paper);
+  color: var(--ink);
   cursor: pointer;
 }
-.menu-toggle:hover,
-.menu-close:hover { background: var(--navy-2); }
+.menu-toggle:hover { background: var(--wash); }
+.menu-close { color: var(--paper); }
+.menu-close:hover { background: var(--ink-2); }
 
 .menu-icon,
 .menu-icon::before,
@@ -386,7 +392,7 @@ main#main {
 .close-icon::before { transform: rotate(45deg); }
 .close-icon::after  { transform: rotate(-45deg); }
 
-/* Wide screens: the popover nav is just an ordinary block inside the rail.
+/* Wide screens: the popover nav is just a block inside the rail.
    Resetting popover's own styles is what lets one element be both. */
 @media (min-width: 64.0625rem) {
   .site-nav[popover] {
@@ -404,39 +410,36 @@ main#main {
   }
 }
 
-/* Narrow screens: the rail lies down as a bar across the top, and the
-   menu slides in from the right as a panel. */
+/* Narrow screens: the rail lies down as a bar across the top of the
+   shell, and the menu slides in from the right. */
 @media (max-width: 64rem) {
-  body { padding-left: 0; }
+  .shell { grid-template-columns: minmax(0, 1fr); }
   html { scroll-padding-top: 6rem; }
 
   .rail {
     position: sticky;
-    inset: 0.75rem auto auto;
+    top: 0;
+    z-index: 40;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    width: min(100% - 1.5rem, var(--container));
-    margin: 0.75rem auto 0;
-    padding: 0.625rem 0.75rem 0.625rem 1.25rem;
-    border-radius: 999px;
+    padding: 0.75rem 1rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
   }
-  .rail::after {                   /* progress runs along the bottom instead */
+  .rail::after {                   /* progress runs along the bottom */
     top: auto;
     right: 0;
     bottom: 0;
+    left: 0;
     width: auto;
-    height: 3px;
+    height: 2px;
     transform-origin: left;
     transform: scaleX(0);
   }
   .rail-mark { display: none; }
-
-  .brand { flex-direction: row; align-items: center; gap: 0.75rem; }
-  .brand-logo { width: 3.5rem; }
-  .brand-sub { display: none; }
-
   .menu-toggle { display: grid; }
 
   .site-nav {
@@ -448,10 +451,10 @@ main#main {
     margin: 0;
     padding: 0.75rem 1rem 2rem;
     border: 0;
-    border-left: 4px solid var(--gold);
-    background: var(--navy);
+    border-left: 4px solid var(--lilac);
+    background: var(--ink);
     color: var(--paper);
-    box-shadow: -16px 0 40px -20px rgb(11 29 69 / 0.6);
+    box-shadow: -16px 0 40px -20px rgb(17 17 19 / 0.6);
     overflow-y: auto;
     transform: translateX(100%);
     transition:
@@ -468,35 +471,269 @@ main#main {
     .site-nav:popover-open { transform: translateX(100%); }
   }
   .site-nav::backdrop {
-    background: rgb(11 29 69 / 0);
+    background: rgb(17 17 19 / 0);
     transition:
       background 0.32s ease,
       overlay 0.32s allow-discrete,
       display 0.32s allow-discrete;
   }
-  .site-nav:popover-open::backdrop { background: rgb(11 29 69 / 0.45); }
+  .site-nav:popover-open::backdrop { background: rgb(17 17 19 / 0.5); }
   @starting-style {
-    .site-nav:popover-open::backdrop { background: rgb(11 29 69 / 0); }
+    .site-nav:popover-open::backdrop { background: rgb(17 17 19 / 0); }
   }
   html:has(.site-nav:popover-open) { overflow: hidden; }
 
   .menu-close { display: grid; align-self: flex-end; margin-bottom: 1rem; }
-  .site-nav ul { flex-direction: column; gap: 0.375rem; }
+  .site-nav ul { align-items: stretch; gap: 0.25rem; }
+  /* Back to normal horizontal text inside the slide-in panel. */
   .site-nav a,
   .site-nav a:visited {
+    writing-mode: horizontal-tb;
+    rotate: none;
     padding: 0.85rem 1rem;
     border-radius: 0.75rem;
+    color: var(--on-ink);
     font-size: 1.125rem;
+    line-height: 1.3;
   }
+  .site-nav a:hover { background: var(--ink-2); color: var(--paper); }
 }
 
 
-/* ---------- 7. Page header, ruler, history layout ---------- */
-.byline { margin-top: 0.75rem; color: var(--muted); font-size: 1rem; font-weight: 500; }
-.lead { font-size: 1.25rem; font-weight: 500; line-height: 1.55; }
+/* ==================================================================
+   7. Bento tiles
+   ------------------------------------------------------------------
+   One grid of six equal columns. Every tile claims a number of columns
+   and rows with grid-column / grid-row: span, which is what gives the
+   wall its uneven, packed look. Several grids stacked with the same six
+   columns and the same --gap still read as one wall.
+   ================================================================== */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: var(--gap);
+  margin: 0 0 var(--gap);
+  padding: 0;
+  list-style: none;
+}
 
-/* Hero figures on the AI pages — unchanged from the previous design. */
-.page-hero { margin-bottom: var(--gap); padding: clamp(1.5rem, 4vw, 2.75rem); }
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 7.5rem;
+  padding: clamp(1.1rem, 1.6vw, 1.6rem);
+  background: var(--wash);
+  border-radius: var(--radius);
+  overflow: hidden;
+  color: var(--text);
+}
+/* The thin bracket hooked onto the top-right corner of every tile.
+   currentColor means it is dark on pale tiles and pale on dark ones. */
+.tile::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0.7rem;
+  right: 0.7rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+a.tile,
+a.tile:visited { color: var(--text); text-decoration: none; }
+
+/* ---- Colour ---- */
+.tile--lilac { background: var(--lilac); color: var(--paper); }
+.tile--soft  { background: var(--lilac-2); }
+.tile--mint  { background: var(--mint); }
+.tile--sun   { background: var(--yellow); }
+.tile--pink  { background: var(--pink); }
+.tile--coal  { background: var(--coal); color: var(--paper); }
+.tile--ink   { background: var(--ink); color: var(--paper); }
+
+.tile--lilac h1, .tile--lilac h2, .tile--lilac h3, .tile--lilac .tile-title,
+.tile--coal  h1, .tile--coal  h2, .tile--coal  h3, .tile--coal  .tile-title,
+.tile--ink   h1, .tile--ink   h2, .tile--ink   h3, .tile--ink   .tile-title { color: var(--paper); }
+.tile--lilac .tile-kicker, .tile--lilac .tile-text, .tile--lilac .byline,
+.tile--coal  .tile-kicker, .tile--coal  .tile-text, .tile--coal  .byline,
+.tile--ink   .tile-kicker, .tile--ink   .tile-text, .tile--ink   .byline { color: var(--on-ink); }
+.tile--lilac a, .tile--lilac a:visited,
+.tile--coal  a, .tile--coal  a:visited,
+.tile--ink   a, .tile--ink   a:visited { color: var(--paper); }
+.tile--lilac a:focus-visible,
+.tile--coal  a:focus-visible,
+.tile--ink   a:focus-visible,
+.tile--ink   button:focus-visible { outline-color: var(--paper); }
+
+/* ---- Text inside a tile ---- */
+.tile-kicker {
+  margin: 0 0 0.5rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.tile-title {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--ink);
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+.tile-text { display: block; color: var(--muted); font-size: 0.9375rem; line-height: 1.55; }
+/* On a coloured tile the body text goes full strength, not muted. */
+.tile--soft .tile-text, .tile--mint .tile-text,
+.tile--sun .tile-text,  .tile--pink .tile-text { color: var(--text); }
+.tile-go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  gap: 0.35rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  margin-top: auto;                /* an auto margin pushes it to the bottom */
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 1rem;
+  line-height: 1;
+}
+a.tile:hover .tile-go { background: var(--lilac); }
+.tile--lilac .tile-go,
+.tile--ink .tile-go { background: var(--paper); color: var(--ink); }
+
+/* A picture filling the top of a tile, bleeding to its edges. The
+   negative margins cancel the tile's padding on three sides. */
+.tile-image {
+  --pad: clamp(1.1rem, 1.6vw, 1.6rem);
+  display: block;
+  max-width: none;                 /* beats the global img { max-width: 100% } */
+  width: calc(100% + 2 * var(--pad));
+  margin: calc(-1 * var(--pad)) calc(-1 * var(--pad)) 1rem;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* Tiles that are nothing but a picture. */
+.tile--photo { padding: 0; }
+.tile--photo > img {
+  width: 100%;
+  height: 100%;
+  min-height: 9rem;
+  object-fit: cover;
+}
+
+/* ---- The profile tile ---- */
+.t-profile { align-items: flex-start; justify-content: flex-end; padding: clamp(1.25rem, 2vw, 2rem); }
+.profile-portrait {
+  width: min(100%, 15rem);
+  margin: 0 auto 1.25rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.profile-name {
+  margin: 0;
+  color: var(--paper);
+  font-size: clamp(1.75rem, 3vw, 2.75rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+}
+.profile-name strong { display: block; font-weight: 600; }
+.profile-mail {
+  margin: 1rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px dashed rgb(255 255 255 / 0.45);
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+/* The round stamp, bottom right of the profile tile. An SVG <textPath>
+   bends the line of text around a circle; the whole thing turns slowly. */
+.stamp {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  width: 6rem;
+  height: 6rem;
+}
+.stamp text { fill: var(--paper); font-size: 11px; font-weight: 600; letter-spacing: 0.14em; }
+.stamp-ring { fill: none; stroke: rgb(255 255 255 / 0.55); stroke-width: 1.5; }
+.stamp-dot  { fill: var(--paper); }
+@media (prefers-reduced-motion: no-preference) {
+  .stamp { animation: spin 22s linear infinite; }
+}
+@keyframes spin { to { rotate: 360deg; } }
+
+/* ---- Statistic tiles ---- */
+.stat-number {
+  margin: auto 0 0;
+  color: var(--ink);
+  font-size: clamp(2.75rem, 4.5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+.stat-label { margin: 0.4rem 0 0; color: var(--ink); font-size: 0.9375rem; font-weight: 500; line-height: 1.4; }
+.tile--coal .stat-number, .tile--coal .stat-label,
+.tile--ink .stat-number, .tile--ink .stat-label,
+.tile--lilac .stat-number, .tile--lilac .stat-label { color: var(--paper); }
+
+/* ---- Sizes: which tile claims how much of the wall ---- */
+.span-2 { grid-column: span 2; }
+.span-3 { grid-column: span 3; }
+.span-4 { grid-column: span 4; }
+.span-6 { grid-column: span 6; }
+.tall-2 { grid-row: span 2; }
+.tall-3 { grid-row: span 3; }
+
+.bento-heading {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 1.5rem 0 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+}
+.bento-heading::after {            /* the rule that runs off to the right */
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+@media (max-width: 64rem) {
+  .bento { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .span-3, .span-4, .span-6 { grid-column: span 4; }
+  .tall-3 { grid-row: span 2; }
+}
+@media (max-width: 44rem) {
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .span-2, .span-3, .span-4, .span-6 { grid-column: span 2; }
+  .tall-2, .tall-3 { grid-row: auto; }
+  .stamp { width: 4.5rem; height: 4.5rem; }
+}
+
+
+/* ---------- 8. Page header, ruler, history layout ---------- */
+.byline { margin-top: 0.75rem; color: var(--muted); font-size: 1rem; font-weight: 500; }
+
+/* Hero figures on the AI pages. */
+.page-hero { margin-bottom: var(--gap); padding: clamp(1.25rem, 3vw, 2.25rem); }
 .first-words {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -506,8 +743,8 @@ main#main {
 }
 .first-words .letters {
   margin: 0;
-  color: var(--navy);
-  font-size: clamp(7rem, 26vw, 16rem);
+  color: var(--ink);
+  font-size: clamp(6rem, 22vw, 13rem);
   font-weight: 800;
   line-height: 0.78;
   letter-spacing: -0.07em;
@@ -515,10 +752,10 @@ main#main {
 .first-words .quote {
   max-width: 12ch;
   margin: 0;
-  color: var(--navy);
-  font-size: clamp(2.25rem, 6vw, 4rem);
+  color: var(--ink);
+  font-size: clamp(2rem, 5vw, 3.25rem);
   font-style: italic;
-  font-weight: 500;
+  font-weight: 300;
   line-height: 1.08;
   letter-spacing: -0.02em;
 }
@@ -526,7 +763,7 @@ main#main {
 .first-words figcaption p { font-size: 1rem; line-height: 1.65; }
 .first-words figcaption .lead {
   margin: 0 0 0.5rem;
-  color: var(--navy);
+  color: var(--ink);
   font-size: 1.0625rem;
   font-weight: 700;
 }
@@ -534,15 +771,16 @@ main#main {
   .first-words { grid-template-columns: 1fr; }
 }
 
-/* Time ruler: 1960 to 2026, one gold tick per entry. Hover or focus a
+/* Time ruler: 1960 to 2026, one lilac tick per entry. Hover or focus a
    tick to see which entry it is. */
+.tile--ruler { overflow: visible; }   /* so the tooltips can escape */
 .ruler-ticks {
   position: relative;
   height: 2.5rem;
-  margin: 0;
+  margin: 0.5rem 0 0;
   padding: 0;
   list-style: none;
-  border-bottom: 2px solid var(--navy);
+  border-bottom: 2px solid var(--ink);
 }
 .ruler-ticks li {
   position: absolute;
@@ -565,10 +803,10 @@ main#main {
   height: var(--tick);
   translate: -50% 0;
   border-radius: 2px 2px 0 0;
-  background: var(--gold);
+  background: var(--lilac);
 }
 .ruler-ticks a:hover::before,
-.ruler-ticks a:focus-visible::before { background: var(--navy); height: 2.25rem; }
+.ruler-ticks a:focus-visible::before { background: var(--ink); height: 2.25rem; }
 .ruler-ticks a:hover .visually-hidden,
 .ruler-ticks a:focus-visible .visually-hidden {
   bottom: calc(100% + 0.5rem);
@@ -581,7 +819,7 @@ main#main {
   clip: auto;
   translate: -50% 0;
   border-radius: 0.5rem;
-  background: var(--navy);
+  background: var(--ink);
   color: var(--paper);
   font-size: 1rem;
   line-height: 1.4;
@@ -601,7 +839,7 @@ main#main {
 
 .history-grid {
   display: grid;
-  grid-template-columns: 15rem minmax(0, 1fr);
+  grid-template-columns: 14rem minmax(0, 1fr);
   gap: var(--gap);
   align-items: start;
   margin-top: var(--gap);
@@ -609,16 +847,16 @@ main#main {
 .history-body { min-width: 0; }
 
 .page-section { margin-bottom: var(--gap); }
-.page-section.panel { padding: clamp(1.5rem, 3.5vw, 2.75rem); }
+.page-section.panel { padding: clamp(1.5rem, 3vw, 2.5rem); }
 .page-section > h2 { margin-bottom: 1.5rem; }
-.page-section > h2::before {        /* the gold rule that opens each section */
+.page-section > h2::before {        /* the lilac rule that opens each section */
   content: "";
   display: block;
-  width: 3rem;
-  height: 4px;
+  width: 2.5rem;
+  height: 5px;
   margin-bottom: 1rem;
-  border-radius: 2px;
-  background: var(--gold);
+  border-radius: 3px;
+  background: var(--lilac);
 }
 .prose p { max-width: var(--measure); }
 
@@ -628,15 +866,14 @@ main#main {
   max-height: calc(100vh - 2.5rem);
   overflow-y: auto;
   padding: 1.5rem;
-  border-radius: var(--radius-lg);
   font-size: 1rem;
   line-height: 1.4;
 }
-.toc-title { margin-bottom: 0.75rem; color: var(--navy); font-weight: 700; }
+.toc-title { margin-bottom: 0.75rem; color: var(--ink); font-weight: 700; }
 .toc ol { margin: 0; padding: 0; list-style: none; }
 .toc > ol > li { padding: 0.5rem 0; border-top: 1px solid var(--rule); }
 .toc a,
-.toc a:visited { color: var(--blue); font-weight: 500; text-decoration: none; }
+.toc a:visited { color: var(--link); font-weight: 500; text-decoration: none; }
 .toc a:hover { text-decoration: underline; }
 .toc-decades { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.5rem !important; }
 .toc-decades a,
@@ -648,14 +885,14 @@ main#main {
 }
 
 @media (max-width: 64rem) {
-  .history-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .toc { position: static; max-height: none; margin-bottom: 2rem; }
+  .history-grid { grid-template-columns: minmax(0, 1fr); }
+  .toc { position: static; max-height: none; }
   .toc > ol { display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
   .toc > ol > li { border-top: 0; }
 }
 
 
-/* ---------- 8. Timeline (centre spine) ----------
+/* ---------- 9. Timeline (centre spine) ----------
    Structure: <ol class="timeline"> of decades, each with an <h3> and an
    <ol class="decade-events"> of entries, all in chronological order.
    Each entry list is a three-column grid: left cards | spine | right cards.
@@ -667,13 +904,12 @@ main#main {
   display: block;
   width: fit-content;
   margin: 0 auto;
-  padding: 1rem 1.75rem 1.1rem;
-  background: var(--paper);
-  border: 1px solid var(--rule);
+  padding: 0.9rem 1.75rem 1rem;
+  background: var(--ink);
+  color: var(--paper);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
 }
-.page-section--timeline > h2.section-chip::before { margin-inline: auto; }
+.page-section--timeline > h2.section-chip::before { margin-inline: auto; background: var(--yellow); }
 
 .timeline {
   position: relative;
@@ -682,7 +918,7 @@ main#main {
   list-style: none;
 }
 .timeline::before,
-.timeline::after {                 /* the spine: unlit, then lit in gold */
+.timeline::after {                 /* the spine: unlit, then lit in lilac */
   content: "";
   position: absolute;
   top: 0;
@@ -691,9 +927,9 @@ main#main {
   width: 4px;
   translate: -50% 0;
   border-radius: 2px;
-  background: #C9D3E6;
+  background: var(--rule);
 }
-.timeline::after { background: var(--gold); transform-origin: top; }
+.timeline::after { background: var(--lilac); transform-origin: top; }
 .timeline::before,
 .timeline::after { z-index: 0; }     /* the spine stays behind the cards */
 
@@ -706,11 +942,11 @@ main#main {
   margin: 0 auto 2rem;
   padding: 0.45rem 1.25rem;
   border-radius: 999px;
-  background: var(--navy);
-  color: var(--paper);               /* white on navy: 16.46:1 */
-  font-size: 1.25rem;
+  background: var(--ink);
+  color: var(--paper);               /* white on ink: 19.1:1 */
+  font-size: 1.1875rem;
   font-weight: 800;
-  box-shadow: 0 0 0 5px var(--page);
+  box-shadow: 0 0 0 5px var(--paper);
 }
 
 .decade-events {
@@ -756,7 +992,7 @@ main#main {
 /* The stagger: each card starts beside the lower part of the previous one. */
 .event + .event { margin-top: calc(-1 * var(--stagger)); }
 
-/* The gold arm from the spine to the card. Must stay behind the year badge,
+/* The arm from the spine to the card. Must stay behind the year badge,
    otherwise it draws through the numerals like a strikethrough. */
 .event::before {
   content: "";
@@ -766,7 +1002,7 @@ main#main {
   left: var(--arm-x);
   width: calc(var(--spine) / 2);
   height: 3px;
-  background: var(--gold);
+  background: var(--lilac);
 }
 
 .event-card {
@@ -774,8 +1010,8 @@ main#main {
   padding: 1.25rem 1.5rem 1.5rem;
   background: var(--paper);
   border: 1px solid var(--rule);
-  border-top: 4px solid var(--gold);
-  border-radius: 1rem;
+  border-top: 4px solid var(--lilac);
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
   font-size: 1rem;
   line-height: 1.65;
@@ -800,31 +1036,31 @@ main#main {
   translate: -50% 0;
   padding: 0.3rem 0.75rem;
   border-radius: 0.625rem;
-  background: var(--navy);
-  color: var(--paper);               /* white on navy: 16.46:1 */
+  background: var(--ink);
+  color: var(--paper);               /* white on ink: 19.1:1 */
   font-size: 1.0625rem;
   font-weight: 800;
   line-height: 1.25;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
-  box-shadow: 0 0 0 4px var(--page);
+  box-shadow: 0 0 0 4px var(--paper);
 }
 .event-detail { color: var(--muted); font-size: 1rem; font-weight: 500; }
 .event-title { margin-bottom: 0.75rem; }
 
-.event-body .label { color: var(--navy); font-weight: 700; }
+.event-body .label { color: var(--ink); font-weight: 700; }
 .event-body .label::after { content: " "; }
 
-/* "Why it mattered" gets a gold edge so the takeaway reads first. */
+/* "Why it mattered" gets a lilac edge so the takeaway reads first. */
 .why {
   padding-left: 0.875rem;
-  border-left: 3px solid var(--gold);
+  border-left: 3px solid var(--lilac);
 }
 
 .note {
   margin: 1rem 0;
   padding: 0.875rem 1.125rem;
-  border-left: 3px solid var(--navy);
+  border-left: 3px solid var(--ink);
   border-radius: 0 0.75rem 0.75rem 0;
   background: var(--wash);
   font-size: 1rem;
@@ -858,9 +1094,9 @@ main#main {
     left: 5px;
     width: 20px;
     height: 20px;
-    border: 4px solid var(--gold);
+    border: 4px solid var(--lilac);
     border-radius: 50%;
-    background: var(--gold);
+    background: var(--lilac);
   }
   .event-year {
     position: static;
@@ -871,9 +1107,9 @@ main#main {
 }
 
 
-/* ---------- 9. Major entries ----------
-   Landmark rows: full width across the spine, navy, with the year badge
-   on the spine above the card. Text colours switch to the navy set. */
+/* ---------- 10. Major entries ----------
+   Landmark rows: full width across the spine, black, with the year badge
+   on the spine above the card. Text colours switch to the dark set. */
 .decade-events > .event.event--major {
   --card-inset: 0;
   grid-column: 1 / -1;
@@ -888,10 +1124,10 @@ main#main {
   grid-template-columns: minmax(0, 19rem) minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   column-gap: 3rem;
-  padding: 2.75rem 3rem 2.5rem;
-  background: var(--navy);
+  padding: 2.5rem 2.75rem 2.25rem;
+  background: var(--ink);
   border: 0;
-  border-top: 4px solid var(--gold);
+  border-top: 4px solid var(--yellow);
   color: var(--paper);
   font-size: 1.0625rem;
 }
@@ -901,29 +1137,31 @@ main#main {
   grid-row: 2;
   color: var(--paper);
   font-size: 1.625rem;
-  line-height: 1.2;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 .event--major .event-body { grid-column: 2; grid-row: 1 / span 2; }
 .event--major .event-year {
   top: -1.2rem;
   left: 50%;
   padding: 0.4rem 1.1rem;
-  border: 2px solid var(--gold);
+  border: 2px solid var(--yellow);
   font-size: 1.375rem;
 }
-.event--major .event-detail { color: var(--on-navy); }
+.event--major .event-detail { color: var(--on-ink); }
 .event--major .label { color: var(--paper); }
 .event--major a,
-.event--major a:visited { color: var(--blue-on-navy); }
-.event--major .source { color: var(--on-navy); }
+.event--major a:visited { color: var(--link-on-ink); }
+.event--major .source { color: var(--on-ink); }
+.event--major .why { border-left-color: var(--yellow); }
 .event--major .note {
-  background: var(--navy-note);
-  border-left-color: var(--gold);
+  background: var(--ink-note);
+  border-left-color: var(--yellow);
   color: var(--paper);
 }
 
 @media (max-width: 64rem) {
-  .event--major .event-card { grid-template-columns: 1fr; padding: 2.5rem 2rem 2rem; }
+  .event--major .event-card { grid-template-columns: 1fr; padding: 2.25rem 1.75rem 2rem; }
   .event--major .event-date,
   .event--major .event-title,
   .event--major .event-body { grid-column: 1; grid-row: auto; }
@@ -936,7 +1174,7 @@ main#main {
 }
 
 
-/* ---------- 10. Technologies, sources, related ---------- */
+/* ---------- 11. Technologies, sources, related ---------- */
 .tech-intro { max-width: var(--measure); margin-bottom: 1.75rem; }
 .tech {
   display: grid;
@@ -946,17 +1184,17 @@ main#main {
   padding: 0;
   list-style: none;
 }
-.tech li { padding-top: 1.25rem; border-top: 4px solid var(--navy); }
+.tech li { padding-top: 1.25rem; border-top: 4px solid var(--ink); }
 .tech h3 { margin-bottom: 0.25rem; }
 .tech .role { margin-bottom: 0.75rem; color: var(--muted); font-size: 1rem; font-weight: 500; line-height: 1.45; }
 .tech p { font-size: 1rem; line-height: 1.65; }
-.tech .label { color: var(--navy); font-weight: 700; }
+.tech .label { color: var(--ink); font-weight: 700; }
 .tech-sources { max-width: var(--measure); margin-top: 1.75rem; color: var(--muted); font-size: 1rem; }
 
 .sources-note { max-width: var(--measure); color: var(--muted); font-size: 1rem; }
 .sources-group { margin: 1.75rem 0 0.25rem; }
 
-/* References: numbered, in columns, gold numbers on navy discs. */
+/* References: numbered, in columns, white numbers on black discs. */
 .reference-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(19rem, 100%), 1fr));
@@ -984,8 +1222,8 @@ main#main {
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  background: var(--navy);
-  color: var(--paper);               /* white on navy: 16.46:1 */
+  background: var(--ink);
+  color: var(--paper);
   font-size: 0.9375rem;
   font-weight: 700;
 }
@@ -1001,16 +1239,16 @@ main#main {
   display: inline-block;
   margin-right: 0.5rem;
   padding: 0 0.5rem;
-  border: 1px solid var(--navy);
   border-radius: 999px;
-  color: var(--navy);
+  background: var(--lilac-2);
+  color: var(--ink);
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.5;
   vertical-align: 0.1em;
 }
 
-/* Related pages: counterpart and other topic, as two bento tiles. */
+/* Related pages: counterpart and other topic, as two tiles. */
 .related ul {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
@@ -1019,14 +1257,10 @@ main#main {
   padding: 0;
   list-style: none;
 }
-.related li { display: grid; }        /* lets the tile fill the row height */
+.related li { display: grid; }      /* lets the tile fill the row height */
 
 
-/* ---------- 11. Home page ----------
-   The tiles themselves live in section 15; this is only the weekly log
-   that sits inside one of them.
-
-   Weekly work as a small timeline. */
+/* ---------- 12. Home page: the weekly log ---------- */
 .weekly-list {
   position: relative;
   margin: 0;
@@ -1036,12 +1270,12 @@ main#main {
 .weekly-list::before {
   content: "";
   position: absolute;
-  top: 0.5rem;
-  bottom: 0.5rem;
-  left: 11px;
-  width: 4px;
+  top: 0.9rem;
+  bottom: 0.9rem;
+  left: 9px;
+  width: 3px;
   border-radius: 2px;
-  background: var(--gold);
+  background: var(--lilac);
 }
 .weekly-list li {
   position: relative;
@@ -1049,71 +1283,69 @@ main#main {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem 1rem;
-  padding: 0.75rem 0 0.75rem 3rem;
+  padding: 0.5rem 0 0.5rem 2.5rem;
 }
 .weekly-list li::before {
   content: "";
   position: absolute;
-  top: 1.2rem;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  border: 4px solid var(--gold);
+  top: 1rem;
+  left: 2px;
+  width: 17px;
+  height: 17px;
+  border: 4px solid var(--lilac);
   border-radius: 50%;
   background: var(--paper);
 }
 .weekly-week {
-  padding: 0.15rem 0.7rem;
+  padding: 0.1rem 0.6rem;
   border-radius: 0.5rem;
-  background: var(--navy);
+  background: var(--ink);
   color: var(--paper);
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 700;
 }
-.weekly-list a { font-size: 1.125rem; font-weight: 600; }
+.weekly-list a { font-size: 1.0625rem; font-weight: 600; }
 
 
-/* ---------- 12. Footer ----------
+/* ---------- 13. Footer ----------
    The menu is NOT repeated down here. It is written once, in the rail. */
 .site-footer {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem 2.5rem;
-  width: min(100% - 2.5rem, var(--container));
-  margin: var(--gap) auto 1.25rem;
-  padding: 2rem clamp(1.5rem, 3vw, 2.75rem);
-  background: var(--navy);
-  border-radius: var(--radius-lg);
-  color: var(--on-navy);
-  font-size: 1rem;
+  gap: 1.25rem 2.5rem;
+  margin-top: var(--gap);
+  padding: 1.75rem;
+  background: var(--ink);
+  border-radius: var(--radius);
+  color: var(--on-ink);
+  font-size: 0.9375rem;
   line-height: 1.6;
 }
-.footer-note { max-width: 62ch; margin: 0; }
+.footer-note { max-width: 64ch; margin: 0; }
 .site-footer a:focus-visible { outline-color: var(--paper); }
 .site-footer .back-to-top,
 .site-footer .back-to-top:visited {
   flex-shrink: 0;
   padding: 0.5rem 1.1rem;
-  border: 2px solid var(--gold);
+  border: 2px solid var(--lilac);
   border-radius: 999px;
   color: var(--paper);
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
 }
-.back-to-top:hover { background: var(--navy-2); }
+.back-to-top:hover { background: var(--lilac); }
 
 
-/* ---------- 13. Scroll-linked motion ----------
+/* ---------- 14. Scroll-linked motion ----------
    Only in browsers with scroll-driven animations, and only when the
    visitor has not asked for reduced motion. Elsewhere everything shows
    in its finished state. */
 @supports (animation-timeline: scroll()) {
-  /* scroll(root block) ties the animation's progress to how far down the
-     document has been scrolled, so the gold bar is a reading progress
-     meter: 0% at the top, 100% at the bottom. */
+  /* scroll(root block) ties progress to how far the document has been
+     scrolled, so the lilac bar is a reading meter: 0% top, 100% bottom. */
   .rail::after {
     animation: grow-y linear both;
     animation-timeline: scroll(root block);
@@ -1125,7 +1357,7 @@ main#main {
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    /* The spine fills in gold down to the middle of the screen. */
+    /* The spine fills in down to the middle of the screen. */
     .timeline {
       view-timeline: --spine block;
       view-timeline-inset: 50% 50%;
@@ -1136,7 +1368,7 @@ main#main {
       animation-range: cover 0% cover 100%;
     }
 
-    /* Reading glow: a gold halo around whichever card is at the middle
+    /* Reading glow: a lilac halo around whichever card is at the middle
        of the screen, and a pulse on its year badge as it arrives. */
     .event {
       view-timeline: --entry block;
@@ -1154,6 +1386,13 @@ main#main {
       animation-timeline: --entry, view();
       animation-range: cover 0% cover 100%, entry 0% cover 25%;
     }
+
+    /* Tiles rise into place as the wall scrolls past. */
+    .tile {
+      animation: tile-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
   }
 }
 
@@ -1161,7 +1400,7 @@ main#main {
 @keyframes grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @keyframes reading-glow {
   0%, 100% { box-shadow: var(--shadow); }
-  6%, 94%  { box-shadow: 0 0 0 2px var(--gold), 0 16px 44px -10px rgb(179 134 42 / 0.55); }
+  6%, 94%  { box-shadow: 0 0 0 2px var(--lilac), 0 16px 44px -10px rgb(111 95 216 / 0.5); }
 }
 @keyframes badge-pulse {
   0%   { scale: 1; }
@@ -1169,6 +1408,10 @@ main#main {
   14%, 100% { scale: 1; }
 }
 @keyframes fade-in { from { opacity: 0.15; } to { opacity: 1; } }
+@keyframes tile-in {
+  from { opacity: 0; translate: 0 2rem; }
+  to   { opacity: 1; translate: 0 0; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -1179,13 +1422,14 @@ main#main {
 }
 
 
-/* ---------- 14. Print ---------- */
+/* ---------- 15. Print ---------- */
 @media print {
   html, body { background: #fff; color: #000; font-size: 11pt; padding: 0; }
   body::before, body::after,
-  .rail, .skip, .toc, .ruler, .related, .back-to-top,
-  .tile--mark, .tile--figure, .tile--cover { display: none !important; }
-  main#main { width: auto; padding: 0; }
+  .rail, .skip, .toc, .tile--ruler, .related, .back-to-top,
+  .tile--photo, .tile-image, .stamp, .profile-portrait { display: none !important; }
+  .shell { display: block; box-shadow: none; border-radius: 0; }
+  .shell-body { padding: 0; }
   .bento { display: block; }
   .panel, .event-card, .tile {
     border: 0 !important;
@@ -1195,10 +1439,10 @@ main#main {
     padding: 0 !important;
     animation: none !important;
   }
-  .tile::before, .tile::after { display: none !important; }
+  .tile::after { display: none !important; }
   .history-grid { display: block; }
-  h1, h2, h3, h4, .tile h1, .tile-title { color: #000; }
-  .page-section > h2::before, .tile--hero h1::after { display: none; }
+  h1, h2, h3, h4, .display, .tile-title, .profile-name, .stat-number { color: #000 !important; }
+  .page-section > h2::before, .display::after { display: none; }
 
   /* Timeline as a plain single column. */
   .timeline::before, .timeline::after, .event::before { display: none; }
@@ -1236,265 +1480,17 @@ main#main {
   .intro a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.85em; overflow-wrap: anywhere; }
   .reference-list { display: block; }
   .reference-list li::before { background: none; color: #000; }
-  .site-footer { border: 0; background: none; color: #000; padding: 1rem 0 0; }
-}
-
-/* ==================================================================
-   15. Bento tiles
-   ------------------------------------------------------------------
-   A "bento" wall: one grid of four equal columns, and tiles that each
-   claim a number of columns and rows with grid-column / grid-row: span.
-   Because every grid on the page uses the same four columns and the
-   same --gap, several stacked grids still read as one wall.
-   ================================================================== */
-.bento {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--gap);
-  margin: 0 0 var(--gap);
-  padding: 0;
-  list-style: none;
-}
-
-/* A section title sitting on the wall, not in a tile. */
-.bento-heading {
-  grid-column: 1 / -1;
-  margin: 1.25rem 0 0;
-  font-size: 1.5rem;
-}
-.bento-heading::before {
-  content: "";
-  display: block;
-  width: 3rem;
-  height: 4px;
-  margin-bottom: 0.9rem;
-  border-radius: 2px;
-  background: var(--gold);
-}
-
-/* ---- The tile itself ---- */
-.tile {
-  --pad: clamp(1.25rem, 2.2vw, 1.75rem);
-  --bracket: var(--navy);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;                    /* lets a tile shrink inside its column */
-  padding: var(--pad);
-  background: var(--paper);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  overflow: hidden;                /* clips full-bleed images to the corners */
-}
-
-/* Corner brackets. Each is a square with two of its four borders
-   removed, so what is left is an L in the corner. */
-.tile::before,
-.tile::after {
-  content: "";
-  position: absolute;
-  z-index: 2;
-  width: 1.1rem;
-  height: 1.1rem;
-  border: 2px solid var(--bracket);
-  opacity: 0.28;
-  pointer-events: none;            /* never swallows a click on the tile */
-}
-.tile::before {
-  top: 0.7rem;
-  left: 0.7rem;
-  border-right: 0;
-  border-bottom: 0;
-  border-radius: 0.4rem 0 0 0;
-}
-.tile::after {
-  right: 0.7rem;
-  bottom: 0.7rem;
-  border-left: 0;
-  border-top: 0;
-  border-radius: 0 0 0.4rem 0;
-}
-
-/* ---- Colour ---- */
-.tile--navy { background: var(--navy); color: var(--paper); --bracket: var(--gold); }
-.tile--sand { background: var(--sand); }
-.tile--sky  { background: var(--sky); }
-.tile--mist { background: var(--mist); }
-
-.tile--navy h1,
-.tile--navy h2,
-.tile--navy .tile-title { color: var(--paper); }
-.tile--navy .tile-kicker,
-.tile--navy .byline,
-.tile--navy .tile-text,
-.tile--navy .lead { color: var(--on-navy); }
-.tile--navy a,
-.tile--navy a:visited { color: var(--blue-on-navy); }
-
-/* ---- Text inside a tile ---- */
-.tile-kicker {
-  margin: 0 0 0.65rem;
-  color: var(--muted);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  line-height: 1.5;
-  text-transform: uppercase;
-}
-.tile-title {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--navy);
-  font-size: 1.75rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-.tile-text { display: block; font-size: 1rem; line-height: 1.6; }
-
-/* A full-bleed picture at the top of a tile. The negative margins pull it
-   out to the tile's edges, cancelling the padding on three sides. */
-.tile-image {
-  width: calc(100% + 2 * var(--pad));
-  margin: calc(-1 * var(--pad)) calc(-1 * var(--pad)) 1.1rem;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-
-/* ---- Link tiles ---- */
-.tile--page,
-.tile--page:visited { color: var(--text); text-decoration: none; }
-.tile-go {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  align-self: flex-start;
-  margin-top: auto;                /* auto margin pushes it to the bottom */
-  padding-top: 1rem;
-  color: var(--blue);
-  font-size: 0.9375rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.tile-go::after { content: "→"; transition: translate 0.18s ease; }
-.tile--page:hover .tile-go::after { translate: 0.25rem 0; }
-.tile--page:hover .tile-title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.15em; }
-.tile--navy .tile-go { color: var(--blue-on-navy); }
-
-/* ---- Picture-only tiles ---- */
-.tile--mark,
-.tile--figure,
-.tile--cover { padding: 0; background: var(--navy); }
-.tile--mark::before, .tile--mark::after,
-.tile--figure::before, .tile--figure::after,
-.tile--cover::before, .tile--cover::after { --bracket: var(--paper); opacity: 0.4; }
-.tile--mark img,
-.tile--figure img,
-.tile--cover img {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-/* cover fills the box and crops the overflow; contain fits the whole
-   picture inside it. The square illustrations use contain so their
-   circle is never clipped — the navy behind them matches the artwork. */
-.tile--cover img { object-fit: cover; }
-.tile--mark img,
-.tile--figure img { object-fit: contain; }
-
-/* ---- Sizes: which tile claims how much of the wall ---- */
-.tile--hero   { grid-column: span 2; grid-row: span 2; }
-.tile--mark   { grid-row: span 2; }
-.tile--weekly { grid-column: span 3; }
-.tile--head   { grid-column: span 2; }
-.tile--cover  { grid-column: span 2; }
-.tile--ruler  { grid-column: 1 / -1; overflow: visible; }  /* tick tooltips escape */
-
-/* ---- The home hero ---- */
-.tile--hero {
-  justify-content: center;
-  padding: clamp(1.75rem, 3.5vw, 3rem);
-  background: var(--navy);
-  color: var(--paper);
-  --bracket: var(--gold);
-}
-.tile--hero h1 {
-  color: var(--paper);
-  font-size: clamp(2.5rem, 5vw, 4.25rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
-}
-.tile--hero h1 em { color: var(--gold); font-style: normal; }
-.tile--hero .lead { margin: 1.25rem 0 0; color: var(--on-navy); }
-.tile--hero .tile-kicker { color: var(--on-navy); }
-.tile-sign {
-  margin: 1.5rem 0 0;
-  padding-top: 1.1rem;
-  border-top: 1px solid rgb(255 255 255 / 0.18);
-  color: var(--paper);
-  font-size: 1.0625rem;
-  font-weight: 700;
-}
-
-/* ---- The small facts tiles ---- */
-.stat-number {
-  margin: 0;
-  color: var(--navy);
-  font-size: clamp(3.5rem, 7vw, 5rem);
-  font-weight: 800;
-  letter-spacing: -0.05em;
-  line-height: 0.9;
-}
-.stat-label { margin: 0.75rem 0 0; color: var(--muted); font-size: 1rem; line-height: 1.5; }
-.meta-line { margin: 0 0 0.35rem; font-size: 1rem; font-weight: 600; line-height: 1.5; }
-.meta-line:last-child { color: var(--muted); font-weight: 500; }
-
-/* ---- The page header tiles ---- */
-.tile--head {
-  justify-content: center;
-  min-height: 18rem;
-  padding: clamp(1.75rem, 3.5vw, 2.75rem);
-}
-.tile--head h1 { font-size: clamp(2rem, 3.6vw, 3rem); }
-.tile--ruler { padding-bottom: 1.1rem; }
-.tile--ruler .tile-kicker { margin-bottom: 1.25rem; }
-
-/* ---- Narrower screens: fewer columns ---- */
-@media (max-width: 68rem) {
-  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .tile--hero,
-  .tile--weekly,
-  .tile--meta,
-  .tile--figure { grid-column: span 2; }
-  .tile--hero { grid-row: auto; }
-  .tile--mark { grid-row: auto; aspect-ratio: 1 / 1; }
-  .tile--head,
-  .tile--cover { grid-column: span 2; }
-  .tile--cover { aspect-ratio: 16 / 9; }
-}
-@media (max-width: 44rem) {
-  .bento { grid-template-columns: minmax(0, 1fr); }
-  .tile--hero,
-  .tile--mark,
-  .tile--weekly,
-  .tile--meta,
-  .tile--figure,
-  .tile--head,
-  .tile--cover,
-  .tile--ruler { grid-column: span 1; }
+  .site-footer { background: none; color: #000; padding: 1rem 0 0; }
 }
 
 
-/* ---------- 404 ---------- */
+/* ---------- 16. 404 ---------- */
 .notfound-code {
-  margin: 0 0 0.75rem;
-  color: var(--gold);
-  font-size: clamp(4rem, 9vw, 7rem);
+  margin: 0 0 0.5rem;
+  color: var(--yellow);
+  font-size: clamp(4rem, 10vw, 8rem);
   font-weight: 800;
-  letter-spacing: -0.05em;
-  line-height: 0.85;
+  letter-spacing: -0.06em;
+  line-height: 0.82;
   font-variant-numeric: tabular-nums;
 }
-.notfound h1 { font-size: clamp(1.75rem, 3.5vw, 2.75rem); }
