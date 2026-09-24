@@ -20,6 +20,17 @@
 {% block title %}Engineering Student Profile{% endblock %}
 {% block description %}Academic profile form for senior engineering students at USEK: background, technical skills, internship experience and Final Year Project preferences.{% endblock %}
 
+{# base.html puts this block straight after the site stylesheet, so
+   form_style.css is loaded second and can override or extend it. Only
+   this page fills the block, so only this page loads the file.
+
+   static_url() is url_for('static', ...) with the file's own timestamp
+   added as ?v=, so a changed file gets a new address and browsers and
+   Cloudflare cannot serve a stale copy. #}
+{% block head %}
+  <link rel="stylesheet" href="{{ static_url('form_style.css') }}">
+{% endblock %}
+
 {% block content %}
 
 <p class="eyebrow">Week 4 · GIN446 · School of Engineering, USEK</p>

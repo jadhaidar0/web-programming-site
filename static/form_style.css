@@ -1,0 +1,304 @@
+/* ==================================================================
+   form_style.css — GIN446 Week 4 (Jad Haidar)
+
+   This file styles the Engineering Student Profile form ONLY.
+
+   How it is loaded
+   ----------------
+   base.html loads the site stylesheet and then leaves an empty slot:
+
+       <link rel="stylesheet" href="... style.css">
+       {% block head %}{% endblock %}
+
+   profile-form.html fills that slot with a link to this file. Because
+   this file is linked AFTER style.css, it comes later in the cascade:
+   where the two set the same property on the same element with the same
+   specificity, THIS file wins. No other page loads it, so nothing here
+   can affect the rest of the site.
+
+   It does not repeat the design tokens. --ink, --lilac, --rule and the
+   rest are declared on :root in style.css, and :root is the <html>
+   element, so every var() below inherits those same values and the form
+   stays in the site's palette automatically.
+
+   Contents
+     1. Page-level overrides      5. Radio and checkbox groups
+     2. The form blocks           6. Validation feedback
+     3. Fields and labels         7. Buttons
+     4. The controls              8. Small screens
+
+   Contrast (WCAG 2.2 AA): --ink label on white 19.1, --muted hint 6.7,
+   placeholder #6C6C76 5.2, white on --ink button 19.1, error #B3261E on
+   #FDF4F3 6.4. Focus ring --lilac on white 5.5 (needs 3 for non-text).
+   ================================================================== */
+
+
+/* ---------- 1. Page-level overrides ----------
+   The two rules below exist to show the point of a second stylesheet:
+   they change site-wide decisions, but only on this page. */
+
+/* Long forms read better in a narrower column than the bento wall does. */
+.profile-form { max-width: 68rem; }
+
+/* Every other page uses --gap for the space between tiles. The form has
+   more blocks stacked vertically, so it gets a little more air. */
+.profile-form { --gap: 1.1rem; }
+
+.form-intro { max-width: var(--measure); margin-bottom: 1.75rem; }
+
+
+/* ---------- 2. The form blocks ----------
+   Each numbered section is a <fieldset> wearing the site's .tile look. */
+.profile-form {
+  display: grid;
+  gap: var(--gap);
+}
+
+/* A fieldset arrives with its own border, padding, and an implicit
+   min-width of min-content that breaks grid and flex layouts. All three
+   are cleared here. */
+.form-block {
+  display: block;            /* .tile is a flex column, and a <legend>
+                                behaves unpredictably inside flex */
+  min-width: 0;
+  margin: 0;
+  padding: clamp(1.25rem, 2vw, 1.9rem);
+  border: 0;
+}
+
+/* The legend is the fieldset's own heading. It is not an <h2>, so it
+   does not affect the page's heading outline. */
+.form-block > legend {
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* The last block is tinted so the end of the form is obvious. */
+.form-block--send { background: var(--lilac-2); }
+
+
+/* ---------- 3. Fields and labels ----------
+   auto-fit + minmax gives as many columns as will fit, each at least
+   17rem wide. min(17rem, 100%) stops that 17rem floor from overflowing
+   a phone narrower than 17rem. */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr));
+  gap: 1.1rem 1.25rem;
+  margin-top: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+  margin: 0;
+}
+.field--wide { grid-column: 1 / -1; }   /* 1 / -1 = first line to last */
+
+.field > label,
+.subgroup > legend {
+  color: var(--ink);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Required fields mark themselves. :has() looks forward from the label
+   to the control right after it and checks for the required attribute,
+   so no extra markup is needed and the two can never fall out of step.
+   The asterisk is decorative: `required` is what a screen reader
+   announces, and aria-hidden is not needed because generated content
+   like this is not exposed as text by assistive technology. */
+.field > label:has(+ :is(input, select, textarea)[required])::after {
+  content: " *";
+  color: var(--lilac);
+  font-weight: 800;
+}
+
+.hint { color: var(--muted); font-size: 0.8125rem; line-height: 1.45; }
+.hint code {
+  padding: 0.05rem 0.3rem;
+  border-radius: 0.3rem;
+  background: var(--wash);
+}
+
+
+/* ---------- 4. The controls ---------- */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+select,
+textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 0.65rem 0.8rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 0.7rem;
+  background: var(--paper);
+  color: var(--text);
+  font: inherit;             /* form controls do NOT inherit the page
+                                font unless they are told to */
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+textarea { resize: vertical; line-height: 1.6; }
+
+/* The multiple-choice list. "size" in the HTML sets how many rows show;
+   this makes the selected rows obvious. */
+select[multiple] { padding: 0.35rem; }
+select[multiple] option {
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.4rem;
+}
+select[multiple] option:checked {
+  background: var(--lilac-2);
+  font-weight: 600;
+}
+
+/* The colour picker is a swatch, not a text box, so it is sized as one. */
+input[type="color"] {
+  width: 4.5rem;
+  height: 2.75rem;
+  padding: 0.25rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 0.7rem;
+  background: var(--paper);
+  cursor: pointer;
+}
+
+/* Placeholders are darkened to 5.2:1. The browser default is far too
+   pale to read, and here the placeholders carry the example values. */
+::placeholder { color: #6C6C76; opacity: 1; }
+
+:is(input, select, textarea):hover { border-color: #C4C1D2; }
+
+:is(input, select, textarea):focus-visible {
+  outline: 3px solid var(--lilac);
+  outline-offset: 2px;
+  border-color: var(--lilac);
+}
+
+/* The whole field lights up, not just the box, so it is easy to see
+   where you are in a long form. */
+.field:focus-within > label { color: var(--lilac); }
+
+
+/* ---------- 5. Radio and checkbox groups ----------
+   A group of radios is its own small <fieldset>: the <legend> asks the
+   question and each button keeps its own <label>. */
+.subgroup {
+  min-width: 0;
+  margin: 1.25rem 0 0;
+  padding: 0.9rem 1.1rem 1rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 0.9rem;
+}
+.field.subgroup { margin-top: 0; }
+.subgroup > legend { padding: 0 0.4rem; }
+
+.choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 0.6rem;
+}
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: 0.55rem 1.5rem;
+  margin-top: 0.6rem;
+}
+
+.choice { display: flex; align-items: flex-start; gap: 0.55rem; }
+.choice input {
+  flex-shrink: 0;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0.3rem 0 0;
+  accent-color: var(--lilac);   /* tints the native tick and dot without
+                                   rebuilding the control from scratch,
+                                   so keyboard support is untouched */
+}
+.choice label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.45;
+  cursor: pointer;
+}
+/* A ticked box bolds its own label. :has() again: style the parent
+   based on the state of the input inside it. */
+.choice:has(input:checked) label { font-weight: 700; color: var(--ink); }
+
+.choice--consent { margin-top: 0.4rem; }
+.choice--consent label { font-weight: 600; }
+
+
+/* ---------- 6. Validation feedback ----------
+   :user-invalid and :user-valid only match AFTER the visitor has
+   actually typed in the control or left it. The older :invalid matches
+   immediately, which would paint a fresh empty form red before anyone
+   had touched it. */
+:is(input, select, textarea):user-invalid {
+  border-color: #B3261E;
+  background: #FDF4F3;
+}
+.field:has(:user-invalid) > label { color: #B3261E; }
+.field:has(:user-invalid) > .hint { color: #B3261E; }
+
+:is(input, select, textarea):user-valid { border-color: #4F8A5B; }
+
+
+/* ---------- 7. Buttons ---------- */
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.35rem;
+}
+.btn {
+  padding: 0.75rem 1.6rem;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn--go { background: var(--ink); color: var(--paper); }
+.btn--go:hover { background: var(--lilac); }
+.btn--quiet {
+  background: transparent;
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.btn--quiet:hover { background: var(--paper); }
+.btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn { transition: background 0.18s ease, border-color 0.18s ease; }
+}
+
+
+/* ---------- 8. Small screens ---------- */
+@media (max-width: 40rem) {
+  .form-block { padding: 1.1rem; }
+  .form-block > legend { font-size: 0.875rem; padding: 0.35rem 0.8rem; }
+  .field-grid { gap: 1rem; margin-top: 1rem; }
+
+  /* Full-width buttons are easier to hit with a thumb. */
+  .form-actions { flex-direction: column; align-items: stretch; }
+  .btn { width: 100%; }
+}
