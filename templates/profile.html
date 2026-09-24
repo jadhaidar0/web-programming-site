@@ -1,0 +1,138 @@
+{% extends "base.html" %} {% block title %}{{ data.get('fullname', 'Student
+Profile') }} — Profile{% endblock %} {# PROVIDED BY THE INSTRUCTOR — do not
+edit. Shows the Engineering Student Profile built from the submitted form.
+Extends base.html, so it appears in the student's own design (their style.css).
+Reads the exact field `name` values from the profile form; `skills` and
+`software` arrive as lists. #} {% block head %}
+<style>
+  /* Small, profile-specific touches. The rest comes from your own style.css. */
+  .profile { max-width: 860px; }
+  .profile-header { border-top: 6px solid {{ data.get('project_color', '#336699') }};
+                    padding-top: 1rem; margin-bottom: 1.5rem; }
+  .profile-title { color: {{ data.get('project_color', '#336699') }}; margin: .25rem 0 .5rem; }
+  .profile-contact { font-size: .95rem; }
+  .profile-contact span { margin-right: 1rem; white-space: nowrap; }
+  .profile section { margin-bottom: 1.6rem; }
+  .profile h2 { border-bottom: 2px solid {{ data.get('project_color', '#336699') }};
+                display: inline-block; padding-bottom: .15rem; }
+  .profile dl { display: grid; grid-template-columns: 220px 1fr; gap: .35rem 1rem; margin: 0; }
+  .profile dt { font-weight: 600; color: #475569; }
+  .profile dd { margin: 0; }
+  .chips { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem; margin: .3rem 0 0; }
+  .chip { border: 1px solid {{ data.get('project_color', '#336699') }};
+          border-radius: 999px; padding: .2rem .7rem; font-size: .9rem; }
+  .swatch { display: inline-block; width: 1rem; height: 1rem; border-radius: 3px;
+            border: 1px solid #cbd5e1; vertical-align: middle;
+            background: {{ data.get('project_color', '#336699') }}; }
+</style>
+{% endblock %} {% block content %}
+<article class="profile">
+  <header class="profile-header">
+    <h1>{{ data.get('fullname') }}</h1>
+    {% if data.get('major') %}
+    <p class="profile-title">{{ data.get('major') | title }} Engineering</p>
+    {% endif %}
+    <p class="profile-contact">
+      {% if data.get('student_id') %}<span>🎓 {{ data.get('student_id') }}</span
+      >{% endif %} {% if data.get('email') %}<span
+        >✉ {{ data.get('email') }}</span
+      >{% endif %} {% if data.get('phone') %}<span
+        >☎ {{ data.get('phone') }}</span
+      >{% endif %} {% if data.get('birthdate') %}<span
+        >🎂 {{ data.get('birthdate') }}</span
+      >{% endif %}
+    </p>
+    <p class="profile-contact">
+      {% if data.get('portfolio') %}<span
+        >🐙 <a href="{{ data.get('portfolio') }}">GitHub</a></span
+      >{% endif %} {% if data.get('gin446') %}<span
+        >🔗 <a href="{{ data.get('gin446') }}">GIN446 site</a></span
+      >{% endif %}
+    </p>
+  </header>
+
+  <section>
+    <h2>Academic Information</h2>
+    <dl>
+      {% if data.get('major') %}
+      <dt>Major</dt>
+      <dd>{{ data.get('major') | title }} Engineering</dd>
+      {% endif %} {% if data.get('gpa') %}
+      <dt>GPA</dt>
+      <dd>{{ data.get('gpa') }} / 100</dd>
+      {% endif %} {% if data.get('credits') %}
+      <dt>Credits completed</dt>
+      <dd>{{ data.get('credits') }} / 148</dd>
+      {% endif %} {% if data.get('graduation') %}
+      <dt>Expected graduation</dt>
+      <dd>
+        {{ data.get('graduation') | title }}{% if data.get('graduation_month')
+        %} — {{ data.get('graduation_month') }}{% endif %}
+      </dd>
+      {% endif %} {% if data.get('internship_completed') %}
+      <dt>Internship completed</dt>
+      <dd>{{ data.get('internship_completed') | title }}</dd>
+      {% endif %}
+    </dl>
+  </section>
+
+  <section>
+    <h2>Technical Background</h2>
+    {% if skills %}
+    <p><strong>Areas of experience</strong></p>
+    <ul class="chips">
+      {% for s in skills %}
+      <li class="chip">{{ s | replace('-', ' ') | title }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %} {% if data.get('language') %}
+    <p style="margin-top: 1rem">
+      Primary programming language: <strong>{{ data.get('language') }}</strong>
+    </p>
+    {% endif %} {% if software %}
+    <p><strong>Engineering software</strong></p>
+    <ul class="chips">
+      {% for sw in software %}
+      <li class="chip">{{ sw | title }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>Final Year Project</h2>
+    <dl>
+      {% if data.get('project_title') %}
+      <dt>Title</dt>
+      <dd>{{ data.get('project_title') }}</dd>
+      {% endif %} {% if data.get('project_area') %}
+      <dt>Area</dt>
+      <dd>{{ data.get('project_area') | replace('-', ' ') | title }}</dd>
+      {% endif %} {% if data.get('team_size') %}
+      <dt>Preferred team size</dt>
+      <dd>{{ data.get('team_size') }}</dd>
+      {% endif %} {% if data.get('meeting_date') %}
+      <dt>Preferred meeting</dt>
+      <dd>
+        {{ data.get('meeting_date') }}{% if data.get('meeting_time') %} at {{
+        data.get('meeting_time') }}{% endif %}
+      </dd>
+      {% endif %} {% if data.get('project_color') %}
+      <dt>Dashboard colour</dt>
+      <dd><span class="swatch"></span> {{ data.get('project_color') }}</dd>
+      {% endif %}
+    </dl>
+    {% if data.get('description') %}
+    <p style="margin-top: 0.8rem"><strong>Description</strong></p>
+    <p>{{ data.get('description') }}</p>
+    {% endif %}
+  </section>
+
+  {% if data.get('form_version') %}
+  <p style="margin-top: 2rem; color: #64748b; font-size: 0.85rem">
+    Form version {{ data.get('form_version') }} —
+    <a href="{{ url_for('submit_profile') }}">edit and resubmit</a>
+  </p>
+  {% endif %}
+</article>
+{% endblock %}

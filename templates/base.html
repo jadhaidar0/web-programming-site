@@ -24,6 +24,11 @@
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="stylesheet" href="{{ static_url('style.css') }}">
+
+  {# A page can add its own <style> or <link> here. It comes AFTER the main
+     stylesheet, so anything a page puts in this block wins. profile.html
+     uses it to colour itself with the colour that was picked in the form. #}
+  {% block head %}{% endblock %}
 </head>
 <body>
 

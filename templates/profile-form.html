@@ -1,0 +1,389 @@
+{#
+  Week 4 — the Engineering Student Profile form.
+
+  Written by hand. It extends base.html, so it arrives inside the same shell,
+  rail and stylesheet as the rest of the site.
+
+  The field `name` values are fixed by the instructor: app.py reads them with
+  request.form, and profile.html looks them up with data.get('...'). They must
+  not be renamed. Two of them arrive as LISTS because they can hold more than
+  one value: "skills" (checkboxes) and "software" (a <select multiple>).
+
+  Every control has a <label for="..."> pointing at that control's id, so
+  clicking the label focuses the control and a screen reader announces it.
+
+  Validation is done by the browser, from the HTML alone: required, pattern,
+  min / max / step and maxlength. No JavaScript.
+#}
+{% extends "base.html" %}
+
+{% block title %}Engineering Student Profile{% endblock %}
+{% block description %}Academic profile form for senior engineering students at USEK: background, technical skills, internship experience and Final Year Project preferences.{% endblock %}
+
+{% block content %}
+
+<p class="eyebrow">Week 4 · GIN446 · School of Engineering, USEK</p>
+<h1 class="display">Student profile<span class="bracket" aria-hidden="true"></span></h1>
+<p class="lead form-intro">
+  Complete this form to provide information about your academic background,
+  technical skills, internship experience, and Final Year Project preferences.
+</p>
+
+{# method="post" sends the data in the request body rather than in the URL,
+   which is what you want for anything long or personal. #}
+<form class="profile-form" action="{{ url_for('submit_profile') }}" method="post">
+
+  <!-- ============ 1. Personal information ============ -->
+  <fieldset class="tile form-block">
+    <legend>1. Personal information</legend>
+
+    <div class="field-grid">
+
+      <p class="field">
+        <label for="student_id">Student ID</label>
+        <input type="text" id="student_id" name="student_id"
+               placeholder="202312345"
+               pattern="\d{9}" maxlength="9" inputmode="numeric"
+               autocomplete="off" required>
+        <span class="hint">Exactly nine digits.</span>
+      </p>
+
+      <p class="field">
+        <label for="fullname">Full name</label>
+        <input type="text" id="fullname" name="fullname"
+               placeholder="First name and last name"
+               maxlength="80" autocomplete="name" required>
+      </p>
+
+      <p class="field">
+        <label for="email">USEK email</label>
+        {# type="email" gives the right keyboard on a phone and a built-in
+           check for the shape of an address; pattern narrows that to the
+           university's own domain. #}
+        <input type="email" id="email" name="email"
+               placeholder="student@net.usek.edu.lb"
+               pattern="[a-zA-Z0-9._%+\-]+@net\.usek\.edu\.lb"
+               title="Use your USEK address, ending in @net.usek.edu.lb"
+               maxlength="120" autocomplete="email" required>
+        <span class="hint">Must end in <code>@net.usek.edu.lb</code>.</span>
+      </p>
+
+      <p class="field">
+        <label for="phone">Mobile number</label>
+        <input type="tel" id="phone" name="phone"
+               placeholder="+961 70 123456"
+               pattern="\+961\s?\d{1,2}\s?\d{6}"
+               title="Lebanese mobile number, for example +961 70 123456"
+               maxlength="20" autocomplete="tel">
+      </p>
+
+      <p class="field">
+        <label for="birthdate">Date of birth</label>
+        {# min / max keep the date inside a sensible range for a student. #}
+        <input type="date" id="birthdate" name="birthdate"
+               min="1985-01-01" max="2010-12-31">
+      </p>
+
+      <p class="field">
+        <label for="portfolio">GitHub</label>
+        <input type="url" id="portfolio" name="portfolio"
+               placeholder="https://github.com/username"
+               maxlength="200">
+      </p>
+
+      <p class="field field--wide">
+        <label for="gin446">GIN446 website</label>
+        <input type="url" id="gin446" name="gin446"
+               placeholder="Your Render website link"
+               maxlength="200">
+        <span class="hint">The address of your own course site.</span>
+      </p>
+
+    </div>
+  </fieldset>
+
+
+  <!-- ============ 2. Academic information ============ -->
+  <fieldset class="tile form-block">
+    <legend>2. Academic information</legend>
+
+    <div class="field-grid">
+
+      <p class="field">
+        <label for="major">Engineering major</label>
+        {# The value is lower case on purpose: profile.html prints it as
+           "{{ major|title }} Engineering". #}
+        <select id="major" name="major" required>
+          <option value="">-- Select your major --</option>
+          <option value="computer">Computer Engineering</option>
+          <option value="electrical">Electrical Engineering</option>
+          <option value="biomedical">Biomedical Engineering</option>
+          <option value="telecommunications">Telecommunications Engineering</option>
+        </select>
+      </p>
+
+      <p class="field">
+        <label for="gpa">Current GPA / 100</label>
+        {# step="0.01" allows two decimals; without it a number box only
+           accepts whole numbers. #}
+        <input type="number" id="gpa" name="gpa"
+               placeholder="85.50"
+               min="0" max="100" step="0.01" required>
+      </p>
+
+      <p class="field">
+        <label for="credits">Credits completed</label>
+        <input type="number" id="credits" name="credits"
+               placeholder="112"
+               min="0" max="148" step="1" required>
+        <span class="hint">Out of 148 credits.</span>
+      </p>
+
+      <p class="field">
+        <label for="graduation_month">Expected graduation month &amp; year</label>
+        <input type="month" id="graduation_month" name="graduation_month"
+               min="2026-01" max="2032-12">
+      </p>
+
+      {# A radio group is its own small fieldset: the legend names the
+         question, and each button still has its own label. #}
+      <fieldset class="field field--wide subgroup">
+        <legend>Expected graduation</legend>
+        <div class="choice-row">
+          <span class="choice">
+            <input type="radio" id="graduation_spring" name="graduation" value="spring" required>
+            <label for="graduation_spring">Spring</label>
+          </span>
+          <span class="choice">
+            <input type="radio" id="graduation_summer" name="graduation" value="summer">
+            <label for="graduation_summer">Summer</label>
+          </span>
+          <span class="choice">
+            <input type="radio" id="graduation_fall" name="graduation" value="fall">
+            <label for="graduation_fall">Fall</label>
+          </span>
+        </div>
+      </fieldset>
+
+      <fieldset class="field field--wide subgroup">
+        <legend>Have you completed an engineering internship?</legend>
+        <div class="choice-row">
+          <span class="choice">
+            <input type="radio" id="internship_yes" name="internship_completed" value="yes" required>
+            <label for="internship_yes">Yes</label>
+          </span>
+          <span class="choice">
+            <input type="radio" id="internship_no" name="internship_completed" value="no">
+            <label for="internship_no">No</label>
+          </span>
+        </div>
+      </fieldset>
+
+    </div>
+  </fieldset>
+
+
+  <!-- ============ 3. Technical background ============ -->
+  <fieldset class="tile form-block">
+    <legend>3. Technical background</legend>
+
+    {# Checkboxes all share name="skills", so ticking several sends the name
+       several times. app.py reads them with request.form.getlist("skills"). #}
+    <fieldset class="subgroup subgroup--grid">
+      <legend>Select all areas in which you have experience</legend>
+      <div class="choice-grid">
+
+        <span class="choice">
+          <input type="checkbox" id="skill_programming" name="skills" value="programming">
+          <label for="skill_programming">Programming</label>
+        </span>
+        <span class="choice">
+          <input type="checkbox" id="skill_embedded" name="skills" value="embedded-systems">
+          <label for="skill_embedded">Embedded Systems</label>
+        </span>
+        <span class="choice">
+          <input type="checkbox" id="skill_electronics" name="skills" value="electronics">
+          <label for="skill_electronics">Electronics</label>
+        </span>
+        <span class="choice">
+          <input type="checkbox" id="skill_networks" name="skills" value="computer-networks">
+          <label for="skill_networks">Computer Networks</label>
+        </span>
+        <span class="choice">
+          <input type="checkbox" id="skill_telecom" name="skills" value="telecommunications">
+          <label for="skill_telecom">Telecommunications</label>
+        </span>
+        <span class="choice">
+          <input type="checkbox" id="skill_biomedical" name="skills" value="biomedical-instrumentation">
+          <label for="skill_biomedical">Biomedical Instrumentation</label>
+        </span>
+        <span class="choice">
+          <input type="checkbox" id="skill_ai" name="skills" value="artificial-intelligence">
+          <label for="skill_ai">Artificial Intelligence / Machine Learning</label>
+        </span>
+        <span class="choice">
+          <input type="checkbox" id="skill_signal" name="skills" value="signal-processing">
+          <label for="skill_signal">Signal Processing</label>
+        </span>
+      </div>
+    </fieldset>
+
+    <div class="field-grid">
+
+      <p class="field">
+        <label for="language">Primary programming language</label>
+        {# A <datalist> is a set of suggestions, not a fixed set of choices:
+           the box still accepts anything typed into it. #}
+        <input type="text" id="language" name="language"
+               list="languages" placeholder="Start typing..."
+               maxlength="40" autocomplete="off">
+        <datalist id="languages">
+          <option value="Python"></option>
+          <option value="C"></option>
+          <option value="C++"></option>
+          <option value="C#"></option>
+          <option value="Java"></option>
+          <option value="JavaScript"></option>
+          <option value="MATLAB"></option>
+          <option value="VHDL"></option>
+          <option value="Verilog"></option>
+          <option value="Assembly"></option>
+          <option value="Rust"></option>
+          <option value="Go"></option>
+          <option value="R"></option>
+          <option value="Swift"></option>
+          <option value="Kotlin"></option>
+          <option value="PHP"></option>
+        </datalist>
+      </p>
+
+      <p class="field">
+        <label for="software">Engineering software used</label>
+        {# "multiple" turns the drop-down into a scrolling list that allows
+           more than one choice; "size" sets how many rows show at once. #}
+        <select id="software" name="software" multiple size="8">
+          <option value="MATLAB">MATLAB</option>
+          <option value="Simulink">Simulink</option>
+          <option value="LabVIEW">LabVIEW</option>
+          <option value="LTspice">LTspice</option>
+          <option value="Vivado">Vivado</option>
+          <option value="SolidWorks">SolidWorks</option>
+          <option value="Proteus">Proteus</option>
+          <option value="AutoCAD">AutoCAD</option>
+          <option value="ANSYS">ANSYS</option>
+          <option value="Altium Designer">Altium Designer</option>
+          <option value="Quartus">Quartus</option>
+          <option value="KiCad">KiCad</option>
+          <option value="Arduino IDE">Arduino IDE</option>
+        </select>
+        <span class="hint">Hold Ctrl (Windows) or Command (Mac) to select several options.</span>
+      </p>
+
+    </div>
+  </fieldset>
+
+
+  <!-- ============ 4. Final Year Project ============ -->
+  <fieldset class="tile form-block">
+    <legend>4. Final Year Project</legend>
+
+    <div class="field-grid">
+
+      <p class="field field--wide">
+        <label for="project_title">Proposed project title</label>
+        <input type="text" id="project_title" name="project_title"
+               placeholder="Enter a tentative project title"
+               maxlength="120">
+      </p>
+
+      <p class="field field--wide">
+        <label for="project_area">Preferred project area</label>
+        {# <optgroup> puts headings inside the drop-down. The headings are
+           labels only — they cannot be selected. #}
+        <select id="project_area" name="project_area">
+          <option value="">-- Select an area --</option>
+          <optgroup label="Computer Engineering">
+            <option value="artificial-intelligence">Artificial Intelligence</option>
+            <option value="web-applications">Web Applications</option>
+            <option value="cybersecurity">Cybersecurity</option>
+            <option value="internet-of-things">Internet of Things</option>
+          </optgroup>
+          <optgroup label="Electrical Engineering">
+            <option value="power-systems">Power Systems</option>
+            <option value="renewable-energy">Renewable Energy</option>
+            <option value="control-systems">Control Systems</option>
+          </optgroup>
+          <optgroup label="Biomedical Engineering">
+            <option value="medical-imaging">Medical Imaging</option>
+            <option value="biosensors">Biosensors</option>
+            <option value="medical-devices">Medical Devices</option>
+          </optgroup>
+          <optgroup label="Telecommunications Engineering">
+            <option value="wireless-communications">Wireless Communications</option>
+            <option value="5g-6g-networks">5G / 6G Networks</option>
+            <option value="digital-signal-processing">Digital Signal Processing</option>
+          </optgroup>
+        </select>
+      </p>
+
+      <p class="field field--wide">
+        <label for="description">Brief project description</label>
+        <textarea id="description" name="description" rows="5" maxlength="600"
+                  placeholder="Describe the problem, proposed solution, and expected outcome..."></textarea>
+        <span class="hint">Up to 600 characters.</span>
+      </p>
+
+      <p class="field">
+        <label for="team_size">Preferred team size</label>
+        <input type="number" id="team_size" name="team_size"
+               value="2" min="1" max="4" step="1">
+      </p>
+
+      <p class="field">
+        <label for="project_color">Colour for your project dashboard</label>
+        {# type="color" opens the operating system's colour picker and sends
+           back a hex value such as #6A56CF. profile.html uses it to tint
+           its headings. #}
+        <input type="color" id="project_color" name="project_color" value="#6A56CF">
+      </p>
+
+      <p class="field">
+        <label for="meeting_date">Preferred meeting date</label>
+        <input type="date" id="meeting_date" name="meeting_date"
+               min="2026-09-01" max="2027-06-30">
+      </p>
+
+      <p class="field">
+        <label for="meeting_time">Preferred meeting time</label>
+        {# step="900" makes the time box step in quarter hours (900 seconds). #}
+        <input type="time" id="meeting_time" name="meeting_time"
+               min="08:00" max="18:00" step="900">
+      </p>
+
+    </div>
+  </fieldset>
+
+
+  <!-- ============ 5. Confirm and send ============ -->
+  <fieldset class="tile form-block form-block--send">
+    <legend>5. Confirmation</legend>
+
+    {# A hidden field is never shown and cannot be edited, but it is still
+       submitted with everything else. It records which version of the form
+       the answers came from. #}
+    <input type="hidden" name="form_version" value="2026-2027">
+
+    <span class="choice choice--consent">
+      <input type="checkbox" id="confirmation" name="confirmation" value="yes" required>
+      <label for="confirmation">I confirm that the information provided is accurate.</label>
+    </span>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn--go">Submit profile</button>
+      <button type="reset" class="btn btn--quiet">Clear form</button>
+    </div>
+  </fieldset>
+
+</form>
+
+{% endblock %}

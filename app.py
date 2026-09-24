@@ -8,7 +8,7 @@ import os
 import re
 from urllib.parse import urlparse
 
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, request, url_for
 
 app = Flask(__name__)
 
@@ -24,6 +24,7 @@ MENU = [
     ("web_history", "Web"),
     ("internet_history_ai", "Internet (AI)"),
     ("web_history_ai", "Web (AI)"),
+    ("submit_profile", "Profile"),
 ]
 
 # The four history pages. Titles and descriptions live here so the pages,
@@ -180,6 +181,7 @@ def home():
         {"week": 2, "title": "History of the Web", "endpoint": "web_history"},
         {"week": 2, "title": "History of the Internet (AI)", "endpoint": "internet_history_ai"},
         {"week": 2, "title": "History of the Web (AI)", "endpoint": "web_history_ai"},
+        {"week": 4, "title": "Engineering Student Profile form", "endpoint": "submit_profile"},
     ]
     return render_template("index.html", weekly_work=weekly_work)
 
@@ -202,6 +204,31 @@ def internet_history_ai():
 @app.route("/web-history-ai")
 def web_history_ai():
     return render_template("web-history-ai.html")
+
+
+# --- Week 4: the Engineering Student Profile form -------------------------
+# This route is the instructor's app_week4.py, unchanged. Server-side form
+# handling is taught later; for now it is a black box with one job:
+#
+#   GET  /submit-profile  -> show the empty form   (templates/profile-form.html)
+#   POST /submit-profile  -> read what was sent and show templates/profile.html
+#
+# request.form is the submitted data. .to_dict() keeps ONE value per field,
+# which is right for text boxes, radios and single selects. Checkboxes and a
+# <select multiple> can send the same name several times, so those two are
+# read with .getlist() instead, which returns every value as a list.
+@app.route("/submit-profile", methods=["GET", "POST"])
+def submit_profile():
+    if request.method == "POST":
+        data = request.form.to_dict()                   # all single-value fields
+        skills = request.form.getlist("skills")         # checkboxes -> list
+        software = request.form.getlist("software")     # multiple <select> -> list
+        return render_template(
+            "profile.html", data=data, skills=skills, software=software
+        )
+
+    # First visit (GET): just show the empty form.
+    return render_template("profile-form.html")
 
 
 @app.errorhandler(404)
