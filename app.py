@@ -41,7 +41,7 @@ HISTORY_PAGES = {
                        "from packet switching to IPv6 reaching the majority in 2026.",
         "topic": "internet",
         "author": "hand",
-        "tint": "navy",
+        "tint": "soft",
         "image": "img/internet-cover.webp",
         "alt": "Paper-craft illustration: a globe laced with network lines, "
                "linked to four early computer terminals.",
@@ -53,7 +53,7 @@ HISTORY_PAGES = {
                        "from ENQUIRE at CERN to the encrypted web of 2026.",
         "topic": "web",
         "author": "hand",
-        "tint": "sand",
+        "tint": "mint",
         "image": "img/web-cover.webp",
         "alt": "Paper-craft illustration: stacked browser windows joined by "
                "golden hyperlink threads.",
@@ -65,7 +65,7 @@ HISTORY_PAGES = {
                        "built from verified research for GIN446.",
         "topic": "internet",
         "author": "ai",
-        "tint": "sky",
+        "tint": "sun",
         "image": "img/internet-ai-cover.webp",
         "alt": "Paper-craft illustration: undersea fibre-optic cables rising to "
                "a coastline, with a satellite and server racks.",
@@ -77,7 +77,7 @@ HISTORY_PAGES = {
                        "built from verified research for GIN446.",
         "topic": "web",
         "author": "ai",
-        "tint": "mist",
+        "tint": "pink",
         "image": "img/web-ai-cover.webp",
         "alt": "Paper-craft illustration: a web page pulled apart into floating "
                "layers, threaded together with gold ribbons.",

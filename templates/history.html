@@ -29,23 +29,33 @@
 {% block content %}
 <div class="history">
 
-  {# The page opens as a bento row: a title tile beside the cover picture,
-     then the time ruler across the full width underneath. #}
-  <div class="bento bento--head">
+  {# The page opens with the giant title, then a bento row: the picture
+     beside a short standfirst, and the time ruler underneath. #}
+  <header class="page-head">
+    {% if kicker %}<p class="eyebrow">{{ kicker }}</p>{% endif %}
+    <h1 class="display">{{ page_heading }}<span class="bracket" aria-hidden="true"></span></h1>
+  </header>
 
-    <header class="tile tile--head tile--{{ page.tint }}">
-      {% if kicker %}<p class="tile-kicker">{{ kicker }}</p>{% endif %}
-      <h1>{{ page_heading }}</h1>
-      {% if byline %}<p class="byline">{{ byline }}</p>{% endif %}
-    </header>
+  <div class="bento">
 
-    <div class="tile tile--cover">
+    <div class="tile tile--photo span-4 tall-2">
       <img src="{{ static_url(page.image) }}" alt="{{ page.alt }}"
            width="1400" height="784" loading="eager" decoding="async">
     </div>
 
-    {# Time ruler: one gold tick per entry, built from the timeline itself. #}
-    <nav class="tile tile--ruler ruler" aria-label="Timeline at a glance">
+    {# ruler_ticks reads the rendered timeline, so this count is always
+       whatever the page actually contains. #}
+    {% set entries = self.timeline()|ruler_ticks %}
+    <div class="tile tile--{{ page.tint }} span-2 tall-2">
+      <p class="tile-kicker">{{ "Written by hand" if page.author == "hand" else "Generated with AI" }}</p>
+      <p class="tile-text">{{ page.description }}</p>
+      {% if byline %}<p class="byline">{{ byline }}</p>{% endif %}
+      <p class="stat-number">{{ entries|length }}</p>
+      <p class="stat-label">entries, {{ entries[0].year }}&ndash;{{ entries[-1].year }}</p>
+    </div>
+
+    {# Time ruler: one lilac tick per entry, built from the timeline itself. #}
+    <nav class="tile tile--ruler span-6" aria-label="Timeline at a glance">
       <p class="tile-kicker">Every entry on one line</p>
       <ol class="ruler-ticks">
         {% for tick in self.timeline()|ruler_ticks %}
@@ -67,7 +77,7 @@
 
   <div class="history-grid">
 
-    <nav class="toc panel" aria-label="On this page">
+    <nav class="toc tile" aria-label="On this page">
       <p class="toc-title">On this page</p>
       <ol>
         <li><a href="#introduction">{{ headings.intro }}</a></li>
@@ -120,14 +130,14 @@
         <ul>
           {% for other, kind in [(counterpart, "Compare with the " ~ ("AI-generated" if history_pages[counterpart].author == "ai" else "hand-made") ~ " version"), (other_topic, "Other topic")] %}
             <li>
-              <a class="tile tile--page tile--{{ history_pages[other].tint }}" href="{{ url_for(other) }}">
+              <a class="tile tile--{{ history_pages[other].tint }}" href="{{ url_for(other) }}">
                 <img class="tile-image" src="{{ static_url(history_pages[other].image) }}"
                      alt="{{ history_pages[other].alt }}"
                      width="1400" height="784" loading="lazy" decoding="async">
                 <span class="tile-kicker">{{ kind }}</span>
                 <span class="tile-title">{{ history_pages[other].short }}</span>
                 <span class="tile-text">{{ history_pages[other].description }}</span>
-                <span class="tile-go" aria-hidden="true">Read</span>
+                <span class="tile-go" aria-hidden="true">&rarr;</span>
               </a>
             </li>
           {% endfor %}

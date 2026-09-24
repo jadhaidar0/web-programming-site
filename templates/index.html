@@ -5,38 +5,64 @@
 {% block content %}
 {#
   The home page is a "bento" wall: tiles of different sizes packed into one
-  grid. Three grids are stacked, all with the same four columns and the same
-  gap, so they read as one continuous wall while the HTML stays simple and
-  each section keeps its own heading.
+  six-column grid. The span-* and tall-* classes say how many columns and
+  rows each tile takes. Several grids stacked with the same six columns and
+  the same gap read as one wall, while each section keeps its own heading.
 #}
 <div class="home">
 
-  {# ---- Grid 1: the introduction ---- #}
+  <p class="eyebrow">Web Programming · GIN446 · School of Engineering, USEK</p>
+  <h1 class="display">Portfolio<span class="bracket" aria-hidden="true"></span></h1>
+
+  {# ---- Grid 1: who and what ---- #}
   <div class="bento">
 
-    <section class="tile tile--hero" aria-labelledby="hero-title">
-      <p class="tile-kicker">GIN446 · School of Engineering · USEK</p>
-      <h1 id="hero-title">Web<br>Programming<br><em>Portfolio</em></h1>
-      <p class="lead">A live site that grows one page or feature every week.</p>
-      <p class="tile-sign">Jad Haidar</p>
+    <section class="tile tile--lilac t-profile span-2 tall-3" aria-labelledby="who-title">
+      <img class="profile-portrait" src="{{ static_url('img/mark.webp') }}"
+           alt="Paper-craft illustration: a circular eye whose iris is rings of network lines, with a globe at its centre."
+           width="900" height="900" loading="eager" decoding="async">
+      <p class="profile-name" id="who-title">I'm,<strong>Jad Haidar</strong></p>
+      <p class="profile-mail"><a href="mailto:jad.haidar@net.usek.edu.lb">jad.haidar@net.usek.edu.lb</a></p>
+
+      {# A round rubber-stamp badge. <textPath> bends the line of text
+         around the circle drawn in <defs>; CSS turns the whole thing. #}
+      <svg class="stamp" viewBox="0 0 120 120" aria-hidden="true" focusable="false">
+        <defs>
+          <path id="stamp-curve" fill="none"
+                d="M60,60 m-42,0 a42,42 0 1,1 84,0 a42,42 0 1,1 -84,0"></path>
+        </defs>
+        <circle class="stamp-ring" cx="60" cy="60" r="56"></circle>
+        <text><textPath href="#stamp-curve">WEB PROGRAMMING · FALL 2026 · USEK · </textPath></text>
+        <circle class="stamp-dot" cx="60" cy="60" r="6"></circle>
+      </svg>
     </section>
 
-    <div class="tile tile--mark">
-      <img src="{{ static_url('img/home-mark.webp') }}"
-           alt="Paper-craft illustration: a circular eye whose iris is built from rings of network lines, with a small globe at its centre."
-           width="1000" height="1000" loading="eager" decoding="async">
+    <div class="tile tile--photo span-2 tall-2">
+      <img src="{{ static_url('img/internet-cover.webp') }}"
+           alt="Paper-craft illustration: a globe laced with network lines, linked to four early computer terminals."
+           width="1400" height="784" loading="eager" decoding="async">
     </div>
 
-    <div class="tile tile--count">
+    <div class="tile tile--mint">
       <p class="stat-number">{{ history_pages|length }}</p>
-      <p class="stat-label">history pages, each written twice — by hand and by AI</p>
+      <p class="stat-label">history pages</p>
     </div>
 
-    <div class="tile tile--meta">
-      <p class="tile-kicker">Course</p>
-      <p class="meta-line">Web Programming</p>
-      <p class="meta-line">Fall 2026 – 2027</p>
-      <p class="meta-line">Built with Flask, Jinja and one stylesheet</p>
+    <div class="tile tile--sun">
+      <p class="stat-number">{{ weekly_work|length }}</p>
+      <p class="stat-label">pieces of weekly work</p>
+    </div>
+
+    <div class="tile tile--coal span-2">
+      <p class="tile-kicker">Built with</p>
+      <p class="stat-label">Flask and Jinja templates on the server, one hand-written
+         stylesheet in the browser, and no JavaScript at all.</p>
+    </div>
+
+    <div class="tile tile--ink span-4">
+      <p class="tile-kicker">Two topics</p>
+      <p class="stat-label">Each one written twice — once by hand, once with AI — so the
+         two versions can be compared side by side.</p>
     </div>
 
   </div>
@@ -46,13 +72,13 @@
     <h2 class="bento-heading" id="history-pages-title">History pages</h2>
 
     {% for endpoint, info in history_pages.items() %}
-      <a class="tile tile--page tile--{{ info.tint }}" href="{{ url_for(endpoint) }}">
+      <a class="tile tile--{{ info.tint }} span-3" href="{{ url_for(endpoint) }}">
         <img class="tile-image" src="{{ static_url(info.image) }}" alt="{{ info.alt }}"
              width="1400" height="784" loading="lazy" decoding="async">
         <span class="tile-kicker">{{ "Written by hand" if info.author == "hand" else "Generated with AI" }}</span>
         <span class="tile-title">{{ info.short }}</span>
         <span class="tile-text">{{ info.description }}</span>
-        <span class="tile-go" aria-hidden="true">Read</span>
+        <span class="tile-go" aria-hidden="true">&rarr;</span>
       </a>
     {% endfor %}
   </section>
@@ -61,7 +87,7 @@
   <section class="bento" aria-labelledby="weekly-work-title">
     <h2 class="bento-heading" id="weekly-work-title">Weekly work</h2>
 
-    <div class="tile tile--weekly">
+    <div class="tile span-4">
       <!-- Each week you add a link here to that week's page or feature. -->
       <ol class="weekly-list">
         {% for item in weekly_work %}
@@ -75,10 +101,10 @@
       </ol>
     </div>
 
-    <div class="tile tile--figure">
+    <div class="tile tile--photo span-2">
       <img src="{{ static_url('img/timeline-tile.webp') }}"
            alt="Paper-craft illustration: a vertical timeline spine with milestone cards branching left and right."
-           width="1000" height="1000" loading="lazy" decoding="async">
+           width="900" height="900" loading="lazy" decoding="async">
     </div>
   </section>
 
