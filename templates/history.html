@@ -29,14 +29,24 @@
 {% block content %}
 <div class="history">
 
-  <header class="page-header panel">
-    {% if kicker %}<p class="kicker">{{ kicker }}</p>{% endif %}
-    <h1>{{ page_heading }}</h1>
-    {% if byline %}<p class="byline">{{ byline }}</p>{% endif %}
-    {% block hero %}{% endblock %}
+  {# The page opens as a bento row: a title tile beside the cover picture,
+     then the time ruler across the full width underneath. #}
+  <div class="bento bento--head">
+
+    <header class="tile tile--head tile--{{ page.tint }}">
+      {% if kicker %}<p class="tile-kicker">{{ kicker }}</p>{% endif %}
+      <h1>{{ page_heading }}</h1>
+      {% if byline %}<p class="byline">{{ byline }}</p>{% endif %}
+    </header>
+
+    <div class="tile tile--cover">
+      <img src="{{ static_url(page.image) }}" alt="{{ page.alt }}"
+           width="1400" height="784" loading="eager" decoding="async">
+    </div>
 
     {# Time ruler: one gold tick per entry, built from the timeline itself. #}
-    <nav class="ruler" aria-label="Timeline at a glance">
+    <nav class="tile tile--ruler ruler" aria-label="Timeline at a glance">
+      <p class="tile-kicker">Every entry on one line</p>
       <ol class="ruler-ticks">
         {% for tick in self.timeline()|ruler_ticks %}
           <li style="--at: {{ tick.left }}%; --stack: {{ tick.stack }}; --tick: {{ 1.25 + tick.stack * 0.5 }}rem">
@@ -48,7 +58,12 @@
         {% for year in range(1960, 2030, 10) %}<span style="--at: {{ ((year - 1960) / 66 * 100)|round(2) }}%">{{ year }}</span>{% endfor %}
       </p>
     </nav>
-  </header>
+
+  </div>
+
+  {# Optional figure under the header (the AI pages use it). #}
+  {% set hero %}{% block hero %}{% endblock %}{% endset %}
+  {% if hero|trim %}<div class="panel page-hero">{{ hero }}</div>{% endif %}
 
   <div class="history-grid">
 
@@ -103,20 +118,19 @@
       {% set counterpart, other_topic = related_pages(request.endpoint) %}
       <nav class="related" aria-label="Related history pages">
         <ul>
-          <li>
-            <a class="related-card" href="{{ url_for(counterpart) }}">
-              <span class="related-kind">Compare with the {{ "AI-generated" if history_pages[counterpart].author == "ai" else "hand-made" }} version</span>
-              <span class="related-title">{{ history_pages[counterpart].title }}</span>
-              <span class="related-text">{{ history_pages[counterpart].description }}</span>
-            </a>
-          </li>
-          <li>
-            <a class="related-card" href="{{ url_for(other_topic) }}">
-              <span class="related-kind">Other topic</span>
-              <span class="related-title">{{ history_pages[other_topic].title }}</span>
-              <span class="related-text">{{ history_pages[other_topic].description }}</span>
-            </a>
-          </li>
+          {% for other, kind in [(counterpart, "Compare with the " ~ ("AI-generated" if history_pages[counterpart].author == "ai" else "hand-made") ~ " version"), (other_topic, "Other topic")] %}
+            <li>
+              <a class="tile tile--page tile--{{ history_pages[other].tint }}" href="{{ url_for(other) }}">
+                <img class="tile-image" src="{{ static_url(history_pages[other].image) }}"
+                     alt="{{ history_pages[other].alt }}"
+                     width="1400" height="784" loading="lazy" decoding="async">
+                <span class="tile-kicker">{{ kind }}</span>
+                <span class="tile-title">{{ history_pages[other].short }}</span>
+                <span class="tile-text">{{ history_pages[other].description }}</span>
+                <span class="tile-go" aria-hidden="true">Read</span>
+              </a>
+            </li>
+          {% endfor %}
         </ul>
       </nav>
 

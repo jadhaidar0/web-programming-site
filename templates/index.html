@@ -3,44 +3,83 @@
 {% block description %}Web Programming portfolio for the GIN446 course at USEK. A live site that grows one page or feature every week.{% endblock %}
 
 {% block content %}
+{#
+  The home page is a "bento" wall: tiles of different sizes packed into one
+  grid. Three grids are stacked, all with the same four columns and the same
+  gap, so they read as one continuous wall while the HTML stays simple and
+  each section keeps its own heading.
+#}
 <div class="home">
 
-  <header class="home-hero">
-    <div class="home-hero-text">
-      <h1>Web Programming Portfolio — Jad Haidar</h1>
-      <p class="lead">A live site that grows one page or feature every week.</p>
-    </div>
-    <img class="home-hero-mark" src="{{ url_for('static', filename='logo-white.png') }}"
-         alt="" width="767" height="392">
-  </header>
+  {# ---- Grid 1: the introduction ---- #}
+  <div class="bento">
 
-  <section class="page-section panel" aria-labelledby="history-pages-title">
-    <h2 id="history-pages-title">History pages</h2>
-    <ul class="page-cards">
-      {% for endpoint, info in history_pages.items() %}
-        <li>
-          <a class="page-card" href="{{ url_for(endpoint) }}">
-            <span class="page-card-title">{{ info.title }}</span>
-            <span class="page-card-text">{{ info.description }}</span>
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
+    <section class="tile tile--hero" aria-labelledby="hero-title">
+      <p class="tile-kicker">GIN446 · School of Engineering · USEK</p>
+      <h1 id="hero-title">Web<br>Programming<br><em>Portfolio</em></h1>
+      <p class="lead">A live site that grows one page or feature every week.</p>
+      <p class="tile-sign">Jad Haidar</p>
+    </section>
+
+    <div class="tile tile--mark">
+      <img src="{{ static_url('img/home-mark.webp') }}"
+           alt="Paper-craft illustration: a circular eye whose iris is built from rings of network lines, with a small globe at its centre."
+           width="1000" height="1000" loading="eager" decoding="async">
+    </div>
+
+    <div class="tile tile--count">
+      <p class="stat-number">{{ history_pages|length }}</p>
+      <p class="stat-label">history pages, each written twice — by hand and by AI</p>
+    </div>
+
+    <div class="tile tile--meta">
+      <p class="tile-kicker">Course</p>
+      <p class="meta-line">Web Programming</p>
+      <p class="meta-line">Fall 2026 – 2027</p>
+      <p class="meta-line">Built with Flask, Jinja and one stylesheet</p>
+    </div>
+
+  </div>
+
+  {# ---- Grid 2: the four history pages ---- #}
+  <section class="bento" aria-labelledby="history-pages-title">
+    <h2 class="bento-heading" id="history-pages-title">History pages</h2>
+
+    {% for endpoint, info in history_pages.items() %}
+      <a class="tile tile--page tile--{{ info.tint }}" href="{{ url_for(endpoint) }}">
+        <img class="tile-image" src="{{ static_url(info.image) }}" alt="{{ info.alt }}"
+             width="1400" height="784" loading="lazy" decoding="async">
+        <span class="tile-kicker">{{ "Written by hand" if info.author == "hand" else "Generated with AI" }}</span>
+        <span class="tile-title">{{ info.short }}</span>
+        <span class="tile-text">{{ info.description }}</span>
+        <span class="tile-go" aria-hidden="true">Read</span>
+      </a>
+    {% endfor %}
   </section>
 
-  <section class="page-section panel" aria-labelledby="weekly-work-title">
-    <h2 id="weekly-work-title">Weekly Work</h2>
-    <!-- Each week you add a link here to that week's page or feature. -->
-    <ol class="weekly-list">
-      {% for item in weekly_work %}
-        <li>
-          <span class="weekly-week">Week {{ item.week }}</span>
-          <a href="{{ url_for(item.endpoint) }}">{{ item.title }}</a>
-        </li>
-      {% else %}
-        <li>Week 1 — live site launched.</li>
-      {% endfor %}
-    </ol>
+  {# ---- Grid 3: the weekly log ---- #}
+  <section class="bento" aria-labelledby="weekly-work-title">
+    <h2 class="bento-heading" id="weekly-work-title">Weekly work</h2>
+
+    <div class="tile tile--weekly">
+      <!-- Each week you add a link here to that week's page or feature. -->
+      <ol class="weekly-list">
+        {% for item in weekly_work %}
+          <li>
+            <span class="weekly-week">Week {{ item.week }}</span>
+            <a href="{{ url_for(item.endpoint) }}">{{ item.title }}</a>
+          </li>
+        {% else %}
+          <li>Week 1 — live site launched.</li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    <div class="tile tile--figure">
+      <img src="{{ static_url('img/timeline-tile.webp') }}"
+           alt="Paper-craft illustration: a vertical timeline spine with milestone cards branching left and right."
+           width="1000" height="1000" loading="lazy" decoding="async">
+    </div>
   </section>
 
 </div>
