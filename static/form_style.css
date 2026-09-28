@@ -97,14 +97,22 @@
 
 /* The legend is the fieldset's own heading. It is not an <h2>, so it
    does not affect the page's heading outline. */
+/* A flex row with align-items: center is what actually centres the
+   number against the title. Laying them out as inline boxes instead
+   leaves the circle sitting on the text baseline, which pushes it low
+   and stretches the pill. */
 .form-block > legend {
-  padding: 0.35rem 1.1rem 0.35rem 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.3rem 1.1rem 0.3rem 0.3rem;
   border-radius: 999px;
   background: var(--ink);
   color: var(--paper);
   font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: 0.01em;
+  line-height: 1.2;
 }
 
 /* The number in the circle is drawn by CSS, not typed into the HTML, so
@@ -114,17 +122,17 @@
    counter() printed here. */
 .form-block > legend::before {
   content: counter(section);
-  display: inline-grid;
-  place-items: center;
+  display: grid;
+  place-items: center;          /* centres the digit inside the circle */
+  flex-shrink: 0;               /* keeps it a circle, never an oval */
   width: 1.75rem;
   height: 1.75rem;
-  margin-right: 0.6rem;
   border-radius: 50%;
   background: var(--lilac);
   color: var(--paper);
   font-size: 0.8125rem;
   font-weight: 800;
-  vertical-align: -0.5rem;
+  line-height: 1;
 }
 
 
