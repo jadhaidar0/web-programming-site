@@ -127,6 +127,9 @@ img { max-width: 100%; height: auto; }
   font-size: clamp(2.75rem, 8.5vw, 8rem);
   font-weight: 800;
   letter-spacing: -0.055em;
+  /* The letters are pulled tight, so a normal word space looks like a
+     hole between them. This pulls the gap in to match. */
+  word-spacing: -0.045em;
   line-height: 0.85;
   text-wrap: balance;
 }
