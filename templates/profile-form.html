@@ -35,10 +35,30 @@
 
 <p class="eyebrow">Week 4 · GIN446 · School of Engineering, USEK</p>
 <h1 class="display">Student profile<span class="bracket" aria-hidden="true"></span></h1>
-<p class="lead form-intro">
-  Complete this form to provide information about your academic background,
-  technical skills, internship experience, and Final Year Project preferences.
-</p>
+
+{# The same bento row the other pages open with, so the form does not
+   start with a wall of boxes. .tile, .span-*, .tall-* all come from
+   style.css — nothing new is invented here. #}
+<div class="bento">
+  <div class="tile tile--photo span-2 tall-2">
+    <img src="{{ static_url('img/form-tile.webp') }}"
+         alt="Paper-craft illustration: a clipboard holding a form with ticked boxes and a pencil."
+         width="900" height="900" loading="eager" decoding="async">
+  </div>
+
+  <div class="tile tile--soft span-4 tall-2">
+    <p class="tile-kicker">Before you start</p>
+    <p class="lead">
+      Complete this form to provide information about your academic background,
+      technical skills, internship experience, and Final Year Project preferences.
+    </p>
+    <ul class="form-steps">
+      <li>Five short sections.</li>
+      <li>Fields marked <span class="req-star" aria-hidden="true">*</span> must be filled in.</li>
+      <li>Your answers are shown back to you as a profile page straight away.</li>
+    </ul>
+  </div>
+</div>
 
 {# method="post" sends the data in the request body rather than in the URL,
    which is what you want for anything long or personal. #}
@@ -46,7 +66,7 @@
 
   <!-- ============ 1. Personal information ============ -->
   <fieldset class="tile form-block">
-    <legend>1. Personal information</legend>
+    <legend>Personal information</legend>
 
     <div class="field-grid">
 
@@ -116,7 +136,7 @@
 
   <!-- ============ 2. Academic information ============ -->
   <fieldset class="tile form-block">
-    <legend>2. Academic information</legend>
+    <legend>Academic information</legend>
 
     <div class="field-grid">
 
@@ -196,7 +216,7 @@
 
   <!-- ============ 3. Technical background ============ -->
   <fieldset class="tile form-block">
-    <legend>3. Technical background</legend>
+    <legend>Technical background</legend>
 
     {# Checkboxes all share name="skills", so ticking several sends the name
        several times. app.py reads them with request.form.getlist("skills"). #}
@@ -296,7 +316,7 @@
 
   <!-- ============ 4. Final Year Project ============ -->
   <fieldset class="tile form-block">
-    <legend>4. Final Year Project</legend>
+    <legend>Final Year Project</legend>
 
     <div class="field-grid">
 
@@ -377,7 +397,7 @@
 
   <!-- ============ 5. Confirm and send ============ -->
   <fieldset class="tile form-block form-block--send">
-    <legend>5. Confirmation</legend>
+    <legend>Confirmation</legend>
 
     {# A hidden field is never shown and cannot be edited, but it is still
        submitted with everything else. It records which version of the form
