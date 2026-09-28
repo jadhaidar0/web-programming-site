@@ -44,7 +44,23 @@
    more blocks stacked vertically, so it gets a little more air. */
 .profile-form { --gap: 1.1rem; }
 
-.form-intro { max-width: var(--measure); margin-bottom: 1.75rem; }
+/* The "before you start" list in the header tile. */
+.form-steps { margin: 1rem 0 0; padding: 0; list-style: none; }
+.form-steps li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.form-steps li + li { margin-top: 0.35rem; }
+.form-steps li::before {            /* a small tick instead of a bullet */
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--lilac);
+  font-weight: 800;
+}
+.req-star { color: var(--lilac); font-weight: 800; }
 
 
 /* ---------- 2. The form blocks ----------
@@ -52,6 +68,7 @@
 .profile-form {
   display: grid;
   gap: var(--gap);
+  counter-reset: section;          /* starts the section counter at 0 */
 }
 
 /* A fieldset arrives with its own border, padding, and an implicit
@@ -64,12 +81,24 @@
   margin: 0;
   padding: clamp(1.25rem, 2vw, 1.9rem);
   border: 0;
+  counter-increment: section;      /* +1 for each section, in order */
 }
+
+/* Each section gets its own pale tint, taken from the tile colours used
+   on the rest of the site. :nth-of-type counts fieldsets, and the ">"
+   means only the five top-level ones — the small fieldsets nested
+   inside a section are not children of the form, so they are skipped.
+   Body text on every tint below is at least 17:1. */
+.profile-form > .form-block:nth-of-type(1) { background: #F1EFFC; }  /* lilac */
+.profile-form > .form-block:nth-of-type(2) { background: #E9F6F0; }  /* mint  */
+.profile-form > .form-block:nth-of-type(3) { background: #FDF4E4; }  /* sun   */
+.profile-form > .form-block:nth-of-type(4) { background: #FBEEFA; }  /* pink  */
+.profile-form > .form-block:nth-of-type(5) { background: var(--lilac-2); }
 
 /* The legend is the fieldset's own heading. It is not an <h2>, so it
    does not affect the page's heading outline. */
 .form-block > legend {
-  padding: 0.4rem 1rem;
+  padding: 0.35rem 1.1rem 0.35rem 0.35rem;
   border-radius: 999px;
   background: var(--ink);
   color: var(--paper);
@@ -78,8 +107,25 @@
   letter-spacing: 0.01em;
 }
 
-/* The last block is tinted so the end of the form is obvious. */
-.form-block--send { background: var(--lilac-2); }
+/* The number in the circle is drawn by CSS, not typed into the HTML, so
+   the sections renumber themselves if one is added, moved or removed.
+   Same counter idea as the numbered reference lists on the history
+   pages: counter-reset on the parent, counter-increment on each item,
+   counter() printed here. */
+.form-block > legend::before {
+  content: counter(section);
+  display: inline-grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: 0.6rem;
+  border-radius: 50%;
+  background: var(--lilac);
+  color: var(--paper);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  vertical-align: -0.5rem;
+}
 
 
 /* ---------- 3. Fields and labels ----------
@@ -156,15 +202,18 @@ textarea {
 
 textarea { resize: vertical; line-height: 1.6; }
 
-/* The multiple-choice list. "size" in the HTML sets how many rows show;
-   this makes the selected rows obvious. */
-select[multiple] { padding: 0.35rem; }
+/* The multiple-choice list. "size" in the HTML sets how many rows show. */
+select[multiple] { padding: 0.4rem; border-radius: 0.9rem; }
 select[multiple] option {
-  padding: 0.35rem 0.5rem;
-  border-radius: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.5rem;
 }
+/* Several browsers ignore a plain background-color on a selected
+   <option> and paint their own highlight instead. A gradient is not
+   ignored, so a one-colour gradient is used to force the colour. */
 select[multiple] option:checked {
-  background: var(--lilac-2);
+  background: linear-gradient(var(--lilac), var(--lilac));
+  color: var(--paper);
   font-weight: 600;
 }
 
@@ -189,11 +238,18 @@ input[type="color"] {
   outline: 3px solid var(--lilac);
   outline-offset: 2px;
   border-color: var(--lilac);
+  box-shadow: 0 8px 20px -12px rgb(106 86 207 / 0.9);
 }
 
 /* The whole field lights up, not just the box, so it is easy to see
    where you are in a long form. */
 .field:focus-within > label { color: var(--lilac); }
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(input, select, textarea) {
+    transition: border-color 0.16s ease, box-shadow 0.16s ease;
+  }
+}
 
 
 /* ---------- 5. Radio and checkbox groups ----------
@@ -209,17 +265,14 @@ input[type="color"] {
 .field.subgroup { margin-top: 0; }
 .subgroup > legend { padding: 0 0.4rem; }
 
-.choice-row {
+/* Both groups wrap freely, so each pill is only as wide as its own text
+   and the rows fill up naturally. */
+.choice-row,
+.choice-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  margin-top: 0.6rem;
-}
-.choice-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
-  gap: 0.55rem 1.5rem;
-  margin-top: 0.6rem;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
 }
 
 .choice { display: flex; align-items: flex-start; gap: 0.55rem; }
@@ -238,9 +291,52 @@ input[type="color"] {
   line-height: 1.45;
   cursor: pointer;
 }
-/* A ticked box bolds its own label. :has() again: style the parent
-   based on the state of the input inside it. */
-.choice:has(input:checked) label { font-weight: 700; color: var(--ink); }
+
+/* ---- Choices as pills ----
+   Every choice in a .choice-row or a .choice-grid is drawn as a rounded
+   pill, and the pill FILLS with the accent colour when its own box is
+   ticked. :has(input:checked) is what makes that possible: it styles the
+   pill based on the state of the input inside it. The native checkbox
+   and radio are left in place, so the keyboard and screen readers keep
+   working exactly as before — only the surround is restyled. */
+:is(.choice-row, .choice-grid) .choice {
+  align-items: center;
+  padding: 0.55rem 1rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  cursor: pointer;
+}
+:is(.choice-row, .choice-grid) .choice input { margin: 0; }
+:is(.choice-row, .choice-grid) .choice:hover { border-color: var(--lilac); }
+
+:is(.choice-row, .choice-grid) .choice:has(input:checked) {
+  background: var(--lilac);
+  border-color: var(--lilac);
+}
+:is(.choice-row, .choice-grid) .choice:has(input:checked) label {
+  color: var(--paper);          /* white on lilac: 5.5:1 */
+  font-weight: 700;
+}
+/* On a lilac pill a lilac tick would vanish, so the box flips to white
+   and the browser picks a dark tick to sit on it. */
+:is(.choice-row, .choice-grid) .choice:has(input:checked) input {
+  accent-color: var(--paper);
+}
+/* The focus ring belongs on the pill, not on the little box inside it. */
+:is(.choice-row, .choice-grid) .choice:has(input:focus-visible) {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.choice-row, .choice-grid) .choice {
+    transition: background 0.16s ease, border-color 0.16s ease;
+  }
+}
+
+/* The consent box is on its own and stays a plain checkbox. */
+.choice--consent { align-items: flex-start; }
 
 .choice--consent { margin-top: 0.4rem; }
 .choice--consent label { font-weight: 600; }
