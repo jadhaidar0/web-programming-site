@@ -187,8 +187,8 @@ function restartQuiz() {
     userAnswers[i] = undefined;
   }
   currentQuestion = 0;
-  document.getElementById("resultsPanel").style.display = "none";
-  document.getElementById("quizPanel").style.display = "";
+  document.getElementById("resultsPanel").classList.remove("is-open");
+  document.getElementById("quizPanel").classList.remove("is-hidden");
   renderQuestion();
   document.getElementById("quizPanel").scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -308,11 +308,6 @@ function renderQuestion() {
     "Question " + (currentQuestion + 1) + " of " + questions.length;
   document.getElementById("questionText").textContent = current.question;
 
-  // One value handed to CSS: how far through the quiz we are, as a
-  // number between 0 and 1. The stylesheet draws the bar at the top of
-  // the panel from it, so the width lives in the CSS.
-  panel.style.setProperty("--progress", (currentQuestion + 1) / questions.length);
-
   renderStepper();
 
   // Rebuild the choices from scratch each time.
@@ -398,16 +393,30 @@ function renderStepper() {
     }
   }
 
+  // The deck ring and its label. --answered is a percentage; the
+  // stylesheet turns it into an angle for the conic-gradient, so the
+  // drawing stays in CSS and only the number comes from here.
+  const answered = countAnswered();
+  document.getElementById("quizPanel").style.setProperty(
+    "--answered", (answered / questions.length) * 100
+  );
+  document.getElementById("deckCount").textContent =
+    answered + "/" + questions.length;
   document.getElementById("answeredCount").textContent =
-    countAnswered() + " of " + questions.length + " answered";
+    answered === questions.length ? "All answered" : "answered so far";
 }
 
 /** Hide the quiz, show the results panel, fill it in. */
 function showResults(score, percentage, message, correction) {
-  document.getElementById("quizPanel").style.display = "none";
+  // Toggle a class rather than writing style.display directly. An inline
+  // style beats every rule in the stylesheet, so setting display here
+  // would flatten the panel's own grid layout. The class lets the
+  // stylesheet keep deciding HOW each panel is laid out; this only says
+  // WHICH one is showing.
+  document.getElementById("quizPanel").classList.add("is-hidden");
 
   const results = document.getElementById("resultsPanel");
-  results.style.display = "block";
+  results.classList.add("is-open");
 
   document.getElementById("scoreText").textContent =
     "Score: " + score + " / " + questions.length;
