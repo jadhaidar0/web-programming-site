@@ -1,19 +1,24 @@
 {#
   Week 5 — the JavaScript quiz.
 
-  Based on the provided quiz.html. The ids the activity depends on are
+  Based on the provided quiz.html. Every id the activity depends on is
   unchanged: progress, questionText, choices, the four navigation
   buttons, quizPanel, resultsPanel, scoreText, percentageText,
   performanceText and correction. static/quiz.js reads all of them.
 
+  Both panels share one shape: a dark "deck" on the left holding the
+  state and the controls, and a light "stage" on the right holding what
+  you read. On a narrow screen the two stack, deck first.
+
   Changes made to the provided file:
     - <main class="container"> became a <div>, because base.html already
       has a <main> and nesting them is invalid HTML.
-    - Empty containers added for the parts quiz.js draws: the answered
-      counter, the results strip and the correction cards.
+    - The deck and stage wrappers, plus empty containers for the parts
+      quiz.js draws: the rings, the stepper, the results strip and the
+      correction cards.
     - The plain-text correction now sits inside a <details>, so the
       output of buildCorrection() is still on the page but folded away
-      under the readable version.
+      beneath the readable version.
 #}
 {% extends "base.html" %}
 
@@ -30,24 +35,20 @@
   <p class="eyebrow">Week 5 · GIN446 · School of Engineering, USEK</p>
   <h1>JavaScript Quiz<span class="bracket" aria-hidden="true"></span></h1>
 
-  {# Three blocks, laid out by CSS Grid: the header spans the full width,
-     then the question and the controls sit side by side. On a narrow
-     screen the grid collapses to one column and they stack in this
-     same order, which is why the header is first in the markup. #}
   <section id="quizPanel" aria-labelledby="questionText">
 
-    <header class="quiz-head">
+    <div class="deck">
+      {# The ring is a conic-gradient sized by --answered, which quiz.js
+         sets on #quizPanel. The same technique draws the score ring on
+         the results panel below. #}
+      <div class="deck-ring" aria-hidden="true">
+        <span id="deckCount"></span>
+      </div>
+
       <p id="progress"></p>
-      <p id="answeredCount"></p>
       {# quiz.js inserts the numbered stepper here, after #progress. #}
-    </header>
+      <p id="answeredCount"></p>
 
-    <div class="quiz-main">
-      <h2 id="questionText"></h2>
-      <div id="choices"></div>
-    </div>
-
-    <aside class="quiz-side">
       <div class="navigation">
         <button id="firstBtn" onclick="goFirst()">First</button>
         <button id="previousBtn" onclick="goPrevious()">Previous</button>
@@ -56,39 +57,43 @@
       </div>
 
       <button class="submit" onclick="submitQuiz()">Submit Quiz</button>
-    </aside>
+    </div>
+
+    <div class="stage">
+      <h2 id="questionText"></h2>
+      <div id="choices"></div>
+    </div>
 
   </section>
 
   <section id="resultsPanel" aria-labelledby="resultsTitle">
-    <h2 id="resultsTitle">Quiz Results</h2>
 
-    <div class="score-head">
-      {# The ring is a conic-gradient sized by the --pct value quiz.js
-         sets on #resultsPanel. #}
-      <div class="score-ring" aria-hidden="true">
+    <div class="deck">
+      <div class="deck-ring is-score" aria-hidden="true">
         <span id="ringValue"></span>
       </div>
 
-      <div class="score-meta">
-        <p id="scoreText"></p>
-        <p id="percentageText"></p>
-        <p id="performanceText"></p>
-      </div>
+      <h2 id="resultsTitle">Quiz Results</h2>
+      <p id="scoreText"></p>
+      <p id="percentageText"></p>
+      <p id="performanceText"></p>
+
+      <button class="submit restart" onclick="restartQuiz()">Start again</button>
     </div>
 
-    <p class="strip-label">Every question at a glance</p>
-    <div id="resultStrip"></div>
+    <div class="stage">
+      <p class="strip-label">Every question at a glance</p>
+      <div id="resultStrip"></div>
 
-    <h3>Correction</h3>
-    <ol id="correctionCards"></ol>
+      <h3>Correction</h3>
+      <ol id="correctionCards"></ol>
 
-    <details class="plain">
-      <summary>Plain text version</summary>
-      <pre id="correction"></pre>
-    </details>
+      <details class="plain">
+        <summary>Plain text version</summary>
+        <pre id="correction"></pre>
+      </details>
+    </div>
 
-    <button class="submit restart" onclick="restartQuiz()">Start again</button>
   </section>
 
 </div>
