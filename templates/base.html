@@ -58,10 +58,36 @@
         <button class="menu-close" type="button" popovertarget="site-menu" popovertargetaction="hide" aria-label="Close menu">
           <span class="close-icon" aria-hidden="true"></span>
         </button>
+        {# One entry per topic. The two history topics carry a submenu that
+           chooses between the hand-made and the AI version, so the menu
+           stays short. The submenu opens on hover and on keyboard focus
+           (see :focus-within in the stylesheet), so it needs no JavaScript. #}
         <ul>
-          {% for endpoint, label in menu %}
-            <li>
-              <a href="{{ url_for(endpoint) }}"{% if request.endpoint == endpoint %} aria-current="page"{% endif %}>{{ label }}</a>
+          {% for item in menu %}
+            {% set active = menu_is_active(item, request.endpoint) %}
+            {# Exactly one link per page may carry aria-current="page".
+               When an entry has a submenu, that marker belongs to the
+               child, because the child names the exact version you are
+               reading. The parent is highlighted with a class instead,
+               which is a visual cue rather than a claim about the page. #}
+            <li{% if item.children %} class="has-sub"{% endif %}>
+              <a href="{{ url_for(item.endpoint) }}"
+                 {%- if active %} class="is-active"{% endif %}
+                 {%- if not item.children and request.endpoint == item.endpoint %} aria-current="page"{% endif %}>
+                {{ item.label }}
+                {%- if item.children %}<span class="sub-caret" aria-hidden="true"></span>{% endif %}
+              </a>
+
+              {% if item.children %}
+                <ul class="submenu" aria-label="{{ item.label }}: choose a version">
+                  {% for child in item.children %}
+                    <li>
+                      <a href="{{ url_for(child.endpoint) }}"
+                         {%- if request.endpoint == child.endpoint %} aria-current="page"{% endif %}>{{ child.label }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
             </li>
           {% endfor %}
         </ul>

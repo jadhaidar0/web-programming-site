@@ -1,0 +1,75 @@
+{#
+  The course journal. One entry per week, built from WEEKS in app.py.
+
+  Everything on this page comes out of that one list, so adding week 5 is
+  a matter of adding a dict there. Nothing in this template mentions a
+  specific week.
+#}
+{% extends "base.html" %}
+
+{% block title %}Journal{% endblock %}
+{% block description %}A week-by-week record of the GIN446 Web Programming course: what was built on this site each week, and what it taught.{% endblock %}
+
+{% block content %}
+
+<p class="eyebrow">GIN446 · School of Engineering, USEK</p>
+<h1 class="display">Journal<span class="bracket" aria-hidden="true"></span></h1>
+
+<div class="bento">
+  <div class="tile tile--soft span-4">
+    <p class="tile-kicker">What this is</p>
+    <p class="lead">
+      A record of the course week by week: what I added to this site, and the
+      ideas behind it. The site is the coursework, so the journal and the
+      thing it describes are the same project.
+    </p>
+  </div>
+
+  <div class="tile tile--ink span-2">
+    <p class="stat-number">{{ weeks|length }}</p>
+    <p class="stat-label">weeks recorded so far</p>
+  </div>
+</div>
+
+{# <ol> because the weeks are a sequence: their order carries meaning. #}
+<ol class="journal">
+  {% for entry in weeks %}
+    <li class="journal-entry" id="week-{{ entry.week }}">
+      <article class="tile tile--{{ entry.tint }} journal-card">
+
+        <header class="journal-head">
+          <p class="journal-week">Week {{ entry.week }}</p>
+          <h2>{{ entry.title }}</h2>
+          <p class="journal-summary">{{ entry.summary }}</p>
+        </header>
+
+        <div class="journal-cols">
+          <section aria-labelledby="built-{{ entry.week }}">
+            <h3 id="built-{{ entry.week }}">What I built</h3>
+            <ul class="journal-list journal-list--built">
+              {% for line in entry.built %}<li>{{ line }}</li>{% endfor %}
+            </ul>
+          </section>
+
+          <section aria-labelledby="learned-{{ entry.week }}">
+            <h3 id="learned-{{ entry.week }}">What I learned</h3>
+            <ul class="journal-list journal-list--learned">
+              {% for line in entry.learned %}<li>{{ line }}</li>{% endfor %}
+            </ul>
+          </section>
+        </div>
+
+        {% if entry.links %}
+          <nav class="journal-links" aria-label="Pages from week {{ entry.week }}">
+            {% for endpoint, label in entry.links %}
+              <a href="{{ url_for(endpoint) }}">{{ label }}</a>
+            {% endfor %}
+          </nav>
+        {% endif %}
+
+      </article>
+    </li>
+  {% endfor %}
+</ol>
+
+{% endblock %}
