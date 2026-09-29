@@ -308,12 +308,10 @@ function renderQuestion() {
     "Question " + (currentQuestion + 1) + " of " + questions.length;
   document.getElementById("questionText").textContent = current.question;
 
-  // Two values handed to CSS. --progress drives the bar at the top of
-  // the panel, and data-q is printed as the big faint number behind the
-  // card with content: attr(data-q). Both live in the stylesheet; only
-  // the values come from here.
+  // One value handed to CSS: how far through the quiz we are, as a
+  // number between 0 and 1. The stylesheet draws the bar at the top of
+  // the panel from it, so the width lives in the CSS.
   panel.style.setProperty("--progress", (currentQuestion + 1) / questions.length);
-  panel.dataset.q = currentQuestion + 1;
 
   renderStepper();
 
