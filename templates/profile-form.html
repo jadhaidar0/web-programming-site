@@ -101,53 +101,53 @@
 
       <p class="field">
         <label for="phone">Mobile number</label>
-        {# The country picker is a <datalist>, the same control used for
-           the programming language further down. Picking a country fills
-           in its dialling code and leaves the cursor ready for the rest
-           of the number, so the whole thing still arrives as ONE value
-           under name="phone". A separate <select> would split the number
-           across two fields and the code would be lost on the profile
-           page, which reads data.get('phone') only.
+        {# Two controls, one number. The country picker is its own
+           <select> so it can show a flag and a country name, and the
+           number box holds only the local part. They are joined back
+           together in app.py before the profile page prints them.
 
-           <option value> is what gets inserted; label is what the list
-           shows beside it. #}
-        <input type="tel" id="phone" name="phone"
-               list="dial-codes"
-               placeholder="+961 70 123456"
-               pattern="\+[0-9]{1,4}[\s\-]?[0-9][0-9\s\-]{4,14}"
-               title="International format, starting with the country code, for example +961 70 123456"
-               maxlength="20" inputmode="tel" autocomplete="tel">
-        <datalist id="dial-codes">
-          <option value="+961" label="Lebanon"></option>
-          <option value="+971" label="United Arab Emirates"></option>
-          <option value="+966" label="Saudi Arabia"></option>
-          <option value="+974" label="Qatar"></option>
-          <option value="+965" label="Kuwait"></option>
-          <option value="+973" label="Bahrain"></option>
-          <option value="+968" label="Oman"></option>
-          <option value="+962" label="Jordan"></option>
-          <option value="+963" label="Syria"></option>
-          <option value="+964" label="Iraq"></option>
-          <option value="+20"  label="Egypt"></option>
-          <option value="+90"  label="Turkey"></option>
-          <option value="+357" label="Cyprus"></option>
-          <option value="+33"  label="France"></option>
-          <option value="+32"  label="Belgium"></option>
-          <option value="+49"  label="Germany"></option>
-          <option value="+44"  label="United Kingdom"></option>
-          <option value="+39"  label="Italy"></option>
-          <option value="+34"  label="Spain"></option>
-          <option value="+41"  label="Switzerland"></option>
-          <option value="+31"  label="Netherlands"></option>
-          <option value="+46"  label="Sweden"></option>
-          <option value="+1"   label="United States / Canada"></option>
-          <option value="+61"  label="Australia"></option>
-          <option value="+55"  label="Brazil"></option>
-          <option value="+234" label="Nigeria"></option>
-          <option value="+225" label="Ivory Coast"></option>
-          <option value="+27"  label="South Africa"></option>
-        </datalist>
-        <span class="hint">Pick your country from the list, then type the rest of the number.</span>
+           The picker gets its own <label>, hidden from view but read
+           aloud, because every control needs a name of its own. #}
+        <span class="phone-group">
+          <label class="visually-hidden" for="phone_country">Country code</label>
+          <select class="phone-country" id="phone_country" name="phone_country">
+            <option value="+961" selected>🇱🇧&nbsp; +961&nbsp; Lebanon</option>
+            <option value="+971">🇦🇪&nbsp; +971&nbsp; United Arab Emirates</option>
+            <option value="+966">🇸🇦&nbsp; +966&nbsp; Saudi Arabia</option>
+            <option value="+974">🇶🇦&nbsp; +974&nbsp; Qatar</option>
+            <option value="+965">🇰🇼&nbsp; +965&nbsp; Kuwait</option>
+            <option value="+973">🇧🇭&nbsp; +973&nbsp; Bahrain</option>
+            <option value="+968">🇴🇲&nbsp; +968&nbsp; Oman</option>
+            <option value="+962">🇯🇴&nbsp; +962&nbsp; Jordan</option>
+            <option value="+963">🇸🇾&nbsp; +963&nbsp; Syria</option>
+            <option value="+964">🇮🇶&nbsp; +964&nbsp; Iraq</option>
+            <option value="+20">🇪🇬&nbsp; +20&nbsp; Egypt</option>
+            <option value="+90">🇹🇷&nbsp; +90&nbsp; Turkey</option>
+            <option value="+357">🇨🇾&nbsp; +357&nbsp; Cyprus</option>
+            <option value="+33">🇫🇷&nbsp; +33&nbsp; France</option>
+            <option value="+32">🇧🇪&nbsp; +32&nbsp; Belgium</option>
+            <option value="+49">🇩🇪&nbsp; +49&nbsp; Germany</option>
+            <option value="+44">🇬🇧&nbsp; +44&nbsp; United Kingdom</option>
+            <option value="+39">🇮🇹&nbsp; +39&nbsp; Italy</option>
+            <option value="+34">🇪🇸&nbsp; +34&nbsp; Spain</option>
+            <option value="+41">🇨🇭&nbsp; +41&nbsp; Switzerland</option>
+            <option value="+31">🇳🇱&nbsp; +31&nbsp; Netherlands</option>
+            <option value="+46">🇸🇪&nbsp; +46&nbsp; Sweden</option>
+            <option value="+1">🇺🇸&nbsp; +1&nbsp; United States / Canada</option>
+            <option value="+61">🇦🇺&nbsp; +61&nbsp; Australia</option>
+            <option value="+55">🇧🇷&nbsp; +55&nbsp; Brazil</option>
+            <option value="+234">🇳🇬&nbsp; +234&nbsp; Nigeria</option>
+            <option value="+225">🇨🇮&nbsp; +225&nbsp; Ivory Coast</option>
+            <option value="+27">🇿🇦&nbsp; +27&nbsp; South Africa</option>
+          </select>
+
+          <input class="phone-number" type="tel" id="phone" name="phone"
+                 placeholder="70 123456"
+                 pattern="[0-9][0-9\s\-]{5,13}"
+                 title="The number without the country code, for example 70 123456"
+                 maxlength="16" inputmode="tel" autocomplete="tel-national">
+        </span>
+        <span class="hint">Pick the country, then type the rest of the number.</span>
       </p>
 
       <p class="field">

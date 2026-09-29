@@ -392,6 +392,16 @@ def submit_profile():
         data = request.form.to_dict()                   # all single-value fields
         skills = request.form.getlist("skills")         # checkboxes -> list
         software = request.form.getlist("software")     # multiple <select> -> list
+
+        # The mobile number is collected as TWO controls: a country picker
+        # and the number itself. profile.html prints data['phone'] on its
+        # own, so the two halves are joined back into one value here.
+        # pop() also takes phone_country out of data, so it is not left
+        # lying around as a stray field.
+        code = data.pop("phone_country", "").strip()
+        number = data.get("phone", "").strip()
+        data["phone"] = f"{code} {number}".strip() if number else ""
+
         return render_template(
             "profile.html", data=data, skills=skills, software=software
         )
