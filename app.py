@@ -46,6 +46,7 @@ MENU = [
     },
     {"endpoint": "weekly", "label": "Journal"},
     {"endpoint": "research", "label": "Research"},
+    {"endpoint": "quiz", "label": "Quiz"},
     {"endpoint": "submit_profile", "label": "Profile"},
 ]
 
@@ -242,6 +243,32 @@ WEEKS = [
         ],
         "links": [("submit_profile", "The profile form")],
     },
+    {
+        "week": 5,
+        "title": "The first JavaScript on the site",
+        "tint": "soft",
+        "summary": "An interactive quiz. Until this week every page was finished by the "
+                   "time it reached the browser. This one keeps changing after it arrives.",
+        "built": [
+            "A ten question quiz with First, Previous, Next and Last navigation.",
+            "Answers that survive moving around, so a question can be revisited and changed.",
+            "Scoring, a percentage, a verdict, and a full correction for every question.",
+            "quiz.css, a third stylesheet loaded only by that page.",
+        ],
+        "learned": [
+            "An object groups related values under names. Each question is one object "
+            "holding its text, its choices, the index of the correct one, and an explanation.",
+            "Storing the correct answer as an INDEX rather than as text means the two can "
+            "never disagree if the wording of a choice changes.",
+            "An array slot that was never filled is undefined, and undefined is never equal "
+            "to a number. Unanswered questions therefore score nothing with no special case.",
+            "const on an array stops the variable being pointed somewhere else, not the "
+            "contents being changed. userAnswers is const and still gets written into.",
+            "Separating the logic from the page is what makes it testable: the functions that "
+            "calculate the score never touch the DOM, and the DOM code never decides anything.",
+        ],
+        "links": [("quiz", "The quiz")],
+    },
 ]
 
 
@@ -346,6 +373,13 @@ def home():
 def weekly():
     """The course journal: what was built each week, and what it taught."""
     return render_template("weekly.html")
+
+
+# Week 5: the JavaScript quiz. The page is served as-is; everything the
+# quiz does happens in the browser, in static/quiz.js.
+@app.route("/quiz")
+def quiz():
+    return render_template("quiz.html")
 
 
 @app.route("/research")

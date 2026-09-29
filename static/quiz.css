@@ -1,0 +1,288 @@
+/* =====================================================================
+   quiz.css — GIN446 Week 5
+
+   Loaded only by quiz.html, through the {% block head %} slot in
+   base.html, so it arrives AFTER style.css and can extend it without
+   touching any other page. Same arrangement as form_style.css.
+
+   It declares no colours of its own. --ink, --lilac, --mint and the rest
+   are on :root in style.css, and :root is the <html> element, so every
+   var() below inherits the site's palette automatically.
+
+   The starter version of this file set body { background: #f4f4f4 } and
+   its own font. Both are gone: loading second, they would have
+   overridden the site's own background and typeface on this page only.
+
+     1. The panel            4. Navigation and submit
+     2. Progress             5. Results
+     3. Question and choices 6. Small screens
+   ===================================================================== */
+
+
+/* ---------- 1. The panel ---------- */
+.container {
+  width: 100%;
+  max-width: 56rem;
+  margin: 0;
+}
+
+#quizPanel,
+#resultsPanel {
+  position: relative;
+  padding: clamp(1.4rem, 2.6vw, 2.25rem);
+  border-radius: var(--radius);
+  background: var(--wash);
+  overflow: hidden;
+}
+
+/* The same corner bracket the tiles elsewhere on the site carry. */
+#quizPanel::after,
+#resultsPanel::after {
+  content: "";
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.container > h1 {
+  margin: 0 0 var(--gap);
+  color: var(--ink);
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  word-spacing: -0.04em;
+  line-height: 0.9;
+  text-align: left;              /* the starter centred it */
+}
+
+
+/* ---------- 2. Progress ----------
+   The counter is a chip, and under it a bar whose width comes from the
+   --progress custom property that quiz.js sets on #quizPanel. */
+#progress {
+  display: inline-block;
+  margin: 0;
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* The bar is two background layers rather than an extra element: the
+   first is the lilac fill, the second the pale track behind it. The
+   first layer listed paints on top. A gradient between two identical
+   stops is just a flat colour that can be sized, which a plain
+   background-color cannot be. */
+#quizPanel {
+  --progress: 0;
+  background-image:
+    linear-gradient(var(--lilac) 0 0),
+    linear-gradient(var(--lilac-2) 0 0);
+  background-repeat: no-repeat;
+  background-size: calc(var(--progress) * 100%) 4px, 100% 4px;
+  background-position: left top;
+}
+@media (prefers-reduced-motion: no-preference) {
+  #quizPanel { transition: background-size 0.25s ease; }
+}
+
+
+/* ---------- 3. Question and choices ---------- */
+#questionText {
+  margin: 1.1rem 0 1.5rem;
+  color: var(--ink);
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+#choices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* One choice per row, drawn as a wide pill. The native radio stays in
+   place and is only re-tinted, so the keyboard still works: arrow keys
+   move between the options and Space picks one. */
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.9rem 1.1rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 0.9rem;
+  background: var(--paper);
+  font-size: 1.0625rem;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.choice input {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  accent-color: var(--lilac);
+}
+.choice:hover { border-color: var(--lilac); }
+
+/* :has() again: the pill fills when the radio inside it is picked. */
+.choice:has(input:checked) {
+  background: var(--lilac);
+  border-color: var(--lilac);
+  color: var(--paper);           /* white on lilac: 5.5:1 */
+  font-weight: 600;
+}
+.choice:has(input:checked) input { accent-color: var(--paper); }
+.choice:has(input:focus-visible) {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .choice { transition: background 0.16s ease, border-color 0.16s ease; }
+}
+
+
+/* ---------- 4. Navigation and submit ---------- */
+.navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.75rem;
+  padding-top: 1.35rem;
+  border-top: 1.5px solid rgb(17 17 19 / 0.1);
+}
+
+.navigation button,
+.submit {
+  padding: 0.65rem 1.35rem;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.navigation button:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+
+/* First and Previous switch off on question 1, Next and Last on the
+   last one. quiz.js sets the disabled property; this is what it looks
+   like. not-allowed rather than pointer, so the cursor says so too. */
+.navigation button:disabled {
+  border-color: var(--rule);
+  color: var(--muted);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit {
+  margin-top: 1rem;
+  background: var(--lilac);
+  border-color: var(--lilac);
+  color: var(--paper);
+  font-size: 1rem;
+  padding: 0.8rem 1.8rem;
+}
+.submit:hover { background: var(--ink); border-color: var(--ink); }
+
+button:focus-visible { outline: 3px solid var(--lilac); outline-offset: 3px; }
+
+
+/* ---------- 5. Results ----------
+   Hidden until quiz.js sets an inline display, which beats this rule. */
+#resultsPanel {
+  display: none;
+  margin-top: var(--gap);
+  background: var(--paper);
+  border: 1.5px solid var(--rule);
+}
+#resultsPanel > h2 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  letter-spacing: -0.03em;
+}
+
+/* The score reads as a headline, not as a sentence. */
+#scoreText {
+  margin: 1rem 0 0.2rem;
+  color: var(--ink);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+#percentageText {
+  margin: 0 0 0.9rem;
+  color: var(--muted);
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+/* The verdict is a badge, coloured by the band. quiz.js puts the first
+   word of the message into data-band, and these four rules read it. */
+#performanceText {
+  display: inline-block;
+  margin: 0;
+  padding: 0.4rem 1.1rem;
+  border-radius: 999px;
+  background: var(--lilac-2);
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 800;
+}
+#resultsPanel[data-band="excellent"] #performanceText { background: var(--mint); }
+#resultsPanel[data-band="good"]      #performanceText { background: var(--lilac-2); }
+#resultsPanel[data-band="pass"]      #performanceText { background: var(--yellow); }
+#resultsPanel[data-band="needs"]     #performanceText { background: var(--pink); }
+
+#resultsPanel > h3 {
+  margin: 2rem 0 0.75rem;
+  padding-top: 1.35rem;
+  border-top: 1.5px solid var(--rule);
+  font-size: 1.25rem;
+}
+
+/* The correction is one long pre-formatted string built in quiz.js, so
+   the line breaks come from the text. pre-wrap keeps those breaks and
+   still wraps long lines instead of scrolling sideways. */
+#correction {
+  margin: 0;
+  padding: 1.15rem 1.25rem;
+  border-radius: 0.9rem;
+  background: var(--wash);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+
+/* ---------- 6. Small screens ---------- */
+@media (max-width: 40rem) {
+  #quizPanel,
+  #resultsPanel { padding: 1.15rem; }
+  .choice { padding: 0.8rem 0.9rem; font-size: 1rem; }
+
+  /* Full width buttons are an easier target for a thumb. */
+  .navigation { display: grid; grid-template-columns: 1fr 1fr; }
+  .navigation button { width: 100%; }
+  .submit { width: 100%; }
+}
