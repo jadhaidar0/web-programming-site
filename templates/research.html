@@ -71,7 +71,7 @@
   </div>
 
   <div class="tile tile--ink span-2">
-    <p class="stat-number">17</p>
+    <p class="stat-number">16</p>
     <p class="stat-label">techniques, all live on this page</p>
   </div>
 </div>
@@ -111,24 +111,6 @@
 
     {# ====================== HTML ====================== #}
 
-    {% call specimen(
-        "datalist: suggestions, not a fixed list",
-        "html",
-        '<input list="fruit" name="q">\n<datalist id="fruit">\n  <option value="+961" label="Lebanon">\n  <option value="+33"  label="France">\n</datalist>',
-        "A <select> forces one of its options. A datalist only suggests: the box still
-         accepts anything typed into it. value is what gets inserted, label is what the
-         list shows beside it.",
-        "submit_profile", "the country picker and the language field") %}
-      <label class="demo-label-sm" for="demo-dl">Click the box, then start typing a letter</label>
-      <input class="demo-input" type="text" id="demo-dl" list="demo-countries"
-             placeholder="+961 70 123456" autocomplete="off">
-      <datalist id="demo-countries">
-        <option value="+961" label="Lebanon"></option>
-        <option value="+33" label="France"></option>
-        <option value="+971" label="United Arab Emirates"></option>
-        <option value="+44" label="United Kingdom"></option>
-      </datalist>
-    {% endcall %}
 
     {% call specimen(
         "Validation the browser does for you",
@@ -360,7 +342,7 @@
   </article>
 {% endmacro %}
 
-{% call specimen("datalist") %}
+{% call specimen("Counters") %}
   ...this markup becomes caller()...
 {% endcall %}{% endraw %}',
         "A macro is a reusable chunk of template. call passes a block of markup INTO it, and
