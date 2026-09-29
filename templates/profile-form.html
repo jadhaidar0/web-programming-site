@@ -101,11 +101,53 @@
 
       <p class="field">
         <label for="phone">Mobile number</label>
+        {# The country picker is a <datalist>, the same control used for
+           the programming language further down. Picking a country fills
+           in its dialling code and leaves the cursor ready for the rest
+           of the number, so the whole thing still arrives as ONE value
+           under name="phone". A separate <select> would split the number
+           across two fields and the code would be lost on the profile
+           page, which reads data.get('phone') only.
+
+           <option value> is what gets inserted; label is what the list
+           shows beside it. #}
         <input type="tel" id="phone" name="phone"
+               list="dial-codes"
                placeholder="+961 70 123456"
-               pattern="\+961\s?\d{1,2}\s?\d{6}"
-               title="Lebanese mobile number, for example +961 70 123456"
-               maxlength="20" autocomplete="tel">
+               pattern="\+[0-9]{1,4}[\s\-]?[0-9][0-9\s\-]{4,14}"
+               title="International format, starting with the country code, for example +961 70 123456"
+               maxlength="20" inputmode="tel" autocomplete="tel">
+        <datalist id="dial-codes">
+          <option value="+961" label="Lebanon"></option>
+          <option value="+971" label="United Arab Emirates"></option>
+          <option value="+966" label="Saudi Arabia"></option>
+          <option value="+974" label="Qatar"></option>
+          <option value="+965" label="Kuwait"></option>
+          <option value="+973" label="Bahrain"></option>
+          <option value="+968" label="Oman"></option>
+          <option value="+962" label="Jordan"></option>
+          <option value="+963" label="Syria"></option>
+          <option value="+964" label="Iraq"></option>
+          <option value="+20"  label="Egypt"></option>
+          <option value="+90"  label="Turkey"></option>
+          <option value="+357" label="Cyprus"></option>
+          <option value="+33"  label="France"></option>
+          <option value="+32"  label="Belgium"></option>
+          <option value="+49"  label="Germany"></option>
+          <option value="+44"  label="United Kingdom"></option>
+          <option value="+39"  label="Italy"></option>
+          <option value="+34"  label="Spain"></option>
+          <option value="+41"  label="Switzerland"></option>
+          <option value="+31"  label="Netherlands"></option>
+          <option value="+46"  label="Sweden"></option>
+          <option value="+1"   label="United States / Canada"></option>
+          <option value="+61"  label="Australia"></option>
+          <option value="+55"  label="Brazil"></option>
+          <option value="+234" label="Nigeria"></option>
+          <option value="+225" label="Ivory Coast"></option>
+          <option value="+27"  label="South Africa"></option>
+        </datalist>
+        <span class="hint">Pick your country from the list, then type the rest of the number.</span>
       </p>
 
       <p class="field">
