@@ -30,24 +30,34 @@
   <p class="eyebrow">Week 5 · GIN446 · School of Engineering, USEK</p>
   <h1>JavaScript Quiz<span class="bracket" aria-hidden="true"></span></h1>
 
+  {# Three blocks, laid out by CSS Grid: the header spans the full width,
+     then the question and the controls sit side by side. On a narrow
+     screen the grid collapses to one column and they stack in this
+     same order, which is why the header is first in the markup. #}
   <section id="quizPanel" aria-labelledby="questionText">
+
     <header class="quiz-head">
       <p id="progress"></p>
-      {# quiz.js inserts the numbered stepper here, after #progress. #}
       <p id="answeredCount"></p>
+      {# quiz.js inserts the numbered stepper here, after #progress. #}
     </header>
 
-    <h2 id="questionText"></h2>
-    <div id="choices"></div>
-
-    <div class="navigation">
-      <button id="firstBtn" onclick="goFirst()">First</button>
-      <button id="previousBtn" onclick="goPrevious()">Previous</button>
-      <button id="nextBtn" onclick="goNext()">Next</button>
-      <button id="lastBtn" onclick="goLast()">Last</button>
+    <div class="quiz-main">
+      <h2 id="questionText"></h2>
+      <div id="choices"></div>
     </div>
 
-    <button class="submit" onclick="submitQuiz()">Submit Quiz</button>
+    <aside class="quiz-side">
+      <div class="navigation">
+        <button id="firstBtn" onclick="goFirst()">First</button>
+        <button id="previousBtn" onclick="goPrevious()">Previous</button>
+        <button id="nextBtn" onclick="goNext()">Next</button>
+        <button id="lastBtn" onclick="goLast()">Last</button>
+      </div>
+
+      <button class="submit" onclick="submitQuiz()">Submit Quiz</button>
+    </aside>
+
   </section>
 
   <section id="resultsPanel" aria-labelledby="resultsTitle">
