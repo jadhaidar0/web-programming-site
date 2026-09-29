@@ -402,8 +402,12 @@ function renderStepper() {
   );
   document.getElementById("deckCount").textContent =
     answered + "/" + questions.length;
+  // The ring already carries the count, so this line is a key for the
+  // squares above it rather than a second tally.
   document.getElementById("answeredCount").textContent =
-    answered === questions.length ? "All answered" : "answered so far";
+    answered === questions.length
+      ? "All questions answered"
+      : "Filled squares are answered";
 }
 
 /** Hide the quiz, show the results panel, fill it in. */

@@ -49,19 +49,24 @@
       {# quiz.js inserts the numbered stepper here, after #progress. #}
       <p id="answeredCount"></p>
 
-      <div class="navigation">
-        <button id="firstBtn" onclick="goFirst()">First</button>
-        <button id="previousBtn" onclick="goPrevious()">Previous</button>
-        <button id="nextBtn" onclick="goNext()">Next</button>
-        <button id="lastBtn" onclick="goLast()">Last</button>
-      </div>
-
       <button class="submit" onclick="submitQuiz()">Submit Quiz</button>
     </div>
 
     <div class="stage">
       <h2 id="questionText"></h2>
       <div id="choices"></div>
+
+      {# The pager sits under the choices, where you are already looking.
+         Reading order is left to right: First, Previous, then Next and
+         Last pushed to the far side by an auto margin. That matches the
+         order the buttons are written in, so the keyboard walks them in
+         the same order the eye does. #}
+      <nav class="navigation" aria-label="Move between questions">
+        <button id="firstBtn" onclick="goFirst()">First</button>
+        <button id="previousBtn" onclick="goPrevious()">Previous</button>
+        <button id="nextBtn" onclick="goNext()">Next</button>
+        <button id="lastBtn" onclick="goLast()">Last</button>
+      </nav>
     </div>
 
   </section>
