@@ -165,47 +165,89 @@
 }
 .step:focus-visible { outline: 3px solid var(--paper); outline-offset: 2px; }
 
+/* ---- The pager ----
+   Backwards on the left, forwards on the right. margin-left: auto on
+   the Next button eats all the spare space, which pushes it and Last
+   over to the far side without any extra wrapper or spacer element. */
 .navigation {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.4rem;
-  width: 100%;
-  margin-top: auto;              /* an auto margin pushes it to the foot */
-  padding-top: 1rem;
-  border-top: 1px solid rgb(255 255 255 / 0.15);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.75rem;
+  padding-top: 1.35rem;
+  border-top: 1.5px solid rgb(17 17 19 / 0.1);
 }
+#nextBtn { margin-left: auto; }
 
-.navigation button,
-.submit {
-  padding: 0.6rem 1rem;
-  border: 1.5px solid rgb(255 255 255 / 0.35);
+.navigation button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.25rem;
+  border: 1.5px solid var(--rule);
   border-radius: 999px;
-  background: transparent;
-  color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   cursor: pointer;
 }
-.navigation button:hover:not(:disabled) { background: var(--paper); color: var(--ink); }
+.navigation button:hover:not(:disabled) { border-color: var(--ink); }
+
+/* Arrows drawn as generated content, so the button's own text stays the
+   only thing a screen reader announces. The doubled arrows are the jump
+   to an end, the single ones are one step. */
+#firstBtn::before    { content: "\00AB"; }   /* « */
+#previousBtn::before { content: "\2039"; }   /* ‹ */
+#nextBtn::after      { content: "\203A"; }   /* › */
+#lastBtn::after      { content: "\00BB"; }   /* » */
+.navigation button::before,
+.navigation button::after { font-size: 1.125rem; line-height: 1; opacity: 0.6; }
+
+/* Next is the one you press nine times out of ten, so it is the only
+   filled button in the row. */
+#nextBtn {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+#nextBtn:hover:not(:disabled) { background: var(--lilac); border-color: var(--lilac); }
+#nextBtn::after { opacity: 0.85; }
 
 /* First and Previous switch off on question 1, Next and Last on the
    last one. quiz.js sets the disabled property; this is how it looks. */
 .navigation button:disabled {
-  border-color: rgb(255 255 255 / 0.12);
-  color: rgb(255 255 255 / 0.35);
+  background: transparent;
+  border-color: var(--rule);
+  color: var(--muted);
+  opacity: 0.55;
   cursor: not-allowed;
 }
+.navigation button:focus-visible { outline: 3px solid var(--lilac); outline-offset: 3px; }
 
+@media (prefers-reduced-motion: no-preference) {
+  .navigation button { transition: background 0.16s ease, border-color 0.16s ease; }
+  #nextBtn:hover:not(:disabled)::after { translate: 0.15rem 0; }
+  .navigation button::after { transition: translate 0.16s ease; }
+}
+
+/* The submit button is the only control left in the deck. */
 .submit {
   width: 100%;
-  padding: 0.8rem 1rem;
+  margin-top: auto;              /* an auto margin pushes it to the foot */
+  padding: 0.85rem 1rem;
+  border: 1.5px solid var(--lilac);
+  border-radius: 999px;
   background: var(--lilac);
-  border-color: var(--lilac);
+  color: var(--paper);
+  font: inherit;
   font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
 }
 .submit:hover { background: var(--paper); border-color: var(--paper); color: var(--ink); }
-.restart { margin-top: auto; background: transparent; border-color: rgb(255 255 255 / 0.35); }
+.restart { background: transparent; border-color: rgb(255 255 255 / 0.35); }
 .restart:hover { background: var(--paper); color: var(--ink); }
 
 .deck button:focus-visible { outline: 3px solid var(--paper); outline-offset: 3px; }
@@ -509,8 +551,7 @@
   #progress, #resultsTitle, #scoreText { align-self: end; margin: 0; }
   #answeredCount, #percentageText { align-self: start; margin: 0; }
   #performanceText { grid-column: 2; justify-self: start; }
-  #stepper, .navigation, .submit, .restart { grid-column: 1 / -1; }
-  .navigation { margin-top: 0.5rem; }
+  #stepper, .submit, .restart { grid-column: 1 / -1; }
 }
 
 @media (max-width: 40rem) {
