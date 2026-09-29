@@ -171,6 +171,42 @@ function goLast() {
 }
 
 /**
+ * Jump straight to one question, used by the numbered stepper.
+ * The guard keeps the index inside the array whatever it is given.
+ */
+function goTo(index) {
+  if (index >= 0 && index < questions.length) {
+    currentQuestion = index;
+    renderQuestion();
+  }
+}
+
+/** Empty every answer and go back to the beginning. */
+function restartQuiz() {
+  for (let i = 0; i < userAnswers.length; i++) {
+    userAnswers[i] = undefined;
+  }
+  currentQuestion = 0;
+  document.getElementById("resultsPanel").style.display = "none";
+  document.getElementById("quizPanel").style.display = "";
+  renderQuestion();
+  document.getElementById("quizPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/** How many questions have been answered so far. */
+function countAnswered() {
+  let answered = 0;
+
+  for (let i = 0; i < userAnswers.length; i++) {
+    if (userAnswers[i] !== undefined) {
+      answered = answered + 1;
+    }
+  }
+
+  return answered;
+}
+
+/**
  * One point per correct answer.
  * An unanswered slot is undefined, and undefined is never equal to a
  * number, so unanswered questions score nothing without a special case.
@@ -263,20 +299,23 @@ function submitQuiz() {
    page, and this layer never decides anything about the quiz.
    --------------------------------------------------------------------- */
 
-/** Draw the current question, its choices, and the navigation state. */
+/** Draw the current question, its choices, the stepper and the buttons. */
 function renderQuestion() {
   const current = questions[currentQuestion];
+  const panel = document.getElementById("quizPanel");
 
   document.getElementById("progress").textContent =
     "Question " + (currentQuestion + 1) + " of " + questions.length;
   document.getElementById("questionText").textContent = current.question;
 
-  // Hand the position to CSS as a number between 0 and 1. The stylesheet
-  // draws the progress bar from it, so the width lives in the CSS and
-  // only the value comes from here.
-  document.getElementById("quizPanel").style.setProperty(
-    "--progress", (currentQuestion + 1) / questions.length
-  );
+  // Two values handed to CSS. --progress drives the bar at the top of
+  // the panel, and data-q is printed as the big faint number behind the
+  // card with content: attr(data-q). Both live in the stylesheet; only
+  // the values come from here.
+  panel.style.setProperty("--progress", (currentQuestion + 1) / questions.length);
+  panel.dataset.q = currentQuestion + 1;
+
+  renderStepper();
 
   // Rebuild the choices from scratch each time.
   const choicesBox = document.getElementById("choices");
@@ -295,13 +334,18 @@ function renderQuestion() {
     radio.checked = userAnswers[currentQuestion] === i;
     radio.addEventListener("change", function () {
       saveAnswer(i);
+      renderStepper();          // the dot for this question fills in
     });
+
+    const text = document.createElement("span");
+    text.className = "choice-text";
+    text.textContent = current.choices[i];
 
     const label = document.createElement("label");
     label.className = "choice";
     label.htmlFor = id;
     label.appendChild(radio);
-    label.appendChild(document.createTextNode(current.choices[i]));
+    label.appendChild(text);
 
     choicesBox.appendChild(label);
   }
@@ -313,6 +357,51 @@ function renderQuestion() {
   document.getElementById("previousBtn").disabled = atStart;
   document.getElementById("nextBtn").disabled = atEnd;
   document.getElementById("lastBtn").disabled = atEnd;
+}
+
+/**
+ * The row of numbered dots. One per question, marked as answered or not,
+ * with the current one highlighted. Clicking a dot jumps to it.
+ * It is built once and then only updated, so clicking a dot does not
+ * destroy the element the click came from.
+ */
+function renderStepper() {
+  let stepper = document.getElementById("stepper");
+
+  if (stepper === null) {
+    stepper = document.createElement("nav");
+    stepper.id = "stepper";
+    stepper.setAttribute("aria-label", "Jump to a question");
+
+    for (let i = 0; i < questions.length; i++) {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "step";
+      dot.textContent = i + 1;
+      dot.addEventListener("click", function () {
+        goTo(i);
+      });
+      stepper.appendChild(dot);
+    }
+
+    const progress = document.getElementById("progress");
+    progress.parentNode.insertBefore(stepper, progress.nextSibling);
+  }
+
+  const dots = stepper.children;
+  for (let i = 0; i < dots.length; i++) {
+    // aria-current tells a screen reader which one you are on; the
+    // data attribute is what the stylesheet colours.
+    dots[i].dataset.state = userAnswers[i] === undefined ? "empty" : "answered";
+    if (i === currentQuestion) {
+      dots[i].setAttribute("aria-current", "true");
+    } else {
+      dots[i].removeAttribute("aria-current");
+    }
+  }
+
+  document.getElementById("answeredCount").textContent =
+    countAnswered() + " of " + questions.length + " answered";
 }
 
 /** Hide the quiz, show the results panel, fill it in. */
@@ -328,14 +417,129 @@ function showResults(score, percentage, message, correction) {
     "Percentage: " + percentage + "%";
   document.getElementById("performanceText").textContent = message;
 
+  // A band name lets the stylesheet colour the verdict and the ring.
+  results.dataset.band = message.toLowerCase().split(" ")[0];
+  // The ring is a conic-gradient sized by this one number.
+  results.style.setProperty("--pct", percentage);
+  document.getElementById("ringValue").textContent = percentage + "%";
+
+  renderResultStrip();
+  renderCorrectionCards();
+
   // textContent, not innerHTML: the correction is plain text and must
   // never be treated as markup.
   document.getElementById("correction").textContent = correction;
 
-  // A band class lets the stylesheet colour the verdict.
-  results.dataset.band = message.toLowerCase().split(" ")[0];
-
   results.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/** One small square per question: correct, incorrect or unanswered. */
+function renderResultStrip() {
+  const strip = document.getElementById("resultStrip");
+  strip.innerHTML = "";
+
+  for (let i = 0; i < questions.length; i++) {
+    const given = userAnswers[i];
+    const cell = document.createElement("button");
+    cell.type = "button";
+    cell.className = "strip-cell";
+    cell.textContent = i + 1;
+
+    if (given === undefined) {
+      cell.dataset.state = "empty";
+      cell.title = "Question " + (i + 1) + ": not answered";
+    } else if (given === questions[i].answer) {
+      cell.dataset.state = "right";
+      cell.title = "Question " + (i + 1) + ": correct";
+    } else {
+      cell.dataset.state = "wrong";
+      cell.title = "Question " + (i + 1) + ": incorrect";
+    }
+
+    // Jump to that question's entry further down the correction.
+    cell.addEventListener("click", function () {
+      document.getElementById("fix-" + i).scrollIntoView({
+        behavior: "smooth", block: "center"
+      });
+    });
+
+    strip.appendChild(cell);
+  }
+}
+
+/**
+ * The correction as a list of cards.
+ *
+ * buildCorrection() still produces the plain-text version, and it is
+ * still shown, tucked inside the "Plain text version" panel underneath.
+ * This is the same information drawn properly: the interface layer is
+ * allowed to present the data however it likes.
+ */
+function renderCorrectionCards() {
+  const list = document.getElementById("correctionCards");
+  list.innerHTML = "";
+
+  for (let i = 0; i < questions.length; i++) {
+    const current = questions[i];
+    const given = userAnswers[i];
+    const isRight = given === current.answer;
+
+    const item = document.createElement("li");
+    item.className = "fix";
+    item.id = "fix-" + i;
+    item.dataset.state = given === undefined ? "empty" : isRight ? "right" : "wrong";
+
+    const head = document.createElement("div");
+    head.className = "fix-head";
+    head.innerHTML = "";
+
+    const num = document.createElement("span");
+    num.className = "fix-num";
+    num.textContent = i + 1;
+
+    const q = document.createElement("h4");
+    q.className = "fix-q";
+    q.textContent = current.question;
+
+    const verdict = document.createElement("span");
+    verdict.className = "fix-verdict";
+    verdict.textContent =
+      given === undefined ? "Not answered" : isRight ? "Correct" : "Incorrect";
+
+    head.appendChild(num);
+    head.appendChild(q);
+    head.appendChild(verdict);
+
+    const answers = document.createElement("dl");
+    answers.className = "fix-answers";
+    answers.appendChild(makeRow("Your answer",
+      given === undefined ? "Not answered" : current.choices[given]));
+    answers.appendChild(makeRow("Correct answer", current.choices[current.answer]));
+
+    const why = document.createElement("p");
+    why.className = "fix-why";
+    why.textContent = current.explanation;
+
+    item.appendChild(head);
+    item.appendChild(answers);
+    item.appendChild(why);
+    list.appendChild(item);
+  }
+}
+
+/** A <dt>/<dd> pair for the correction cards. */
+function makeRow(term, value) {
+  const wrap = document.createDocumentFragment();
+
+  const dt = document.createElement("dt");
+  dt.textContent = term;
+
+  const dd = document.createElement("dd");
+  dd.textContent = value;
+
+  wrap.appendChild(dt);
+  wrap.appendChild(dd);
+  return wrap;
 }
 
 
