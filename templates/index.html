@@ -83,22 +83,26 @@
     {% endfor %}
   </section>
 
-  {# ---- Grid 3: the weekly log ---- #}
+  {# ---- Grid 3: the weekly log ----
+       Built from WEEKS in app.py, the same list the Journal page uses, so
+       the two can never disagree. Each line links to that week's entry. #}
   <section class="bento" aria-labelledby="weekly-work-title">
     <h2 class="bento-heading" id="weekly-work-title">Weekly work</h2>
 
     <div class="tile span-4">
-      <!-- Each week you add a link here to that week's page or feature. -->
       <ol class="weekly-list">
-        {% for item in weekly_work %}
+        {% for entry in weeks %}
           <li>
-            <span class="weekly-week">Week {{ item.week }}</span>
-            <a href="{{ url_for(item.endpoint) }}">{{ item.title }}</a>
+            <span class="weekly-week">Week {{ entry.week }}</span>
+            <a href="{{ url_for('weekly') }}#week-{{ entry.week }}">{{ entry.title }}</a>
           </li>
         {% else %}
-          <li>Week 1 — live site launched.</li>
+          <li>Week 1, live site launched.</li>
         {% endfor %}
       </ol>
+      <p class="weekly-more">
+        <a href="{{ url_for('weekly') }}">Read the full journal</a>
+      </p>
     </div>
 
     <div class="tile tile--photo span-2">

@@ -17,15 +17,48 @@ app = Flask(__name__)
 # Site data, defined once and shared by every template
 # ---------------------------------------------------------------------------
 
-# Main menu: (endpoint, label). Used by the header and the footer.
+# Main menu. Each entry is a dict:
+#
+#   label     what the menu shows
+#   endpoint  where the entry itself goes
+#   children  optional list of {endpoint, label} shown in a small submenu
+#
+# The two history topics have children, so the menu stays at five items
+# instead of listing the hand-made and AI versions separately. Clicking
+# the parent still works on its own: it goes to the hand-made version.
 MENU = [
-    ("home", "Home"),
-    ("internet_history", "Internet"),
-    ("web_history", "Web"),
-    ("internet_history_ai", "Internet (AI)"),
-    ("web_history_ai", "Web (AI)"),
-    ("submit_profile", "Profile"),
+    {"endpoint": "home", "label": "Home"},
+    {
+        "endpoint": "internet_history",
+        "label": "Internet",
+        "children": [
+            {"endpoint": "internet_history", "label": "Written by hand"},
+            {"endpoint": "internet_history_ai", "label": "Generated with AI"},
+        ],
+    },
+    {
+        "endpoint": "web_history",
+        "label": "Web",
+        "children": [
+            {"endpoint": "web_history", "label": "Written by hand"},
+            {"endpoint": "web_history_ai", "label": "Generated with AI"},
+        ],
+    },
+    {"endpoint": "weekly", "label": "Journal"},
+    {"endpoint": "submit_profile", "label": "Profile"},
 ]
+
+
+def menu_is_active(item, endpoint):
+    """True when a menu entry, or any of its children, is the current page.
+
+    The parent "Internet" should look selected on both the hand-made and
+    the AI page, otherwise the menu loses your place as soon as you
+    switch version from inside the submenu.
+    """
+    if item["endpoint"] == endpoint:
+        return True
+    return any(child["endpoint"] == endpoint for child in item.get("children", []))
 
 # The four history pages. Titles and descriptions live here so the pages,
 # the home page cards and the related-page links all use the same text.
@@ -86,6 +119,131 @@ HISTORY_PAGES = {
 }
 
 
+# The course journal. One entry per week, newest last.
+#
+#   built    what was added to the site that week
+#   learned  the ideas behind it, in plain words
+#   links    pages to look at, as (endpoint, label)
+WEEKS = [
+    {
+        "week": 1,
+        "title": "Getting a Flask site live",
+        "tint": "soft",
+        "summary": "Set the project up from the course template and put it on a real "
+                   "server instead of leaving it on my laptop.",
+        "built": [
+            "A Flask app with routes for the home page and one template per page.",
+            "The folder layout Flask expects: templates/ for pages, static/ for CSS and images.",
+            "The site deployed and reachable on its own address.",
+        ],
+        "learned": [
+            "A route is a URL joined to a Python function. Flask runs the function "
+            "and sends back whatever it returns.",
+            "render_template() looks inside templates/ and fills the page in before sending it.",
+            "url_for() builds addresses from the route's name instead of me typing the path. "
+            "If a route changes later, every link follows it.",
+        ],
+        "links": [("home", "Home page")],
+    },
+    {
+        "week": 2,
+        "title": "History of the Internet and the Web",
+        "tint": "mint",
+        "summary": "Four long pages on the same two topics, each one written twice: "
+                   "once by hand from my own research, once with AI, so the two can "
+                   "be compared.",
+        "built": [
+            "Two hand-written timelines, one for the Internet and one for the Web.",
+            "Two AI-generated versions of the same topics.",
+            "A sourced reference list on every page, with the primary sources marked.",
+        ],
+        "learned": [
+            "Semantic HTML is about meaning, not looks. header, nav, main, section, "
+            "article and time each say what a piece of content is.",
+            "A page should have one h1 and no skipped heading levels, because that "
+            "outline is how a screen reader navigates.",
+            "An ordered list is the honest element for a timeline, since the order "
+            "carries meaning.",
+            "Checking sources properly is slower than writing. Several links looked "
+            "fine and turned out to be dead or to no longer support the claim.",
+        ],
+        "links": [
+            ("internet_history", "History of the Internet"),
+            ("web_history", "History of the Web"),
+        ],
+    },
+    {
+        "week": 3,
+        "title": "One layout, one stylesheet",
+        "tint": "sun",
+        "summary": "The four pages had grown their own copies of the same header, "
+                   "footer and CSS. This week was about saying each of those things "
+                   "once and having every page inherit it.",
+        "built": [
+            "base.html, holding the page shell, the menu and the footer, with Jinja "
+            "blocks for the parts that change.",
+            "history.html, a second layer between base.html and the four history "
+            "pages, so everything those four share is written once.",
+            "One style.css for the whole site, with the colours, fonts and spacing "
+            "declared as design tokens on :root.",
+            "A full redesign on top of that: the white shell, the side rail, the "
+            "bento tile grid and the centre-spine timeline.",
+        ],
+        "learned": [
+            "Template inheritance: {% extends %} names the parent, {% block %} marks "
+            "a hole in it, and a child page fills the holes. The shared parts exist "
+            "in one file.",
+            "Design tokens are custom properties declared once on :root. Because "
+            ":root is the html element, every var() further down inherits it, so "
+            "changing one line restyles the whole site.",
+            "The cascade is not a bug to fight. Later rules and more specific "
+            "selectors win, and that is what lets a page add to the site styles "
+            "without editing them.",
+            "CSS Grid places things without moving them in the HTML. The timeline "
+            "alternates left and right using nth-child and column spans, so the "
+            "reading order stays correct.",
+            "Contrast has to be measured, not guessed. Several colours I liked "
+            "failed WCAG AA and had to be darkened.",
+        ],
+        "links": [
+            ("internet_history", "See the shared layout in use"),
+            ("web_history_ai", "The same layout, different content"),
+        ],
+    },
+    {
+        "week": 4,
+        "title": "Forms and the data behind them",
+        "tint": "pink",
+        "summary": "An Engineering Student Profile form, built by hand, that posts "
+                   "to the server and comes back as a finished profile page.",
+        "built": [
+            "profile-form.html: five sections, 34 controls, twelve different input "
+            "types, a datalist, a multiple select and a select with optgroups.",
+            "Validation done by the browser alone, with required, pattern, min, max, "
+            "step and maxlength. No JavaScript.",
+            "form_style.css, a second stylesheet loaded only by the form page "
+            "through the {% block head %} slot.",
+        ],
+        "learned": [
+            "The name attribute is what the server sees. The label is for the person, "
+            "the name is for the code, and they are not the same thing.",
+            "A checkbox group and a multiple select can send the same name more than "
+            "once, so the server reads those as a list and everything else as a "
+            "single value.",
+            "GET puts the data in the URL, POST puts it in the request body. Anything "
+            "long or personal should be POST.",
+            "Every control needs a label tied to its id, or clicking the text does "
+            "nothing and a screen reader announces an unnamed box.",
+            ":user-invalid waits until someone has actually used a field, while "
+            ":invalid fires immediately and paints an untouched form red.",
+            "A second stylesheet loaded after the first can extend one page without "
+            "touching any other. That is the cascade being useful on purpose.",
+        ],
+        "links": [("submit_profile", "The profile form")],
+    },
+]
+
+
 def related_pages(endpoint):
     """For a history page: its counterpart (same topic, other author) and the
     other topic by the same author."""
@@ -122,7 +280,13 @@ def asset_version():
 
 @app.context_processor
 def site_data():
-    return {"menu": MENU, "history_pages": HISTORY_PAGES, "related_pages": related_pages}
+    return {
+        "menu": MENU,
+        "menu_is_active": menu_is_active,
+        "history_pages": HISTORY_PAGES,
+        "related_pages": related_pages,
+        "weeks": WEEKS,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -174,16 +338,13 @@ def ruler_ticks(timeline_html):
 @app.route("/")
 def home():
     """Serve the portfolio home page."""
-    # Each entry names a Flask endpoint; the template builds the link with url_for().
-    weekly_work = [
-        {"week": 1, "title": "Live site launched", "endpoint": "home"},
-        {"week": 2, "title": "History of the Internet", "endpoint": "internet_history"},
-        {"week": 2, "title": "History of the Web", "endpoint": "web_history"},
-        {"week": 2, "title": "History of the Internet (AI)", "endpoint": "internet_history_ai"},
-        {"week": 2, "title": "History of the Web (AI)", "endpoint": "web_history_ai"},
-        {"week": 4, "title": "Engineering Student Profile form", "endpoint": "submit_profile"},
-    ]
-    return render_template("index.html", weekly_work=weekly_work)
+    return render_template("index.html")
+
+
+@app.route("/weekly")
+def weekly():
+    """The course journal: what was built each week, and what it taught."""
+    return render_template("weekly.html")
 
 
 @app.route("/internet-history")
