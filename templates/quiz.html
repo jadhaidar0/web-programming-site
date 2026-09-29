@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block title %} Quiz {% endblock %} {% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='quiz.css') }}" />
+{% endblock %} {% block content%}
+<div class="container">
+  <h1>JavaScript Quiz</h1>
+  <section id="quizPanel">
+    <p id="progress"></p>
+    <h2 id="questionText"></h2>
+    <div id="choices"></div>
+    <div class="navigation">
+      <button id="firstBtn" onclick="goFirst()">First</button>
+      <button id="previousBtn" onclick="goPrevious()">Previous</button>
+      <button id="nextBtn" onclick="goNext()">Next</button>
+      <button id="lastBtn" onclick="goLast()">Last</button>
+    </div>
+    <button class="submit" onclick="submitQuiz()">Submit Quiz</button>
+  </section>
+  <section id="resultsPanel">
+    <h2>Quiz Results</h2>
+    <p id="scoreText"></p>
+    <p id="percentageText"></p>
+    <p id="performanceText"></p>
+    <h3>Correction</h3>
+    <pre id="correction"></pre>
+  </section>
+</div>
+<script src="{{ url_for('static', filename='quiz.js') }}"></script>
+{% endblock %}
