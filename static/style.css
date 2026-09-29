@@ -305,14 +305,23 @@ button:focus-visible {
    sticky table of contents from sticking. */
 .shell { position: relative; overflow: clip; }
 
-.site-nav ul {
+/* The child combinator matters here: without it this rule would also
+   hit the submenu lists nested inside, and they would inherit the
+   rail's 1.5rem gap. */
+.site-nav > ul {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;          /* each row spans the rail's full width,
+                                    which is what the flyout anchors to */
   gap: 1.5rem;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+.site-nav > ul > li {
+  position: relative;            /* the anchor for a flyout submenu */
+  display: flex;
+  justify-content: center;       /* the rotated link stays centred */
 }
 /* vertical-rl stacks the letters top-to-bottom; rotating the element a
    half turn flips that so the line reads bottom-to-top, the way side
@@ -348,8 +357,6 @@ button:focus-visible {
    inside it, so tabbing onto the parent link opens the panel, and the
    next Tab lands on the first choice inside it. That pairing is what
    makes a dropdown work with no JavaScript at all. */
-.has-sub { position: relative; }
-
 .sub-caret {                     /* the little arrow on a parent entry */
   display: block;
   width: 0.34rem;
@@ -361,45 +368,89 @@ button:focus-visible {
   opacity: 0.75;
 }
 
+/* The panel hangs off the right edge of the rail, centred on its own
+   entry. It sets its own flex rules rather than inheriting the rail's. */
 .submenu {
   position: absolute;
-  top: 0;
-  left: calc(100% + 0.6rem);
+  left: calc(100% + 0.85rem);    /* the li now spans the rail, so 100%
+                                    is the rail's edge, not the link's */
+  top: 50%;
   z-index: 60;
-  min-width: 11.5rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.15rem;
+
+  min-width: 11rem;
   margin: 0;
-  padding: 0.35rem;
+  padding: 0.4rem;
   list-style: none;
   background: var(--ink);
   border-radius: 0.9rem;
   box-shadow: 0 18px 40px -22px rgb(17 17 19 / 0.75);
 
   /* Closed. visibility: hidden also takes the links out of the tab
-     order, so a shut menu cannot be tabbed into by accident. */
+     order, so a shut menu cannot be tabbed into by accident.
+     The -50% on the y axis is the vertical centring, and stays put
+     while the x value slides. */
   opacity: 0;
   visibility: hidden;
-  translate: -0.4rem 0;
+  translate: -0.4rem -50%;
 }
-.has-sub:hover .submenu,
-.has-sub:focus-within .submenu {
+.site-nav > ul > li:hover .submenu,
+.site-nav > ul > li:focus-within .submenu {
   opacity: 1;
   visibility: visible;
-  translate: 0 0;
+  translate: 0 -50%;
 }
 @media (prefers-reduced-motion: no-preference) {
   .submenu { transition: opacity 0.16s ease, translate 0.16s ease, visibility 0.16s; }
 }
 
+/* An invisible strip covering the gap between the rail and the panel.
+   It belongs to the submenu, which is inside the <li>, so the pointer
+   crossing the gap never leaves :hover and the panel does not flicker
+   shut halfway. */
+.submenu::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 100%;
+  width: 0.9rem;
+}
+
+/* A small diamond, half tucked behind the panel, so it reads as
+   belonging to the rail entry it came from. */
+.submenu::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: calc(100% - 0.28rem);
+  width: 0.56rem;
+  height: 0.56rem;
+  translate: 0 -50%;
+  rotate: 45deg;
+  background: var(--ink);
+}
+
+.submenu li { display: block; }
+
 /* The rail's links are turned on their side; these are not. */
 .submenu a,
 .submenu a:visited {
-  writing-mode: horizontal-tb;
+  display: block;
+  writing-mode: horizontal-tb;   /* the rail's links are on their side;
+                                    these are not */
   rotate: none;
-  padding: 0.55rem 0.8rem;
+  padding: 0.6rem 0.85rem;
   border-radius: 0.6rem;
   color: var(--on-ink);
   font-size: 0.9375rem;
   font-weight: 500;
+  line-height: 1.3;
+  text-align: left;
   white-space: nowrap;
 }
 .submenu a:hover { background: var(--ink-2); color: var(--paper); }
@@ -471,6 +522,11 @@ button:focus-visible {
     display: block;
     position: static;
     inset: auto;
+    /* The rail centres its children, which would leave the menu only as
+       wide as its widest label. Stretching it to the rail's full width
+       is what lets a flyout anchor to the rail's edge instead of to the
+       narrow rotated link. */
+    align-self: stretch;
     width: auto;
     height: auto;
     margin: 0;
@@ -556,7 +612,7 @@ button:focus-visible {
   html:has(.site-nav:popover-open) { overflow: hidden; }
 
   .menu-close { display: grid; align-self: flex-end; margin-bottom: 1rem; }
-  .site-nav ul { align-items: stretch; gap: 0.25rem; }
+  .site-nav > ul { align-items: stretch; gap: 0.25rem; }
   /* Back to normal horizontal text inside the slide-in panel. */
   .site-nav a,
   .site-nav a:visited {
@@ -573,6 +629,8 @@ button:focus-visible {
   /* In the slide-in panel there is no hover, so the submenus are simply
      always open, indented under their parent. */
   .sub-caret { display: none; }
+  .submenu::before,
+  .submenu::after { display: none; }   /* no flyout, so no bridge or pointer */
   .submenu {
     position: static;
     min-width: 0;
