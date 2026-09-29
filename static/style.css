@@ -11,6 +11,7 @@
      7. Bento tiles             15. 404
      8. Page header, ruler,     16. Profile page (Week 4)
         history layout          17. Journal (the weekly log)
+                                18. Research (the specimen lab)
 
    The FORM page loads one extra file on top of this one:
    static/form_style.css (see templates/profile-form.html).
@@ -1750,3 +1751,317 @@ a.tile:hover .tile-go { background: var(--lilac); }
 
 /* The ink tile flips the text colours. */
 .tile--ink .journal-week { background: var(--paper); color: var(--ink); }
+
+
+/* ==================================================================
+   18. Research (the specimen lab)
+   ------------------------------------------------------------------
+   Every card is one technique: syntax, explanation, and a working
+   demonstration. The filter at the top is radio buttons plus :has() —
+   the page demonstrates the selector it is describing.
+   ================================================================== */
+
+/* ---- The filter ---- */
+.lab-filter {
+  min-width: 0;
+  margin: 0 0 var(--gap);
+  padding: 1rem 1.25rem 1.15rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--wash);
+}
+.lab-filter > legend {
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.filter-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.85rem; }
+
+/* The same pill pattern as the form, driven by :has(). */
+.filter-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  cursor: pointer;
+}
+.filter-pill input { margin: 0; accent-color: var(--lilac); }
+.filter-pill label { font-size: 0.9375rem; font-weight: 500; cursor: pointer; }
+.filter-pill:hover { border-color: var(--lilac); }
+.filter-pill:has(input:checked) { background: var(--ink); border-color: var(--ink); }
+.filter-pill:has(input:checked) label { color: var(--paper); font-weight: 700; }
+.filter-pill:has(input:checked) input { accent-color: var(--paper); }
+.filter-pill:has(input:focus-visible) { outline: 3px solid var(--lilac); outline-offset: 2px; }
+
+/* ---- The filtering itself ----
+   One rule per category: when that radio is checked anywhere inside
+   .lab, hide every specimen that is not tagged with it. Because a
+   hidden element generates no box, the numbering below stays
+   contiguous across whatever is left showing. */
+.lab:has(#f-html:checked)  .specimen:not(.t-html)  { display: none; }
+.lab:has(#f-css:checked)   .specimen:not(.t-css)   { display: none; }
+.lab:has(#f-jinja:checked) .specimen:not(.t-jinja) { display: none; }
+.lab:has(#f-flask:checked) .specimen:not(.t-flask) { display: none; }
+
+
+/* ---- The list ---- */
+.specimens {
+  counter-reset: specimen;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.specimen { counter-increment: specimen; }
+.specimen + .specimen { margin-top: var(--gap); }
+
+.specimen-card { padding: clamp(1.25rem, 2.2vw, 2rem); background: var(--wash); }
+
+.specimen-head {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.85rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1.5px solid rgb(17 17 19 / 0.1);
+}
+/* The number is drawn by the counter, not typed into the markup. */
+.specimen-head::before {
+  content: counter(specimen, decimal-leading-zero);
+  color: var(--lilac);
+  font-size: 1.125rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.specimen-head h2 {
+  flex: 1 1 14rem;
+  min-width: 0;
+  font-size: clamp(1.125rem, 1.9vw, 1.5rem);
+  letter-spacing: -0.02em;
+}
+.specimen-tag {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.tag-html  { background: var(--yellow);  color: var(--ink); }
+.tag-css   { background: var(--lilac);   color: var(--paper); }
+.tag-jinja { background: var(--mint);    color: var(--ink); }
+.tag-flask { background: var(--pink);    color: var(--ink); }
+
+.specimen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr));
+  gap: 1.1rem 1.75rem;
+  margin-top: 1.1rem;
+}
+.specimen-label {
+  margin: 0 0 0.5rem;
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.specimen-code pre {
+  margin: 0;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  background: var(--ink);
+  border-radius: 0.8rem;
+  color: #EDEBF7;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  tab-size: 2;
+}
+.specimen-code code { font-family: "SF Mono", Menlo, Consolas, monospace; }
+.specimen-what p { font-size: 0.9375rem; line-height: 1.6; }
+.specimen-seen { margin-top: 0.7rem; font-size: 0.875rem; font-weight: 600; }
+
+/* ---- The demonstration panel ----
+   Deliberately unlike the rest of the card: a dashed edge and a grid
+   background, so it reads as a workbench rather than more documentation. */
+.demo {
+  position: relative;
+  margin-top: 1.2rem;
+  padding: 1.5rem 1.15rem 1.15rem;
+  border: 1.5px dashed rgb(17 17 19 / 0.25);
+  border-radius: 0.9rem;
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(rgb(17 17 19 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(17 17 19 / 0.045) 1px, transparent 1px);
+  background-size: 1.25rem 1.25rem;
+}
+.demo-label {
+  position: absolute;
+  top: -0.6rem;
+  left: 1rem;
+  margin: 0;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  background: var(--lilac);
+  color: var(--paper);
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.demo-note {
+  margin: 0.9rem 0 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgb(17 17 19 / 0.1);
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+.demo-label-sm { display: block; margin-bottom: 0.4rem; font-size: 0.8125rem; font-weight: 700; }
+.demo-plain { margin: 0; font-size: 0.9375rem; }
+
+/* ---- Controls inside the demos ---- */
+.demo-input {
+  width: min(100%, 20rem);
+  padding: 0.55rem 0.75rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 0.6rem;
+  background: var(--paper);
+  font: inherit;
+  font-size: 0.9375rem;
+}
+.demo-input:focus-visible { outline: 3px solid var(--lilac); outline-offset: 2px; border-color: var(--lilac); }
+.demo-input:user-invalid { border-color: #B3261E; background: #FDF4F3; }
+.demo-input:user-valid   { border-color: #4F8A5B; }
+
+.demo-form { display: flex; flex-wrap: wrap; align-items: end; gap: 0.6rem; }
+.demo-form .demo-label-sm { flex: 1 0 100%; margin: 0; }
+
+.demo-btn {
+  padding: 0.55rem 1.1rem;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.demo-btn:hover { background: var(--lilac); border-color: var(--lilac); }
+.demo-btn--quiet { background: transparent; color: var(--ink); }
+.demo-btn--quiet:hover { background: var(--ink); color: var(--paper); }
+
+.demo-pop {
+  max-width: 22rem;
+  padding: 1.25rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: 0 30px 60px -30px rgb(17 17 19 / 0.8);
+}
+.demo-pop::backdrop { background: rgb(17 17 19 / 0.45); }
+.demo-pop .demo-btn--quiet { margin-top: 0.75rem; color: var(--paper); border-color: var(--paper); }
+
+.demo-fieldset { min-width: 0; margin: 0; padding: 0.8rem 1rem 0.9rem; border: 1.5px solid var(--rule); border-radius: 0.8rem; background: var(--paper); }
+.demo-fieldset > legend { padding: 0 0.4rem; font-size: 0.8125rem; font-weight: 700; }
+.demo-choice { display: inline-flex; align-items: center; gap: 0.45rem; margin-right: 1rem; font-size: 0.9375rem; }
+.demo-choice input { accent-color: var(--lilac); }
+
+.demo-choices { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.demo-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.9rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--paper);
+  font-size: 0.9375rem;
+}
+.demo-pill input { margin: 0; accent-color: var(--lilac); }
+.demo-pill label { cursor: pointer; }
+.demo-pill:has(input:checked) { background: var(--lilac); border-color: var(--lilac); }
+.demo-pill:has(input:checked) label { color: var(--paper); font-weight: 700; }
+.demo-pill:has(input:checked) input { accent-color: var(--paper); }
+
+.demo-swatches { display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 0; padding: 0; list-style: none; }
+.demo-swatches li { display: flex; align-items: center; gap: 0.45rem; font-size: 0.8125rem; }
+.demo-swatches span { width: 1.6rem; height: 1.6rem; border-radius: 0.4rem; border: 1px solid rgb(17 17 19 / 0.15); }
+
+.demo-counter { counter-reset: d; margin: 0; padding: 0; list-style: none; font-size: 0.9375rem; }
+.demo-counter li { counter-increment: d; padding-left: 2rem; position: relative; }
+.demo-counter li + li { margin-top: 0.4rem; }
+.demo-counter li::before {
+  content: counter(d);
+  position: absolute;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: var(--lilac);
+  color: var(--paper);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(7rem, 100%), 1fr)); gap: 0.5rem; }
+.demo-grid span {
+  display: grid;
+  place-items: center;
+  padding: 0.9rem 0.5rem;
+  border-radius: 0.6rem;
+  background: var(--lilac-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.demo-clamp {
+  margin: 0;
+  font-size: clamp(2rem, 9vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.demo-vertical { display: flex; gap: 0.5rem; height: 7rem; }
+.demo-vertical span {
+  padding: 0.7rem 0.4rem;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.875rem;
+  font-weight: 600;
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+}
+
+.demo-field { display: flex; flex-direction: column; gap: 0.35rem; margin: 0; }
+.demo-field > label { font-size: 0.8125rem; font-weight: 700; }
+.demo-field:focus-within > label { color: var(--lilac); }
+
+/* A bar whose width is driven by how far the page has been scrolled. */
+.demo-scroll { height: 0.75rem; border-radius: 999px; background: var(--lilac-2); overflow: hidden; }
+.demo-scroll span { display: block; height: 100%; background: var(--lilac); transform-origin: left; transform: scaleX(0.35); }
+@supports (animation-timeline: scroll()) {
+  .demo-scroll span {
+    animation: grow-x linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@media (max-width: 44rem) {
+  .specimen-code pre { font-size: 0.75rem; }
+  .demo { padding: 1.4rem 0.9rem 1rem; }
+}

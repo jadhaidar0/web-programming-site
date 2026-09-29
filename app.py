@@ -45,6 +45,7 @@ MENU = [
         ],
     },
     {"endpoint": "weekly", "label": "Journal"},
+    {"endpoint": "research", "label": "Research"},
     {"endpoint": "submit_profile", "label": "Profile"},
 ]
 
@@ -345,6 +346,13 @@ def home():
 def weekly():
     """The course journal: what was built each week, and what it taught."""
     return render_template("weekly.html")
+
+
+@app.route("/research")
+def research():
+    """Reference notes: the syntax this site is built from, each one with
+    a working demonstration."""
+    return render_template("research.html")
 
 
 @app.route("/internet-history")

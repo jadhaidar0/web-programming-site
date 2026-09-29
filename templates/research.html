@@ -1,0 +1,414 @@
+{#
+  Research: the syntax this site is built from.
+
+  Each entry is a "specimen": the syntax, what it does, where it is used
+  on this site, and a working demonstration you can poke at.
+
+  The page is built from a Jinja macro with {% raw %}{% call %}{% endraw %}, so the card
+  layout is written once and each specimen only supplies its content.
+  The demonstration inside each card is the macro's caller() body.
+
+  The filter at the top is plain radio buttons plus :has() in the
+  stylesheet. No JavaScript anywhere on this page.
+#}
+{% extends "base.html" %}
+
+{% block title %}Research{% endblock %}
+{% block description %}The HTML, CSS, Jinja and Flask syntax behind this site, each with a working demonstration.{% endblock %}
+
+{% macro specimen(title, tag, syntax, what, seen_endpoint=None, seen_label=None, demo_note=None) %}
+  <li class="specimen t-{{ tag }}">
+    <article class="tile specimen-card">
+
+      <header class="specimen-head">
+        <span class="specimen-tag tag-{{ tag }}">{{ tag }}</span>
+        <h2>{{ title }}</h2>
+      </header>
+
+      <div class="specimen-grid">
+        <div class="specimen-code">
+          <p class="specimen-label">Syntax</p>
+          <pre><code>{{ syntax }}</code></pre>
+        </div>
+
+        <div class="specimen-what">
+          <p class="specimen-label">What it does</p>
+          <p>{{ what }}</p>
+          {% if seen_endpoint %}
+            <p class="specimen-seen">
+              <a href="{{ url_for(seen_endpoint) }}">Seen on: {{ seen_label }}</a>
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+      {# caller() drops in whatever was written between {% raw %}{% call %}{% endraw %}
+         and {% raw %}{% endcall %}{% endraw %} at the point this macro was used. #}
+      <div class="demo">
+        <p class="demo-label">Try it</p>
+        {{ caller() }}
+        {% if demo_note %}<p class="demo-note">{{ demo_note }}</p>{% endif %}
+      </div>
+
+    </article>
+  </li>
+{% endmacro %}
+
+{% block content %}
+
+<p class="eyebrow">GIN446 · Reference notes</p>
+<h1 class="display">Research<span class="bracket" aria-hidden="true"></span></h1>
+
+<div class="bento">
+  <div class="tile tile--soft span-4">
+    <p class="tile-kicker">What this is</p>
+    <p class="lead">
+      Every technique this site is built from, one card each: the syntax, what it
+      actually does, where it is used, and a working demonstration you can click.
+      Nothing here is a screenshot. Each demonstration is the real thing, running
+      in your browser as you read it.
+    </p>
+  </div>
+
+  <div class="tile tile--ink span-2">
+    <p class="stat-number">17</p>
+    <p class="stat-label">techniques, all live on this page</p>
+  </div>
+</div>
+
+{# ---- The lab. The filter and the list are siblings inside .lab, which
+     is what lets one :has() rule in the stylesheet hide the cards that
+     do not match. ---- #}
+<div class="lab">
+
+  <fieldset class="lab-filter">
+    <legend>Show</legend>
+    <div class="filter-row">
+      <span class="filter-pill">
+        <input type="radio" id="f-all" name="filter" value="all" checked>
+        <label for="f-all">Everything</label>
+      </span>
+      <span class="filter-pill">
+        <input type="radio" id="f-html" name="filter" value="html">
+        <label for="f-html">HTML</label>
+      </span>
+      <span class="filter-pill">
+        <input type="radio" id="f-css" name="filter" value="css">
+        <label for="f-css">CSS</label>
+      </span>
+      <span class="filter-pill">
+        <input type="radio" id="f-jinja" name="filter" value="jinja">
+        <label for="f-jinja">Jinja</label>
+      </span>
+      <span class="filter-pill">
+        <input type="radio" id="f-flask" name="filter" value="flask">
+        <label for="f-flask">Flask</label>
+      </span>
+    </div>
+  </fieldset>
+
+  <ol class="specimens">
+
+    {# ====================== HTML ====================== #}
+
+    {% call specimen(
+        "datalist: suggestions, not a fixed list",
+        "html",
+        '<input list="fruit" name="q">\n<datalist id="fruit">\n  <option value="+961" label="Lebanon">\n  <option value="+33"  label="France">\n</datalist>',
+        "A <select> forces one of its options. A datalist only suggests: the box still
+         accepts anything typed into it. value is what gets inserted, label is what the
+         list shows beside it.",
+        "submit_profile", "the country picker and the language field") %}
+      <label class="demo-label-sm" for="demo-dl">Click the box, then start typing a letter</label>
+      <input class="demo-input" type="text" id="demo-dl" list="demo-countries"
+             placeholder="+961 70 123456" autocomplete="off">
+      <datalist id="demo-countries">
+        <option value="+961" label="Lebanon"></option>
+        <option value="+33" label="France"></option>
+        <option value="+971" label="United Arab Emirates"></option>
+        <option value="+44" label="United Kingdom"></option>
+      </datalist>
+    {% endcall %}
+
+    {% call specimen(
+        "Validation the browser does for you",
+        "html",
+        '<input type="text" name="student_id"\n       pattern="\\d{9}"\n       maxlength="9" required>',
+        "pattern holds a regular expression the value must match end to end. Together with
+         required, min, max, step and maxlength it means the browser refuses a bad value
+         before anything reaches the server, with no JavaScript written at all.",
+        "submit_profile", "every field on the profile form",
+        "Type fewer than nine digits and press the button. The browser stops you itself.") %}
+      <form class="demo-form" onsubmit="return false">
+        <label class="demo-label-sm" for="demo-id">Student ID, exactly nine digits</label>
+        <input class="demo-input" type="text" id="demo-id" pattern="\d{9}"
+               maxlength="9" required placeholder="202312345"
+               title="Exactly nine digits">
+        <button class="demo-btn" type="submit">Check it</button>
+      </form>
+    {% endcall %}
+
+    {% call specimen(
+        "popover: a panel with no JavaScript",
+        "html",
+        '<button popovertarget="panel">Open</button>\n\n<div id="panel" popover>\n  ...\n</div>',
+        "The popover attribute makes an element hidden until something asks for it.
+         A button carrying popovertarget does the asking. The browser handles showing,
+         hiding, Escape to close, and putting it on top of everything else.",
+        None, None,
+        "Press Escape to close it. Nothing on this page listens for that key: the browser does.") %}
+      <button class="demo-btn" type="button" popovertarget="demo-pop">Open the panel</button>
+      <div class="demo-pop" id="demo-pop" popover>
+        <p><strong>This is a popover.</strong></p>
+        <p>The mobile menu on this site is the same element with different styling.</p>
+        <button class="demo-btn demo-btn--quiet" type="button"
+                popovertarget="demo-pop" popovertargetaction="hide">Close</button>
+      </div>
+    {% endcall %}
+
+    {% call specimen(
+        "fieldset and legend: grouping that means something",
+        "html",
+        '<fieldset>\n  <legend>Expected graduation</legend>\n  <input type="radio" id="s" name="g" value="spring">\n  <label for="s">Spring</label>\n  ...\n</fieldset>',
+        "Three radios are one question, not three. A fieldset says so, and the legend is the
+         question itself. A screen reader reads the legend before each option, so the choice
+         makes sense without seeing the layout.",
+        "submit_profile", "the graduation and internship questions") %}
+      <fieldset class="demo-fieldset">
+        <legend>Which version did you read?</legend>
+        <span class="demo-choice">
+          <input type="radio" id="demo-r1" name="demo-ver" checked>
+          <label for="demo-r1">Written by hand</label>
+        </span>
+        <span class="demo-choice">
+          <input type="radio" id="demo-r2" name="demo-ver">
+          <label for="demo-r2">Generated with AI</label>
+        </span>
+      </fieldset>
+    {% endcall %}
+
+    {# ====================== CSS ====================== #}
+
+    {% call specimen(
+        "Design tokens on :root",
+        "css",
+        ':root {\n  --lilac: #6A56CF;\n  --ink:   #111113;\n}\n\n.button { background: var(--lilac); }',
+        "Custom properties declared on :root are declared on the html element, and every
+         element inherits from it. So one line changes the colour everywhere it is used.
+         This whole site has one set of these and nothing hardcodes a colour.",
+        None, None,
+        "These four swatches are painted with var(). They are the same values the rest of the site uses.") %}
+      <ul class="demo-swatches">
+        <li><span style="background: var(--lilac)"></span><code>--lilac</code></li>
+        <li><span style="background: var(--mint)"></span><code>--mint</code></li>
+        <li><span style="background: var(--yellow)"></span><code>--yellow</code></li>
+        <li><span style="background: var(--ink)"></span><code>--ink</code></li>
+      </ul>
+    {% endcall %}
+
+    {% call specimen(
+        ":has() — the first selector that looks downward",
+        "css",
+        '.choice:has(input:checked) {\n  background: var(--lilac);\n}\n.choice:has(input:checked) label {\n  color: white;\n}',
+        "Until :has() arrived, CSS could only style an element based on its ancestors.
+         :has() styles a parent based on what is inside it. That is what lets a checkbox
+         fill the pill around it without JavaScript and without replacing the real control.",
+        "submit_profile", "the skills and graduation pills",
+        "The real checkbox is still there. Tab to it and press Space: the pill reacts the same way.") %}
+      <div class="demo-choices">
+        <span class="demo-pill">
+          <input type="checkbox" id="demo-c1">
+          <label for="demo-c1">Programming</label>
+        </span>
+        <span class="demo-pill">
+          <input type="checkbox" id="demo-c2" checked>
+          <label for="demo-c2">Computer Networks</label>
+        </span>
+        <span class="demo-pill">
+          <input type="checkbox" id="demo-c3">
+          <label for="demo-c3">Signal Processing</label>
+        </span>
+      </div>
+    {% endcall %}
+
+    {% call specimen(
+        "Counters: numbering that maintains itself",
+        "css",
+        '.list  { counter-reset: item; }\n.list li { counter-increment: item; }\n.list li::before {\n  content: counter(item);\n}',
+        "Three steps: reset on the parent, increment on each child, print in generated
+         content. The numbers are never typed into the HTML, so inserting or deleting one
+         renumbers the rest automatically.",
+        "submit_profile", "the five numbered form sections",
+        "The numbers below are not in the HTML. The list items are empty of digits.") %}
+      <ol class="demo-counter">
+        <li>Personal information</li>
+        <li>Academic information</li>
+        <li>Technical background</li>
+      </ol>
+    {% endcall %}
+
+    {% call specimen(
+        "A grid that needs no media query",
+        "css",
+        'grid-template-columns:\n  repeat(auto-fit, minmax(min(14rem, 100%), 1fr));',
+        "auto-fit makes as many columns as will fit and collapses the rest. minmax sets a
+         floor and lets them share the leftover space. The min() wrapping the floor is the
+         guard: without it, a screen narrower than the floor overflows sideways.",
+        "weekly", "the journal's two columns",
+        "Narrow this browser window. The boxes rearrange themselves, and not one media query is involved.") %}
+      <div class="demo-grid">
+        <span>auto</span><span>fit</span><span>min</span><span>max</span><span>1fr</span>
+      </div>
+    {% endcall %}
+
+    {% call specimen(
+        "clamp(): type that scales with the window",
+        "css",
+        'font-size: clamp(2.75rem, 8.5vw, 8rem);',
+        "Three values: the smallest allowed, the preferred value, and the largest allowed.
+         The middle one is usually tied to the viewport, so the text grows with the window
+         but is never smaller than the floor or larger than the ceiling.",
+        None, None,
+        "Resize the window and watch this line. It stops growing at the ceiling and stops shrinking at the floor.") %}
+      <p class="demo-clamp">Aa</p>
+    {% endcall %}
+
+    {% call specimen(
+        "writing-mode: turning text on its side",
+        "css",
+        'writing-mode: vertical-rl;\nrotate: 180deg;',
+        "vertical-rl stacks the letters top to bottom. Rotating the element a half turn flips
+         that, so the line reads bottom to top the way a side tab normally does. The text is
+         still ordinary text: it can be selected, searched and read aloud.",
+        None, None,
+        "The menu down the left of every page is this and nothing else.") %}
+      <div class="demo-vertical">
+        <span>Internet</span><span>Web</span><span>Journal</span>
+      </div>
+    {% endcall %}
+
+    {% call specimen(
+        ":focus-within and accent-color",
+        "css",
+        '.field:focus-within > label { color: var(--lilac); }\n\ninput[type="checkbox"] { accent-color: var(--lilac); }',
+        ":focus-within matches an element when the focus is on it OR anywhere inside it, so a
+         whole group can react to one input being used. accent-color re-tints a native
+         checkbox without rebuilding it, so it keeps every behaviour it had.",
+        "submit_profile", "every field on the profile form",
+        "Click into the box. The label above it changes colour, not just the box.") %}
+      <p class="demo-field">
+        <label for="demo-fw">Project title</label>
+        <input class="demo-input" type="text" id="demo-fw" placeholder="Click here">
+      </p>
+    {% endcall %}
+
+    {% call specimen(
+        ":user-invalid — errors with better timing",
+        "css",
+        'input:user-invalid  { border-color: #B3261E; }\ninput:user-valid    { border-color: #4F8A5B; }',
+        "An empty required field is invalid from the moment the page loads, so :invalid paints
+         a form red before anyone has done anything wrong. :user-invalid waits until the field
+         has actually been used. Same rule, better moment.",
+        "submit_profile", "the whole profile form",
+        "Type one letter, then click away. Nothing was red until you had actually used it.") %}
+      <p class="demo-field">
+        <label for="demo-uv">An email address</label>
+        <input class="demo-input" type="email" id="demo-uv" placeholder="you@example.com">
+      </p>
+    {% endcall %}
+
+    {% call specimen(
+        "Animation driven by scrolling, not by time",
+        "css",
+        '@supports (animation-timeline: view()) {\n  .card {\n    animation: rise linear both;\n    animation-timeline: view();\n    animation-range: entry 0% entry 60%;\n  }\n}',
+        "Normally an animation runs on a clock. animation-timeline ties its progress to
+         scrolling instead: view() means the element's own trip across the screen. Wrapped in
+         @supports so browsers without it simply show the finished state.",
+        "internet_history", "the timeline spine filling as you scroll",
+        "Scroll this page up and down slowly. The bar tracks your position rather than a timer.") %}
+      <div class="demo-scroll"><span></span></div>
+    {% endcall %}
+
+    {# ====================== Jinja ====================== #}
+
+    {% call specimen(
+        "Template inheritance",
+        "jinja",
+        '{% raw %}{# base.html #}
+<body>
+  {% block content %}{% endblock %}
+</body>
+
+{# any page #}
+{% extends "base.html" %}
+{% block content %} ... {% endblock %}{% endraw %}',
+        "The parent holds everything the pages share and marks the holes with block. A child
+         names its parent with extends and fills the holes. The header, menu and footer on
+         this site exist in exactly one file.",
+        None, None,
+        "There is no demo for this one. It is why every page you are looking at has the same shell.") %}
+      <p class="demo-plain">base.html &rarr; history.html &rarr; internet-history.html</p>
+    {% endcall %}
+
+    {% call specimen(
+        "Macros, call and caller()",
+        "jinja",
+        '{% raw %}{% macro specimen(title) %}
+  <article>
+    <h2>{{ title }}</h2>
+    {{ caller() }}
+  </article>
+{% endmacro %}
+
+{% call specimen("datalist") %}
+  ...this markup becomes caller()...
+{% endcall %}{% endraw %}',
+        "A macro is a reusable chunk of template. call passes a block of markup INTO it, and
+         caller() is where that markup lands. It is a function with a body.",
+        None, None,
+        "Every card on this page is one macro. The demonstration you are reading is that card's caller().") %}
+      <p class="demo-plain">This box is the caller() of the card around it.</p>
+    {% endcall %}
+
+    {# ====================== Flask ====================== #}
+
+    {% call specimen(
+        "url_for(): never type a path",
+        "flask",
+        '{% raw %}<a href="{{ url_for(\'weekly\') }}">Journal</a>
+
+{# and for static files #}
+<img src="{{ url_for(\'static\', filename=\'img/mark.webp\') }}">{% endraw %}',
+        "url_for builds an address from a route's function name instead of a hardcoded path.
+         Change the route later and every link follows it. Typed paths silently rot.",
+        "weekly", "every link on this site",
+        "This link was built by url_for, not typed.") %}
+      <p class="demo-plain"><a href="{{ url_for('weekly') }}">Go to the Journal</a></p>
+    {% endcall %}
+
+    {% call specimen(
+        "Reading a form: one value or a list",
+        "flask",
+        "data     = request.form.to_dict()\nskills   = request.form.getlist('skills')\nsoftware = request.form.getlist('software')",
+        "A text box sends its name once, so to_dict() is right for it. A checkbox group and a
+         multiple select can send the same name several times, and to_dict() would keep only
+         one. getlist() returns every value.",
+        "submit_profile", "the profile form's handler",
+        "Tick both boxes and the name 'skills' is sent twice. That is why the server reads it with getlist.") %}
+      <div class="demo-choices">
+        <span class="demo-pill">
+          <input type="checkbox" id="demo-g1" checked>
+          <label for="demo-g1">skills = programming</label>
+        </span>
+        <span class="demo-pill">
+          <input type="checkbox" id="demo-g2" checked>
+          <label for="demo-g2">skills = networks</label>
+        </span>
+      </div>
+    {% endcall %}
+
+  </ol>
+
+</div>
+
+{% endblock %}

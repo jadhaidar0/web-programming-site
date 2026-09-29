@@ -12,8 +12,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,500&display=swap" rel="stylesheet">
 
-  {# Tab icon. #}
-  <link rel="icon" href="{{ static_url('favicon.png') }}">
+  {# Tab icon. Square, in three sizes: the browser picks the one closest
+     to what it needs, so a tab does not have to shrink a 512px image and
+     a home-screen shortcut does not have to blow up a 32px one. #}
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ static_url('favicon-32.png') }}">
+  <link rel="icon" type="image/png" sizes="512x512" href="{{ static_url('favicon.png') }}">
+  <link rel="apple-touch-icon" href="{{ static_url('apple-touch-icon.png') }}">
 
   {# Preview card shown when the link is shared on WhatsApp, Slack, etc.
      og:image needs a full address, which _external=True gives us. #}
