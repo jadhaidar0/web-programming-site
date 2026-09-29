@@ -1,28 +1,87 @@
-{% extends "base.html" %} {% block title %} Quiz {% endblock %} {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='quiz.css') }}" />
-{% endblock %} {% block content%}
+{#
+  Week 5 — the JavaScript quiz.
+
+  Based on the provided quiz.html. The ids the activity depends on are
+  unchanged: progress, questionText, choices, the four navigation
+  buttons, quizPanel, resultsPanel, scoreText, percentageText,
+  performanceText and correction. static/quiz.js reads all of them.
+
+  Changes made to the provided file:
+    - <main class="container"> became a <div>, because base.html already
+      has a <main> and nesting them is invalid HTML.
+    - Empty containers added for the parts quiz.js draws: the answered
+      counter, the results strip and the correction cards.
+    - The plain-text correction now sits inside a <details>, so the
+      output of buildCorrection() is still on the page but folded away
+      under the readable version.
+#}
+{% extends "base.html" %}
+
+{% block title %}Quiz{% endblock %}
+{% block description %}An interactive ten question JavaScript quiz: navigate freely, change your answers, and get a full correction at the end.{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ static_url('quiz.css') }}">
+{% endblock %}
+
+{% block content %}
 <div class="container">
-  <h1>JavaScript Quiz</h1>
-  <section id="quizPanel">
-    <p id="progress"></p>
+
+  <p class="eyebrow">Week 5 · GIN446 · School of Engineering, USEK</p>
+  <h1>JavaScript Quiz<span class="bracket" aria-hidden="true"></span></h1>
+
+  <section id="quizPanel" aria-labelledby="questionText">
+    <header class="quiz-head">
+      <p id="progress"></p>
+      {# quiz.js inserts the numbered stepper here, after #progress. #}
+      <p id="answeredCount"></p>
+    </header>
+
     <h2 id="questionText"></h2>
     <div id="choices"></div>
+
     <div class="navigation">
       <button id="firstBtn" onclick="goFirst()">First</button>
       <button id="previousBtn" onclick="goPrevious()">Previous</button>
       <button id="nextBtn" onclick="goNext()">Next</button>
       <button id="lastBtn" onclick="goLast()">Last</button>
     </div>
+
     <button class="submit" onclick="submitQuiz()">Submit Quiz</button>
   </section>
-  <section id="resultsPanel">
-    <h2>Quiz Results</h2>
-    <p id="scoreText"></p>
-    <p id="percentageText"></p>
-    <p id="performanceText"></p>
+
+  <section id="resultsPanel" aria-labelledby="resultsTitle">
+    <h2 id="resultsTitle">Quiz Results</h2>
+
+    <div class="score-head">
+      {# The ring is a conic-gradient sized by the --pct value quiz.js
+         sets on #resultsPanel. #}
+      <div class="score-ring" aria-hidden="true">
+        <span id="ringValue"></span>
+      </div>
+
+      <div class="score-meta">
+        <p id="scoreText"></p>
+        <p id="percentageText"></p>
+        <p id="performanceText"></p>
+      </div>
+    </div>
+
+    <p class="strip-label">Every question at a glance</p>
+    <div id="resultStrip"></div>
+
     <h3>Correction</h3>
-    <pre id="correction"></pre>
+    <ol id="correctionCards"></ol>
+
+    <details class="plain">
+      <summary>Plain text version</summary>
+      <pre id="correction"></pre>
+    </details>
+
+    <button class="submit restart" onclick="restartQuiz()">Start again</button>
   </section>
+
 </div>
-<script src="{{ url_for('static', filename='quiz.js') }}"></script>
+
+<script src="{{ static_url('quiz.js') }}"></script>
 {% endblock %}
