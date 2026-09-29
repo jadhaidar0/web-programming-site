@@ -559,3 +559,15 @@
   .deck-ring { grid-row: auto; }
   .fix-answers, .fix-why { padding-left: 0; }
 }
+
+/* Under 34rem the four pills no longer fit on one line. Left to wrap on
+   its own, flex strands whichever button happens not to fit: at 430px
+   that is Last, alone on a second row at the wrong end of it. A 2 x 2
+   grid decides the break instead, so it is always the backward pair on
+   top and the forward pair underneath. The auto margin has no free
+   space to absorb in a grid, so it is switched off. */
+@media (max-width: 34rem) {
+  .navigation { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .navigation button { justify-content: center; }
+  #nextBtn { margin-left: 0; }
+}
