@@ -9,7 +9,12 @@
   The demonstration inside each card is the macro's caller() body.
 
   The filter at the top is plain radio buttons plus :has() in the
-  stylesheet. No JavaScript anywhere on this page.
+  stylesheet, with no JavaScript involved.
+
+  One card does load JavaScript: the NodeList and HTMLCollection card,
+  because the difference between a live list and a snapshot only appears
+  when the DOM changes, and nothing but JavaScript can change it. That
+  code is in static/research.js and touches nothing outside its own demo.
 #}
 {% extends "base.html" %}
 
@@ -71,7 +76,7 @@
   </div>
 
   <div class="tile tile--ink span-2">
-    <p class="stat-number">16</p>
+    <p class="stat-number">17</p>
     <p class="stat-label">techniques, all live on this page</p>
   </div>
 </div>
@@ -95,6 +100,10 @@
       <span class="filter-pill">
         <input type="radio" id="f-css" name="filter" value="css">
         <label for="f-css">CSS</label>
+      </span>
+      <span class="filter-pill">
+        <input type="radio" id="f-js" name="filter" value="js">
+        <label for="f-js">JavaScript</label>
       </span>
       <span class="filter-pill">
         <input type="radio" id="f-jinja" name="filter" value="jinja">
@@ -311,6 +320,86 @@
       <div class="demo-scroll"><span></span></div>
     {% endcall %}
 
+    {# ====================== JavaScript ====================== #}
+
+    {% call specimen(
+        "NodeList and HTMLCollection: live or a snapshot",
+        "js",
+        '// HTMLCollection, always live\nconst live = box.getElementsByClassName("chip");\nconst kids = box.children;\n\n// NodeList, a snapshot of this moment\nconst snap = box.querySelectorAll(".chip");\n\n// NodeList, but this one IS live\nconst nodes = box.childNodes;',
+        "Both are array-like lists of DOM nodes, and neither is an array. The difference that
+         matters is not the type name but whether the list keeps up with the page: an
+         HTMLCollection is always live, while querySelectorAll hands back a NodeList frozen at
+         the moment it ran. Query the page again and you get a new snapshot; the live one
+         updated by itself.",
+        "quiz", "the quiz stepper, which reads stepper.children",
+        "A live list in a counting loop is the classic trap. Removing an element takes it out of
+         the list too, so length shrinks while the counter grows and the loop quits halfway.") %}
+
+      <div class="demo-readout">
+        <div>
+          <span class="demo-readout-label">Live HTMLCollection</span>
+          <strong id="liveCount">4</strong>
+          <span class="demo-readout-src">getElementsByClassName</span>
+        </div>
+        <div>
+          <span class="demo-readout-label">Static NodeList</span>
+          <strong id="snapCount">4</strong>
+          <span class="demo-readout-src">querySelectorAll</span>
+        </div>
+      </div>
+
+      <div class="demo-chips" id="chipBox">
+        <span class="chip">chip 1</span>
+        <span class="chip">chip 2</span>
+        <span class="chip">chip 3</span>
+        <span class="chip">chip 4</span>
+      </div>
+
+      <div class="demo-actions">
+        <button class="demo-btn" type="button" id="chipAdd">Add a chip</button>
+        <button class="demo-btn demo-btn--quiet" type="button" id="chipKillLive">Remove all, live loop</button>
+        <button class="demo-btn demo-btn--quiet" type="button" id="chipKillSnap">Remove all, snapshot</button>
+        <button class="demo-btn demo-btn--quiet" type="button" id="chipReset">Reset</button>
+      </div>
+
+      <p class="demo-log" id="collLog" role="status">
+        Both lists were captured once, before you touched anything. Press
+        <strong>Add a chip</strong> and watch only one of the two numbers move.
+      </p>
+
+      {# The rest of the differences, which the demo above cannot show. #}
+      <dl class="demo-compare">
+        <dt>Comes from</dt>
+        <dd><code>getElementsByClassName</code>, <code>getElementsByTagName</code>,
+            <code>.children</code>, <code>document.forms</code> give an HTMLCollection.
+            <code>querySelectorAll</code> and <code>.childNodes</code> give a NodeList.</dd>
+
+        <dt>Live or static</dt>
+        <dd>Every HTMLCollection is live. A NodeList can be either:
+            <code>querySelectorAll</code> is a snapshot, <code>.childNodes</code> is live.
+            So "NodeList" does not mean "static".</dd>
+
+        <dd class="demo-compare-wide">That is why <code>.children</code> and
+            <code>.childNodes</code> are not the same thing twice. <code>.children</code>
+            skips text and comments; <code>.childNodes</code> keeps them, so the whitespace
+            between two tags in your HTML counts as a node.</dd>
+
+        <dt>Holds</dt>
+        <dd>An HTMLCollection holds elements only. A NodeList holds any node, including text
+            and comment nodes.</dd>
+
+        <dt>Looping</dt>
+        <dd>A NodeList has <code>forEach</code>. An HTMLCollection does not. Both work with
+            <code>for...of</code> and with a plain index, and neither has
+            <code>map</code> or <code>filter</code>: for those, convert first with
+            <code>Array.from(list)</code> or <code>[...list]</code>.</dd>
+
+        <dt>Lookup by name</dt>
+        <dd>An HTMLCollection can be reached by id or name as well as by number, so
+            <code>document.forms["profile"]</code> works. A NodeList is numbers only.</dd>
+      </dl>
+    {% endcall %}
+
     {# ====================== Jinja ====================== #}
 
     {% call specimen(
@@ -393,4 +482,7 @@
 
 </div>
 
+{# Drives the live-versus-snapshot demo only. Loaded last, so every
+   element it reaches for already exists. #}
+<script src="{{ static_url('research.js') }}"></script>
 {% endblock %}

@@ -1808,6 +1808,7 @@ a.tile:hover .tile-go { background: var(--lilac); }
    contiguous across whatever is left showing. */
 .lab:has(#f-html:checked)  .specimen:not(.t-html)  { display: none; }
 .lab:has(#f-css:checked)   .specimen:not(.t-css)   { display: none; }
+.lab:has(#f-js:checked)    .specimen:not(.t-js)    { display: none; }
 .lab:has(#f-jinja:checked) .specimen:not(.t-jinja) { display: none; }
 .lab:has(#f-flask:checked) .specimen:not(.t-flask) { display: none; }
 
@@ -1856,6 +1857,7 @@ a.tile:hover .tile-go { background: var(--lilac); }
 }
 .tag-html  { background: var(--yellow);  color: var(--ink); }
 .tag-css   { background: var(--lilac);   color: var(--paper); }
+.tag-js    { background: var(--ink);     color: var(--paper); }
 .tag-jinja { background: var(--mint);    color: var(--ink); }
 .tag-flask { background: var(--pink);    color: var(--ink); }
 
@@ -2014,6 +2016,99 @@ a.tile:hover .tile-go { background: var(--lilac); }
   color: var(--paper);
   font-size: 0.75rem;
   font-weight: 800;
+}
+
+/* ---- The live-versus-snapshot demo ----
+   Two readouts, a row of chips the demo adds to and removes, and a
+   status line. The chips are plain spans; research.js only ever appends
+   or removes them, so the look lives entirely here. */
+.demo-readout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+}
+.demo-readout > div {
+  display: grid;
+  gap: 0.1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1.5px solid var(--rule);
+  border-radius: 0.7rem;
+  background: var(--paper);
+}
+.demo-readout-label { color: var(--muted); font-size: 0.75rem; font-weight: 700; }
+.demo-readout strong {
+  color: var(--ink);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.demo-readout-src {
+  color: var(--lilac);
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.6875rem;
+}
+
+.demo-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.4rem;
+  /* Holds its height when the demo empties it, so the buttons below do
+     not jump up the page as you click. */
+  min-height: 4.4rem;
+  margin-bottom: 0.9rem;
+  padding: 0.6rem;
+  border: 1.5px dashed var(--rule);
+  border-radius: 0.7rem;
+}
+.chip {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: var(--lilac-2);
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.demo-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.demo-log {
+  margin: 0.9rem 0 0;
+  padding: 0.75rem 0.9rem;
+  border-left: 4px solid var(--lilac);
+  border-radius: 0 0.5rem 0.5rem 0;
+  background: var(--paper);
+  color: var(--text);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+
+/* A description list laid out as two columns: term on the left, the
+   explanation beside it. Grid auto-placement fills row by row, so no
+   wrapper per pair is needed. */
+.demo-compare {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.5rem 1.1rem;
+  margin: 1.1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgb(17 17 19 / 0.1);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+}
+.demo-compare dt { color: var(--ink); font-weight: 800; }
+.demo-compare dd { margin: 0; color: var(--muted); }
+.demo-compare dd code { font-size: 0.75rem; }
+/* An aside that belongs under the pair above it rather than beside a
+   term of its own. */
+.demo-compare-wide { grid-column: 2; }
+
+@media (max-width: 34rem) {
+  .demo-compare { grid-template-columns: minmax(0, 1fr); gap: 0.2rem; }
+  .demo-compare dd { margin-bottom: 0.6rem; }
+  .demo-compare-wide { grid-column: 1; }
 }
 
 .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(7rem, 100%), 1fr)); gap: 0.5rem; }
