@@ -24,9 +24,9 @@
    like the same application rather than a separate page.
 
      1. Panels: deck and stage   5. Results deck
-     2. The deck ring            6. Results stage
-     3. Stepper and buttons      7. Correction cards
-     4. Question and choices     8. Small screens
+     2. The deck ring            6. The correction
+     3. Stepper and buttons      7. Small screens
+     4. Question and choices
    ===================================================================== */
 
 
@@ -392,47 +392,13 @@
 #resultsPanel[data-band="needs"]     #performanceText { background: var(--pink); }
 
 
-/* ---------- 6. Results stage ---------- */
-.strip-label {
-  margin: 0 0 0.6rem;
-  color: var(--muted);
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-#resultStrip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(2.6rem, 1fr));
-  gap: 0.4rem;
-  max-width: 40rem;
-}
-.strip-cell {
-  height: 2.6rem;
-  padding: 0;
-  border: 1.5px solid transparent;
-  border-radius: 0.55rem;
-  font: inherit;
-  font-size: 0.8125rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  cursor: pointer;
-}
-.strip-cell[data-state="right"] { background: var(--mint);  color: var(--ink); }
-.strip-cell[data-state="wrong"] { background: var(--pink);  color: var(--ink); }
-.strip-cell[data-state="empty"] { background: var(--paper); color: var(--muted); border-color: var(--rule); }
-.strip-cell:hover { border-color: var(--ink); }
-.strip-cell:focus-visible { outline: 3px solid var(--lilac); outline-offset: 2px; }
-
+/* ---------- 6. The correction ---------- */
 .stage > h3 {
   margin: 2rem 0 0.9rem;
   padding-top: 1.5rem;
   border-top: 1.5px solid var(--rule);
   font-size: 1.25rem;
 }
-
-
-/* ---------- 7. Correction cards ---------- */
 #correctionCards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(26rem, 100%), 1fr));
@@ -531,7 +497,7 @@
 }
 
 
-/* ---------- 8. Small screens ----------
+/* ---------- 7. Small screens ----------
    Under 60rem the two columns become one and the blocks stack in
    markup order: deck first, then stage. The deck itself turns into a
    compact band with the ring beside the text. */
