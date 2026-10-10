@@ -3,7 +3,6 @@ Web Programming — Flask application.
 Serves the portfolio home page and the Week 2 history pages (hand-made and AI).
 """
 
-import html
 import os
 import re
 from urllib.parse import urlparse
@@ -273,10 +272,15 @@ WEEKS = [
 
 
 def related_pages(endpoint):
-    """For a history page: its counterpart (same topic, other author) and the
-    other topic by the same author."""
+    """The two cards at the foot of a history page: this page's counterpart
+    (same topic, other author) and the other topic by the same author.
+
+    Returns a ready-made list of {endpoint, kicker} so the template only has
+    to loop and draw, with no label building in the markup.
+    """
     page = HISTORY_PAGES[endpoint]
     counterpart = other_topic = None
+
     for other, info in HISTORY_PAGES.items():
         if other == endpoint:
             continue
@@ -284,7 +288,14 @@ def related_pages(endpoint):
             counterpart = other
         elif info["author"] == page["author"]:
             other_topic = other
-    return counterpart, other_topic
+
+    other_author = HISTORY_PAGES[counterpart]["author"]
+    return [
+        {"endpoint": counterpart,
+         "kicker": "Compare with the %s version" % (
+             "AI-generated" if other_author == "ai" else "hand-made")},
+        {"endpoint": other_topic, "kicker": "Other topic"},
+    ]
 
 
 @app.context_processor
@@ -313,6 +324,10 @@ def site_data():
         "menu_is_active": menu_is_active,
         "history_pages": HISTORY_PAGES,
         "related_pages": related_pages,
+        "ruler_ticks": ruler_ticks,
+        "ruler_decades": RULER_DECADES,
+        "ruler_start": RULER_START,
+        "ruler_end": RULER_END,
         "weeks": WEEKS,
     }
 
@@ -334,28 +349,123 @@ def domain(url):
     return host[4:] if host.startswith("www.") else host
 
 
+# The time ruler at the top of every history page: one tick per timeline
+# entry, positioned by year. The years and titles below are the same ones
+# the page's own timeline uses, listed here so the ruler can be built from
+# plain data. test_site.py checks that every tick still points at an entry
+# that exists, so a renamed title fails loudly instead of silently.
 RULER_START, RULER_END = 1960, 2026
-EVENT_PATTERN = re.compile(
-    r'<li class="event[^"]*" id="([^"]+)" data-year="(\d{4})".*?'
-    r'<h4 class="event-title">(.*?)</h4>', re.S)
+RULER_DECADES = range(1960, 2030, 10)
+
+TIMELINE_INDEX = {
+    "internet_history": [
+        ("1960–1966", "Packet switching invented"),
+        ("1969", "First ARPANET message"),
+        ("1971", "First network email"),
+        ("1973", "First international connections"),
+        ("1974", "The Cerf–Kahn paper"),
+        ("1978–1981", "TCP is split into TCP and IP"),
+        ("1983", "Flag Day: NCP to TCP/IP"),
+        ("1983", "The Domain Name System"),
+        ("1986", "The NSFNET backbone"),
+        ("1988", "The Morris worm"),
+        ("1995", "NSFNET decommissioned"),
+        ("1998", "ICANN is incorporated"),
+        ("2011–2012", "IPv4 runs out and IPv6 launches"),
+        ("2015", "HTTP/2"),
+        ("2016", "The web becomes encrypted by default"),
+        ("2018", "TLS 1.3"),
+        ("2021–2022", "QUIC and HTTP/3"),
+        ("2026", "IPv6 reaches the majority"),
+    ],
+    "web_history": [
+        ("1980", "ENQUIRE"),
+        ("1984–1989", "CERN standardises on TCP/IP"),
+        ("1989", '"Information Management: A Proposal"'),
+        ("1990", "The formal proposal and the name"),
+        ("1990", "HTML, HTTP and URLs are built"),
+        ("1991", "The Web goes public"),
+        ("1992–1993", "The Web spreads, then Mosaic arrives"),
+        ("1993", "CERN puts the Web in the public domain"),
+        ("1994", "The first International WWW Conference"),
+        ("1994", "Handover to W3C"),
+        ("1994–1996", "The standards are written down"),
+        ("1997–1999", "HTTP/1.1"),
+        ("2004", "WHATWG forms and the Web becomes an application platform"),
+        ("2014", "HTML5 becomes a W3C Recommendation"),
+        ("2017", "WebAssembly ships in every major browser"),
+        ("2019–2020", "One HTML standard again, and the end of Flash"),
+        ("2022", "HTTP/3 moves the Web off TCP"),
+        ("2026", "Where the Web is now"),
+    ],
+    "internet_history_ai": [
+        ("1960s", "Packet switching is invented"),
+        ("1969", "The first ARPANET message"),
+        ("1971", "The first network email"),
+        ("1973", "The first international connections"),
+        ("1974", "The Cerf–Kahn paper"),
+        ("1978", "TCP is split into TCP and IP"),
+        ("1983", '"Flag Day": ARPANET moves from NCP to TCP/IP'),
+        ("1983", "The Domain Name System"),
+        ("1986", "The NSFNET backbone becomes operational"),
+        ("1988", "The Morris worm"),
+        ("1995", "NSFNET is decommissioned"),
+        ("1998", "ICANN is incorporated"),
+        ("2011", "IPv4 runs out; IPv6 launches"),
+        ("2015", "HTTP/2"),
+        ("2016", "The web becomes encrypted by default"),
+        ("2018", "TLS 1.3"),
+        ("2021", "QUIC and HTTP/3"),
+        ("2026", "IPv6 finally reaches the majority"),
+    ],
+    "web_history_ai": [
+        ("1980", "ENQUIRE"),
+        ("1984", "CERN standardises on TCP/IP"),
+        ("1989", '"Information Management: A Proposal"'),
+        ("1990", "The refined proposal, and the name"),
+        ("1990", "The three core technologies are built"),
+        ("1991", "The line-mode browser and the public announcement"),
+        ("1992", "Spread, then Mosaic"),
+        ("1993", "CERN puts the Web in the public domain"),
+        ("1994", "The first International WWW Conference, at CERN"),
+        ("1994", "Handover to W3C"),
+        ("1994", "The standards are written down"),
+        ("1997", "HTTP/1.1"),
+        ("2004", "WHATWG forms and the Web becomes an application platform"),
+        ("2014", "HTML5 becomes a W3C Recommendation"),
+        ("2017", "WebAssembly ships in every major browser"),
+        ("2019", "One HTML standard again, and the end of Flash"),
+        ("2022", "HTTP/3 moves the Web off TCP"),
+        ("2026", "Where the Web is now"),
+    ],
+}
 
 
-@app.template_filter("ruler_ticks")
-def ruler_ticks(timeline_html):
-    """Read the rendered timeline and return one tick per entry for the
-    time ruler: its anchor, year, title and position along the axis."""
-    ticks, per_year = [], {}
-    for anchor, year, title in EVENT_PATTERN.findall(str(timeline_html)):
-        year = int(year)
-        stack = per_year.get(year, 0)
-        per_year[year] = stack + 1
+def ruler_ticks(endpoint):
+    """One tick per timeline entry: where to link, the year, the title, and
+    how far along the 1960-2026 axis it sits.
+
+    stack counts how many earlier entries share the same year, so the
+    stylesheet can nudge them sideways instead of stacking them on top of
+    each other.
+    """
+    ticks = []
+    seen_years = {}
+
+    for year_label, title in TIMELINE_INDEX[endpoint]:
+        year = int(year_label[:4])
+        stack = seen_years.get(year, 0)
+        seen_years[year] = stack + 1
+
         ticks.append({
-            "anchor": anchor,
+            # Must match the id the event() macro builds in macros.html.
+            "anchor": "e-%d-%s" % (year, slug(title)),
             "year": year,
-            "title": html.unescape(title),
+            "title": title,
             "left": round((year - RULER_START) / (RULER_END - RULER_START) * 100, 2),
             "stack": stack,
         })
+
     return ticks
 
 

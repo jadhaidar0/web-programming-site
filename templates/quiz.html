@@ -46,7 +46,11 @@
       </div>
 
       <p id="progress"></p>
-      {# quiz.js inserts the numbered stepper here, after #progress. #}
+
+      {# The ten numbered buttons. quiz.js fills this in renderStepper()
+         and then only updates them. #}
+      <nav id="stepper" aria-label="Jump to a question"></nav>
+
       <p id="answeredCount"></p>
 
       <button class="submit" onclick="submitQuiz()">Submit Quiz</button>

@@ -76,7 +76,7 @@
   </div>
 
   <div class="tile tile--ink span-2">
-    <p class="stat-number">17</p>
+    <p class="stat-number">16</p>
     <p class="stat-label">techniques, all live on this page</p>
   </div>
 </div>
@@ -306,18 +306,6 @@
         <label for="demo-uv">An email address</label>
         <input class="demo-input" type="email" id="demo-uv" placeholder="you@example.com">
       </p>
-    {% endcall %}
-
-    {% call specimen(
-        "Animation driven by scrolling, not by time",
-        "css",
-        '@supports (animation-timeline: view()) {\n  .card {\n    animation: rise linear both;\n    animation-timeline: view();\n    animation-range: entry 0% entry 60%;\n  }\n}',
-        "Normally an animation runs on a clock. animation-timeline ties its progress to
-         scrolling instead: view() means the element's own trip across the screen. Wrapped in
-         @supports so browsers without it simply show the finished state.",
-        "internet_history", "the timeline spine filling as you scroll",
-        "Scroll this page up and down slowly. The bar tracks your position rather than a timer.") %}
-      <div class="demo-scroll"><span></span></div>
     {% endcall %}
 
     {# ====================== JavaScript ====================== #}
