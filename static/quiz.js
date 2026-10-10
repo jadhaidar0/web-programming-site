@@ -455,7 +455,6 @@ function showResults(score, percentage, message, correction) {
   results.style.setProperty("--pct", percentage);
   document.getElementById("ringValue").textContent = percentage + "%";
 
-  renderResultStrip();
   renderCorrectionCards();
 
   // textContent, not innerHTML: the correction is plain text and must
@@ -463,34 +462,6 @@ function showResults(score, percentage, message, correction) {
   document.getElementById("correction").textContent = correction;
 
   results.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-/** One small square per question: correct, incorrect or unanswered. */
-function renderResultStrip() {
-  const strip = document.getElementById("resultStrip");
-  strip.innerHTML = "";
-
-  for (let i = 0; i < questions.length; i++) {
-    const state = answerState(i);
-
-    const cell = document.createElement("button");
-    cell.type = "button";
-    cell.className = "strip-cell";
-    cell.textContent = i + 1;
-    // The colour is decoration; the title is what carries the outcome in
-    // words, so it is not colour alone.
-    cell.dataset.state = state;
-    cell.title = "Question " + (i + 1) + ": " + STATE_WORDS[state].toLowerCase();
-
-    // Jump to that question's entry further down the correction.
-    cell.addEventListener("click", function () {
-      document.getElementById("fix-" + i).scrollIntoView({
-        behavior: "smooth", block: "center"
-      });
-    });
-
-    strip.appendChild(cell);
-  }
 }
 
 /**
@@ -512,7 +483,6 @@ function renderCorrectionCards() {
 
     const item = document.createElement("li");
     item.className = "fix";
-    item.id = "fix-" + i;
     item.dataset.state = state;
 
     const head = document.createElement("div");
