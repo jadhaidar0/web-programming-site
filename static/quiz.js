@@ -359,13 +359,12 @@ function renderQuestion() {
  * destroy the element the click came from.
  */
 function renderStepper() {
-  let stepper = document.getElementById("stepper");
+  const stepper = document.getElementById("stepper");
 
-  if (stepper === null) {
-    stepper = document.createElement("nav");
-    stepper.id = "stepper";
-    stepper.setAttribute("aria-label", "Jump to a question");
-
+  // Build the ten buttons the first time only. They must not be rebuilt on
+  // every move, because clicking one would then destroy the very button the
+  // click came from.
+  if (stepper.children.length === 0) {
     for (let i = 0; i < questions.length; i++) {
       const dot = document.createElement("button");
       dot.type = "button";
@@ -376,9 +375,6 @@ function renderStepper() {
       });
       stepper.appendChild(dot);
     }
-
-    const progress = document.getElementById("progress");
-    progress.parentNode.insertBefore(stepper, progress.nextSibling);
   }
 
   const dots = stepper.children;
@@ -502,7 +498,6 @@ function renderCorrectionCards() {
 
     const head = document.createElement("div");
     head.className = "fix-head";
-    head.innerHTML = "";
 
     const num = document.createElement("span");
     num.className = "fix-num";
@@ -523,9 +518,9 @@ function renderCorrectionCards() {
 
     const answers = document.createElement("dl");
     answers.className = "fix-answers";
-    answers.appendChild(makeRow("Your answer",
-      given === undefined ? "Not answered" : current.choices[given]));
-    answers.appendChild(makeRow("Correct answer", current.choices[current.answer]));
+    addRow(answers, "Your answer",
+      given === undefined ? "Not answered" : current.choices[given]);
+    addRow(answers, "Correct answer", current.choices[current.answer]);
 
     const why = document.createElement("p");
     why.className = "fix-why";
@@ -538,19 +533,16 @@ function renderCorrectionCards() {
   }
 }
 
-/** A <dt>/<dd> pair for the correction cards. */
-function makeRow(term, value) {
-  const wrap = document.createDocumentFragment();
-
+/** Add one label-and-value pair to a correction card's description list. */
+function addRow(list, term, value) {
   const dt = document.createElement("dt");
   dt.textContent = term;
 
   const dd = document.createElement("dd");
   dd.textContent = value;
 
-  wrap.appendChild(dt);
-  wrap.appendChild(dd);
-  return wrap;
+  list.appendChild(dt);
+  list.appendChild(dd);
 }
 
 

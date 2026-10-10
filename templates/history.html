@@ -43,9 +43,8 @@
            width="1400" height="784" loading="eager" decoding="async">
     </div>
 
-    {# ruler_ticks reads the rendered timeline, so this count is always
-       whatever the page actually contains. #}
-    {% set entries = self.timeline()|ruler_ticks %}
+    {# One tick per timeline entry, from TIMELINE_INDEX in app.py. #}
+    {% set entries = ruler_ticks(request.endpoint) %}
     <div class="tile tile--{{ page.tint }} span-2 tall-2">
       <p class="tile-kicker">{{ "Written by hand" if page.author == "hand" else "Generated with AI" }}</p>
       <p class="tile-text">{{ page.description }}</p>
@@ -58,22 +57,24 @@
     <nav class="tile tile--ruler span-6" aria-label="Timeline at a glance">
       <p class="tile-kicker">Every entry on one line</p>
       <ol class="ruler-ticks">
-        {% for tick in self.timeline()|ruler_ticks %}
+        {% for tick in entries %}
           <li style="--at: {{ tick.left }}%; --stack: {{ tick.stack }}; --tick: {{ 1.25 + tick.stack * 0.5 }}rem">
             <a href="#{{ tick.anchor }}"><span class="visually-hidden">{{ tick.year }}: {{ tick.title }}</span></a>
           </li>
         {% endfor %}
       </ol>
       <p class="ruler-axis" aria-hidden="true">
-        {% for year in range(1960, 2030, 10) %}<span style="--at: {{ ((year - 1960) / 66 * 100)|round(2) }}%">{{ year }}</span>{% endfor %}
+        {% for year in ruler_decades %}
+          <span style="--at: {{ ((year - ruler_start) / (ruler_end - ruler_start) * 100)|round(2) }}%">{{ year }}</span>
+        {% endfor %}
       </p>
     </nav>
 
   </div>
 
-  {# Optional figure under the header (the AI pages use it). #}
-  {% set hero %}{% block hero %}{% endblock %}{% endset %}
-  {% if hero|trim %}<div class="panel page-hero">{{ hero }}</div>{% endif %}
+  {# Optional figure under the header. A page that fills this block
+     supplies its own <div class="panel page-hero"> wrapper. #}
+  {% block hero %}{% endblock %}
 
   <div class="history-grid">
 
@@ -108,8 +109,9 @@
         <ol class="timeline">
           {% block timeline %}{% endblock %}
         </ol>
-        {% set after %}{% block after_timeline %}{% endblock %}{% endset %}
-        {% if after|trim %}<div class="panel after-timeline">{{ after }}</div>{% endif %}
+        {# A page that fills this block supplies its own
+           <div class="panel after-timeline"> wrapper. #}
+        {% block after_timeline %}{% endblock %}
       </section>
 
       {% if headings.technologies %}
@@ -124,19 +126,20 @@
         {% block sources %}{% endblock %}
       </section>
 
-      {# Related pages: this page's counterpart and the other topic. #}
-      {% set counterpart, other_topic = related_pages(request.endpoint) %}
+      {# Related pages: this page's counterpart and the other topic.
+         related_pages() returns both cards with their labels already set. #}
       <nav class="related" aria-label="Related history pages">
         <ul>
-          {% for other, kind in [(counterpart, "Compare with the " ~ ("AI-generated" if history_pages[counterpart].author == "ai" else "hand-made") ~ " version"), (other_topic, "Other topic")] %}
+          {% for card in related_pages(request.endpoint) %}
+            {% set other = history_pages[card.endpoint] %}
             <li>
-              <a class="tile tile--{{ history_pages[other].tint }}" href="{{ url_for(other) }}">
-                <img class="tile-image" src="{{ static_url(history_pages[other].image) }}"
-                     alt="{{ history_pages[other].alt }}"
+              <a class="tile tile--{{ other.tint }}" href="{{ url_for(card.endpoint) }}">
+                <img class="tile-image" src="{{ static_url(other.image) }}"
+                     alt="{{ other.alt }}"
                      width="1400" height="784" loading="lazy" decoding="async">
-                <span class="tile-kicker">{{ kind }}</span>
-                <span class="tile-title">{{ history_pages[other].short }}</span>
-                <span class="tile-text">{{ history_pages[other].description }}</span>
+                <span class="tile-kicker">{{ card.kicker }}</span>
+                <span class="tile-title">{{ other.short }}</span>
+                <span class="tile-text">{{ other.description }}</span>
                 <span class="tile-go" aria-hidden="true">&rarr;</span>
               </a>
             </li>

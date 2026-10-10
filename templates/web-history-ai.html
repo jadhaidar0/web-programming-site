@@ -8,6 +8,7 @@
 {% set decades = ["1980s", "1990s", "2000s", "2010s", "2020s"] %}
 
 {% block hero %}
+  <div class="panel page-hero">
     <figure class="first-words">
     <p class="quote">Vague but exciting...</p>
     <figcaption>
@@ -15,6 +16,7 @@
     <p>In March 1989, Tim Berners-Lee handed his manager at CERN, Mike Sendall, a document called "Information Management: A Proposal". Sendall did not formally approve it, but he wrote this on the front and let him keep going. Everything on this page follows from that.</p>
     </figcaption>
     </figure>
+  </div>
 {% endblock %}
 
 {% block intro %}
@@ -138,7 +140,9 @@
 {% endblock %}
 
 {% block after_timeline %}
+  <div class="panel after-timeline">
   <p class="footnote">In 2013, for the twentieth anniversary of the public-domain release, CERN restored the first website at its original address: <a href="https://first-website.web.cern.ch/">first-website.web.cern.ch</a> and <a href="http://info.cern.ch/">info.cern.ch</a>.</p>
+  </div>
 {% endblock %}
 
 {% block technologies %}

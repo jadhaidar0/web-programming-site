@@ -2,16 +2,16 @@
    style.css — GIN446 Web Programming portfolio (Jad Haidar)
    One stylesheet for every page.
 
-     1. Design tokens            9. Timeline (centre spine)
-     2. Base and type           10. Major entries
-     3. The shell               11. Technologies, sources, related
-     4. Links, focus, panels    12. Footer
-     5. Side rail               13. Scroll-linked motion
-     6. Mobile menu             14. Print
-     7. Bento tiles             15. 404
-     8. Page header, ruler,     16. Profile page (Week 4)
-        history layout          17. Journal (the weekly log)
-                                18. Research (the specimen lab)
+     1. Design tokens            10. Major entries
+     2. Base and type            11. Technologies, sources, related
+     3. The shell                12. Home page: the weekly log
+     4. Links, focus, panels     13. Footer
+     5. Side rail                14. Print
+     6. Mobile menu              15. 404
+     7. Bento tiles              16. Profile page (Week 4)
+     8. Page header, ruler,      17. Journal (the weekly log)
+        history layout           18. Research (the specimen lab)
+     9. Timeline (centre spine)
 
    The FORM page loads one extra file on top of this one:
    static/form_style.css (see templates/profile-form.html).
@@ -289,18 +289,6 @@ button:focus-visible {
 }
 .brand-logo { width: 1.65rem; height: auto; }
 
-/* Reading progress: a lilac bar growing down the rail's right edge. */
-.rail::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--rail) - 2px);
-  width: 2px;
-  background: var(--lilac);
-  transform-origin: top;
-  transform: scaleY(0);
-}
 /* overflow: clip (not hidden) keeps the rounded corners tidy WITHOUT
    turning the shell into a scroll container, which would stop the
    sticky table of contents from sticking. */
@@ -557,16 +545,6 @@ button:focus-visible {
     border-right: 0;
     border-bottom: 1px solid var(--rule);
     background: var(--paper);
-  }
-  .rail::after {                   /* progress runs along the bottom */
-    top: auto;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: auto;
-    height: 2px;
-    transform-origin: left;
-    transform: scaleX(0);
   }
   .rail-mark { display: none; }
   .menu-toggle { display: grid; }
@@ -1068,21 +1046,20 @@ a.tile:hover .tile-go { background: var(--lilac); }
   padding: 0 0 1rem;
   list-style: none;
 }
-.timeline::before,
-.timeline::after {                 /* the spine: unlit, then lit in lilac */
+/* The spine down the middle of the timeline. Pale lilac, so the solid
+   lilac node on each entry still reads against it. */
+.timeline::before {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
   left: 50%;
+  z-index: 0;                      /* behind the cards */
   width: 4px;
   translate: -50% 0;
   border-radius: 2px;
-  background: var(--rule);
+  background: var(--lilac-2);
 }
-.timeline::after { background: var(--lilac); transform-origin: top; }
-.timeline::before,
-.timeline::after { z-index: 0; }     /* the spine stays behind the cards */
 
 .decade { position: relative; z-index: 1; }
 .decade + .decade { margin-top: 2.5rem; }
@@ -1230,8 +1207,7 @@ a.tile:hover .tile-go { background: var(--lilac); }
 
 /* Below 768px: one column, spine at the left edge, badge back in the card. */
 @media (max-width: 48rem) {
-  .timeline::before,
-  .timeline::after { left: 13px; }
+  .timeline::before { left: 13px; }
   .decade-title { margin: 0 0 1.5rem; }
   .decade-events { display: block; }
   .event,
@@ -1490,80 +1466,6 @@ a.tile:hover .tile-go { background: var(--lilac); }
 .back-to-top:hover { background: var(--lilac); }
 
 
-/* ---------- 14. Scroll-linked motion ----------
-   Only in browsers with scroll-driven animations, and only when the
-   visitor has not asked for reduced motion. Elsewhere everything shows
-   in its finished state. */
-@supports (animation-timeline: scroll()) {
-  /* scroll(root block) ties progress to how far the document has been
-     scrolled, so the lilac bar is a reading meter: 0% top, 100% bottom. */
-  .rail::after {
-    animation: grow-y linear both;
-    animation-timeline: scroll(root block);
-  }
-  @media (max-width: 64rem) {
-    .rail::after { animation-name: grow-x; }
-  }
-}
-
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    /* The spine fills in down to the middle of the screen. */
-    .timeline {
-      view-timeline: --spine block;
-      view-timeline-inset: 50% 50%;
-    }
-    .timeline::after {
-      animation: grow-y linear both;
-      animation-timeline: --spine;
-      animation-range: cover 0% cover 100%;
-    }
-
-    /* Reading glow: a lilac halo around whichever card is at the middle
-       of the screen, and a pulse on its year badge as it arrives. */
-    .event {
-      view-timeline: --entry block;
-      view-timeline-inset: 50% 50%;
-    }
-    .event-year {
-      animation: badge-pulse linear both;
-      animation-timeline: --entry;
-      animation-range: cover 0% cover 100%;
-    }
-
-    /* Cards fade in as they come on screen. */
-    .event > .event-card {
-      animation: reading-glow linear both, fade-in linear both;
-      animation-timeline: --entry, view();
-      animation-range: cover 0% cover 100%, entry 0% cover 25%;
-    }
-
-    /* Tiles rise into place as the wall scrolls past. */
-    .tile {
-      animation: tile-in linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 60%;
-    }
-  }
-}
-
-@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
-@keyframes reading-glow {
-  0%, 100% { box-shadow: var(--shadow); }
-  6%, 94%  { box-shadow: 0 0 0 2px var(--lilac), 0 16px 44px -10px rgb(111 95 216 / 0.5); }
-}
-@keyframes badge-pulse {
-  0%   { scale: 1; }
-  4%   { scale: 1.12; }
-  14%, 100% { scale: 1; }
-}
-@keyframes fade-in { from { opacity: 0.15; } to { opacity: 1; } }
-@keyframes tile-in {
-  from { opacity: 0; translate: 0 2rem; }
-  to   { opacity: 1; translate: 0 0; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   body::before,
@@ -1573,7 +1475,7 @@ a.tile:hover .tile-go { background: var(--lilac); }
 }
 
 
-/* ---------- 15. Print ---------- */
+/* ---------- 14. Print ---------- */
 @media print {
   html, body { background: #fff; color: #000; font-size: 11pt; padding: 0; }
   body::before, body::after,
@@ -1596,7 +1498,7 @@ a.tile:hover .tile-go { background: var(--lilac); }
   .page-section > h2::before, .display::after { display: none; }
 
   /* Timeline as a plain single column. */
-  .timeline::before, .timeline::after, .event::before { display: none; }
+  .timeline::before, .event::before { display: none; }
   .decade-title { margin: 1.5rem 0 0.75rem; padding: 0; background: none; color: #000; box-shadow: none; }
   .decade-events { display: block; }
   .event,
@@ -1635,7 +1537,7 @@ a.tile:hover .tile-go { background: var(--lilac); }
 }
 
 
-/* ---------- 16. 404 ---------- */
+/* ---------- 15. 404 ---------- */
 .notfound-code {
   margin: 0 0 0.5rem;
   color: var(--yellow);
@@ -2145,16 +2047,6 @@ a.tile:hover .tile-go { background: var(--lilac); }
 .demo-field { display: flex; flex-direction: column; gap: 0.35rem; margin: 0; }
 .demo-field > label { font-size: 0.8125rem; font-weight: 700; }
 .demo-field:focus-within > label { color: var(--lilac); }
-
-/* A bar whose width is driven by how far the page has been scrolled. */
-.demo-scroll { height: 0.75rem; border-radius: 999px; background: var(--lilac-2); overflow: hidden; }
-.demo-scroll span { display: block; height: 100%; background: var(--lilac); transform-origin: left; transform: scaleX(0.35); }
-@supports (animation-timeline: scroll()) {
-  .demo-scroll span {
-    animation: grow-x linear both;
-    animation-timeline: scroll(root block);
-  }
-}
 
 @media (max-width: 44rem) {
   .specimen-code pre { font-size: 0.75rem; }
