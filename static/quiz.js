@@ -299,6 +299,31 @@ function submitQuiz() {
    page, and this layer never decides anything about the quiz.
    --------------------------------------------------------------------- */
 
+/**
+ * How question i went: "right", "wrong", or "empty" if it was skipped.
+ *
+ * Three different places need this answer, so it is decided once here
+ * rather than spelled out again in each of them. The names match the
+ * data-state values the stylesheet colours.
+ */
+function answerState(index) {
+  if (userAnswers[index] === undefined) {
+    return "empty";
+  }
+  if (userAnswers[index] === questions[index].answer) {
+    return "right";
+  }
+  return "wrong";
+}
+
+/** The words shown for each of those three states. */
+const STATE_WORDS = {
+  right: "Correct",
+  wrong: "Incorrect",
+  empty: "Not answered",
+};
+
+
 /** Draw the current question, its choices, the stepper and the buttons. */
 function renderQuestion() {
   const current = questions[currentQuestion];
@@ -446,22 +471,16 @@ function renderResultStrip() {
   strip.innerHTML = "";
 
   for (let i = 0; i < questions.length; i++) {
-    const given = userAnswers[i];
+    const state = answerState(i);
+
     const cell = document.createElement("button");
     cell.type = "button";
     cell.className = "strip-cell";
     cell.textContent = i + 1;
-
-    if (given === undefined) {
-      cell.dataset.state = "empty";
-      cell.title = "Question " + (i + 1) + ": not answered";
-    } else if (given === questions[i].answer) {
-      cell.dataset.state = "right";
-      cell.title = "Question " + (i + 1) + ": correct";
-    } else {
-      cell.dataset.state = "wrong";
-      cell.title = "Question " + (i + 1) + ": incorrect";
-    }
+    // The colour is decoration; the title is what carries the outcome in
+    // words, so it is not colour alone.
+    cell.dataset.state = state;
+    cell.title = "Question " + (i + 1) + ": " + STATE_WORDS[state].toLowerCase();
 
     // Jump to that question's entry further down the correction.
     cell.addEventListener("click", function () {
@@ -489,12 +508,12 @@ function renderCorrectionCards() {
   for (let i = 0; i < questions.length; i++) {
     const current = questions[i];
     const given = userAnswers[i];
-    const isRight = given === current.answer;
+    const state = answerState(i);
 
     const item = document.createElement("li");
     item.className = "fix";
     item.id = "fix-" + i;
-    item.dataset.state = given === undefined ? "empty" : isRight ? "right" : "wrong";
+    item.dataset.state = state;
 
     const head = document.createElement("div");
     head.className = "fix-head";
@@ -509,8 +528,7 @@ function renderCorrectionCards() {
 
     const verdict = document.createElement("span");
     verdict.className = "fix-verdict";
-    verdict.textContent =
-      given === undefined ? "Not answered" : isRight ? "Correct" : "Incorrect";
+    verdict.textContent = STATE_WORDS[state];
 
     head.appendChild(num);
     head.appendChild(q);
