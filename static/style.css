@@ -63,15 +63,17 @@
   --shadow: 0 1px 2px rgb(17 17 19 / 0.04), 0 12px 30px -20px rgb(17 17 19 / 0.25);
 }
 
-/* Cards lift slightly under the pointer. transition tells the browser to
-   animate the change over 0.2s instead of snapping to it. */
+/* Tiles that are links lift slightly under the pointer, so it is clear
+   they can be clicked. transition tells the browser to animate the change
+   over 0.2s instead of snapping to it.
+
+   Timeline cards deliberately do NOT lift. They are not links, so the
+   movement promised something that does not happen, and the year badge is
+   positioned against the <li> rather than the card, so lifting the card
+   slid the badge across it. */
 @media (prefers-reduced-motion: no-preference) {
-  .event-card,
-  a.tile {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
+  a.tile { transition: transform 0.2s ease, box-shadow 0.2s ease; }
 }
-.event-card:hover,
 a.tile:hover,
 a.tile:focus-visible {
   transform: translateY(-4px);
@@ -312,9 +314,9 @@ button:focus-visible {
   display: flex;
   justify-content: center;       /* the rotated link stays centred */
 }
-/* vertical-rl stacks the letters top-to-bottom; rotating the element a
-   half turn flips that so the line reads bottom-to-top, the way side
-   tabs normally do. */
+/* Two properties turn a normal link into a side tab.
+   writing-mode: vertical-rl runs the text down the page; rotate: 180deg
+   then flips it so it reads bottom-to-top, the way side tabs do. */
 .site-nav a,
 .site-nav a:visited {
   display: block;
@@ -357,13 +359,18 @@ button:focus-visible {
   opacity: 0.75;
 }
 
-/* The panel hangs off the right edge of the rail, centred on its own
-   entry. It sets its own flex rules rather than inheriting the rail's. */
+/* The panel sits against the right edge of the rail, centred on its own
+   entry. Flush, not floating: there is no gap for the pointer to cross,
+   so nothing is needed to keep it open on the way over.
+
+   top: 50% puts its top edge level with the middle of the entry, then
+   translate pulls it up by half its own height to centre it. */
 .submenu {
   position: absolute;
-  left: calc(100% + 0.85rem);    /* the li now spans the rail, so 100%
-                                    is the rail's edge, not the link's */
+  left: 100%;                    /* the li spans the rail, so 100% is the
+                                    rail's edge, not the link's */
   top: 50%;
+  translate: 0 -50%;
   z-index: 60;
 
   display: flex;
@@ -380,48 +387,17 @@ button:focus-visible {
   box-shadow: 0 18px 40px -22px rgb(17 17 19 / 0.75);
 
   /* Closed. visibility: hidden also takes the links out of the tab
-     order, so a shut menu cannot be tabbed into by accident.
-     The -50% on the y axis is the vertical centring, and stays put
-     while the x value slides. */
+     order, so a shut menu cannot be tabbed into by accident. */
   opacity: 0;
   visibility: hidden;
-  translate: -0.4rem -50%;
 }
 .site-nav > ul > li:hover .submenu,
 .site-nav > ul > li:focus-within .submenu {
   opacity: 1;
   visibility: visible;
-  translate: 0 -50%;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .submenu { transition: opacity 0.16s ease, translate 0.16s ease, visibility 0.16s; }
-}
-
-/* An invisible strip covering the gap between the rail and the panel.
-   It belongs to the submenu, which is inside the <li>, so the pointer
-   crossing the gap never leaves :hover and the panel does not flicker
-   shut halfway. */
-.submenu::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 100%;
-  width: 0.9rem;
-}
-
-/* A small diamond, half tucked behind the panel, so it reads as
-   belonging to the rail entry it came from. */
-.submenu::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: calc(100% - 0.28rem);
-  width: 0.56rem;
-  height: 0.56rem;
-  translate: 0 -50%;
-  rotate: 45deg;
-  background: var(--ink);
+  .submenu { transition: opacity 0.16s ease, visibility 0.16s; }
 }
 
 .submenu li { display: block; }
@@ -608,10 +584,9 @@ button:focus-visible {
   /* In the slide-in panel there is no hover, so the submenus are simply
      always open, indented under their parent. */
   .sub-caret { display: none; }
-  .submenu::before,
-  .submenu::after { display: none; }   /* no flyout, so no bridge or pointer */
   .submenu {
     position: static;
+    translate: none;               /* the flyout centring does not apply here */
     min-width: 0;
     margin: 0.2rem 0 0.4rem 0.9rem;
     padding: 0 0 0 0.6rem;
@@ -1029,16 +1004,6 @@ a.tile:hover .tile-go { background: var(--lilac); }
    spans share the spine column, every entry lands on its own row, in DOM
    order. A negative top margin then tucks each card up beside the
    previous one. Nothing is reordered. */
-.page-section--timeline > h2.section-chip {
-  display: block;
-  width: fit-content;
-  margin: 0 auto;
-  padding: 0.9rem 1.75rem 1rem;
-  background: var(--ink);
-  color: var(--paper);
-  border-radius: var(--radius);
-}
-.page-section--timeline > h2.section-chip::before { margin-inline: auto; background: var(--yellow); }
 
 .timeline {
   position: relative;
@@ -1552,7 +1517,6 @@ a.tile:hover .tile-go { background: var(--lilac); }
 }
 .profile h1 { font-size: clamp(1.75rem, 3.5vw, 2.75rem); letter-spacing: -0.03em; }
 .profile h2 { font-size: 1.375rem; }
-.profile .chip { background: var(--paper); }
 .profile dd { overflow-wrap: anywhere; }
 
 @media (max-width: 40rem) {
@@ -1780,263 +1744,27 @@ a.tile:hover .tile-go { background: var(--lilac); }
 .specimen-what p { font-size: 0.9375rem; line-height: 1.6; }
 .specimen-seen { margin-top: 0.7rem; font-size: 0.875rem; font-weight: 600; }
 
-/* ---- The demonstration panel ----
-   Deliberately unlike the rest of the card: a dashed edge and a grid
-   background, so it reads as a workbench rather than more documentation. */
-.demo {
-  position: relative;
-  margin-top: 1.2rem;
-  padding: 1.5rem 1.15rem 1.15rem;
-  border: 1.5px dashed rgb(17 17 19 / 0.25);
-  border-radius: 0.9rem;
-  background-color: var(--paper);
-  background-image:
-    linear-gradient(rgb(17 17 19 / 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(17 17 19 / 0.045) 1px, transparent 1px);
-  background-size: 1.25rem 1.25rem;
-}
-.demo-label {
-  position: absolute;
-  top: -0.6rem;
-  left: 1rem;
-  margin: 0;
-  padding: 0.1rem 0.6rem;
-  border-radius: 999px;
-  background: var(--lilac);
-  color: var(--paper);
-  font-size: 0.625rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.demo-note {
-  margin: 0.9rem 0 0;
-  padding-top: 0.7rem;
-  border-top: 1px solid rgb(17 17 19 / 0.1);
-  color: var(--muted);
-  font-size: 0.8125rem;
-  line-height: 1.5;
-}
-.demo-label-sm { display: block; margin-bottom: 0.4rem; font-size: 0.8125rem; font-weight: 700; }
-.demo-plain { margin: 0; font-size: 0.9375rem; }
 
-/* ---- Controls inside the demos ---- */
-.demo-input {
-  width: min(100%, 20rem);
-  padding: 0.55rem 0.75rem;
-  border: 1.5px solid var(--rule);
-  border-radius: 0.6rem;
-  background: var(--paper);
-  font: inherit;
-  font-size: 0.9375rem;
-}
-.demo-input:focus-visible { outline: 3px solid var(--lilac); outline-offset: 2px; border-color: var(--lilac); }
-.demo-input:user-invalid { border-color: #B3261E; background: #FDF4F3; }
-.demo-input:user-valid   { border-color: #4F8A5B; }
 
-.demo-form { display: flex; flex-wrap: wrap; align-items: end; gap: 0.6rem; }
-.demo-form .demo-label-sm { flex: 1 0 100%; margin: 0; }
 
-.demo-btn {
-  padding: 0.55rem 1.1rem;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--paper);
-  font: inherit;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-.demo-btn:hover { background: var(--lilac); border-color: var(--lilac); }
-.demo-btn--quiet { background: transparent; color: var(--ink); }
-.demo-btn--quiet:hover { background: var(--ink); color: var(--paper); }
 
-.demo-pop {
-  max-width: 22rem;
-  padding: 1.25rem;
-  border: 0;
-  border-radius: var(--radius);
-  background: var(--ink);
-  color: var(--paper);
-  box-shadow: 0 30px 60px -30px rgb(17 17 19 / 0.8);
-}
-.demo-pop::backdrop { background: rgb(17 17 19 / 0.45); }
-.demo-pop .demo-btn--quiet { margin-top: 0.75rem; color: var(--paper); border-color: var(--paper); }
 
-.demo-fieldset { min-width: 0; margin: 0; padding: 0.8rem 1rem 0.9rem; border: 1.5px solid var(--rule); border-radius: 0.8rem; background: var(--paper); }
-.demo-fieldset > legend { padding: 0 0.4rem; font-size: 0.8125rem; font-weight: 700; }
-.demo-choice { display: inline-flex; align-items: center; gap: 0.45rem; margin-right: 1rem; font-size: 0.9375rem; }
-.demo-choice input { accent-color: var(--lilac); }
 
-.demo-choices { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.demo-pill {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.9rem;
-  border: 1.5px solid var(--rule);
-  border-radius: 999px;
-  background: var(--paper);
-  font-size: 0.9375rem;
-}
-.demo-pill input { margin: 0; accent-color: var(--lilac); }
-.demo-pill label { cursor: pointer; }
-.demo-pill:has(input:checked) { background: var(--lilac); border-color: var(--lilac); }
-.demo-pill:has(input:checked) label { color: var(--paper); font-weight: 700; }
-.demo-pill:has(input:checked) input { accent-color: var(--paper); }
 
-.demo-swatches { display: flex; flex-wrap: wrap; gap: 0.9rem; margin: 0; padding: 0; list-style: none; }
-.demo-swatches li { display: flex; align-items: center; gap: 0.45rem; font-size: 0.8125rem; }
-.demo-swatches span { width: 1.6rem; height: 1.6rem; border-radius: 0.4rem; border: 1px solid rgb(17 17 19 / 0.15); }
 
-.demo-counter { counter-reset: d; margin: 0; padding: 0; list-style: none; font-size: 0.9375rem; }
-.demo-counter li { counter-increment: d; padding-left: 2rem; position: relative; }
-.demo-counter li + li { margin-top: 0.4rem; }
-.demo-counter li::before {
-  content: counter(d);
-  position: absolute;
-  left: 0;
-  display: grid;
-  place-items: center;
-  width: 1.4rem;
-  height: 1.4rem;
-  border-radius: 50%;
-  background: var(--lilac);
-  color: var(--paper);
-  font-size: 0.75rem;
-  font-weight: 800;
-}
 
-/* ---- The live-versus-snapshot demo ----
-   Two readouts, a row of chips the demo adds to and removes, and a
-   status line. The chips are plain spans; research.js only ever appends
-   or removes them, so the look lives entirely here. */
-.demo-readout {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
-  gap: 0.5rem;
-  margin-bottom: 0.9rem;
-}
-.demo-readout > div {
-  display: grid;
-  gap: 0.1rem;
-  padding: 0.75rem 0.9rem;
-  border: 1.5px solid var(--rule);
-  border-radius: 0.7rem;
-  background: var(--paper);
-}
-.demo-readout-label { color: var(--muted); font-size: 0.75rem; font-weight: 700; }
-.demo-readout strong {
-  color: var(--ink);
-  font-size: 1.75rem;
-  font-weight: 800;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-.demo-readout-src {
-  color: var(--lilac);
-  font-family: "SF Mono", Menlo, Consolas, monospace;
-  font-size: 0.6875rem;
-}
 
-.demo-chips {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  gap: 0.4rem;
-  /* Holds its height when the demo empties it, so the buttons below do
-     not jump up the page as you click. */
-  min-height: 4.4rem;
-  margin-bottom: 0.9rem;
-  padding: 0.6rem;
-  border: 1.5px dashed var(--rule);
-  border-radius: 0.7rem;
-}
-.chip {
-  padding: 0.35rem 0.8rem;
-  border-radius: 999px;
-  background: var(--lilac-2);
-  color: var(--ink);
-  font-size: 0.8125rem;
-  font-weight: 700;
-}
 
-.demo-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
-.demo-log {
-  margin: 0.9rem 0 0;
-  padding: 0.75rem 0.9rem;
-  border-left: 4px solid var(--lilac);
-  border-radius: 0 0.5rem 0.5rem 0;
-  background: var(--paper);
-  color: var(--text);
-  font-size: 0.8125rem;
-  line-height: 1.55;
-}
 
-/* A description list laid out as two columns: term on the left, the
-   explanation beside it. Grid auto-placement fills row by row, so no
-   wrapper per pair is needed. */
-.demo-compare {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.5rem 1.1rem;
-  margin: 1.1rem 0 0;
-  padding-top: 1rem;
-  border-top: 1px solid rgb(17 17 19 / 0.1);
-  font-size: 0.8125rem;
-  line-height: 1.55;
-}
-.demo-compare dt { color: var(--ink); font-weight: 800; }
-.demo-compare dd { margin: 0; color: var(--muted); }
-.demo-compare dd code { font-size: 0.75rem; }
-/* An aside that belongs under the pair above it rather than beside a
-   term of its own. */
-.demo-compare-wide { grid-column: 2; }
 
 @media (max-width: 34rem) {
-  .demo-compare { grid-template-columns: minmax(0, 1fr); gap: 0.2rem; }
-  .demo-compare dd { margin-bottom: 0.6rem; }
-  .demo-compare-wide { grid-column: 1; }
 }
 
-.demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(7rem, 100%), 1fr)); gap: 0.5rem; }
-.demo-grid span {
-  display: grid;
-  place-items: center;
-  padding: 0.9rem 0.5rem;
-  border-radius: 0.6rem;
-  background: var(--lilac-2);
-  font-size: 0.8125rem;
-  font-weight: 700;
-}
 
-.demo-clamp {
-  margin: 0;
-  font-size: clamp(2rem, 9vw, 5rem);
-  font-weight: 800;
-  letter-spacing: -0.05em;
-  line-height: 1;
-}
 
-.demo-vertical { display: flex; gap: 0.5rem; height: 7rem; }
-.demo-vertical span {
-  padding: 0.7rem 0.4rem;
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--paper);
-  font-size: 0.875rem;
-  font-weight: 600;
-  writing-mode: vertical-rl;
-  rotate: 180deg;
-}
 
-.demo-field { display: flex; flex-direction: column; gap: 0.35rem; margin: 0; }
-.demo-field > label { font-size: 0.8125rem; font-weight: 700; }
-.demo-field:focus-within > label { color: var(--lilac); }
 
 @media (max-width: 44rem) {
   .specimen-code pre { font-size: 0.75rem; }
-  .demo { padding: 1.4rem 0.9rem 1rem; }
 }

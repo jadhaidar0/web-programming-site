@@ -1,27 +1,23 @@
 {#
   Research: the syntax this site is built from.
 
-  Each entry is a "specimen": the syntax, what it does, where it is used
-  on this site, and a working demonstration you can poke at.
+  Each entry is a "specimen": the syntax, what it does, and where it is
+  used on this site.
 
-  The page is built from a Jinja macro with {% raw %}{% call %}{% endraw %}, so the card
-  layout is written once and each specimen only supplies its content.
-  The demonstration inside each card is the macro's caller() body.
+  One Jinja macro draws the card, and each specimen is one call to it
+  with its own text. The card layout is written once, here, instead of
+  sixteen times.
 
   The filter at the top is plain radio buttons plus :has() in the
-  stylesheet, with no JavaScript involved.
-
-  One card does load JavaScript: the NodeList and HTMLCollection card,
-  because the difference between a live list and a snapshot only appears
-  when the DOM changes, and nothing but JavaScript can change it. That
-  code is in static/research.js and touches nothing outside its own demo.
+  stylesheet. There is no JavaScript on this page.
 #}
 {% extends "base.html" %}
 
 {% block title %}Research{% endblock %}
-{% block description %}The HTML, CSS, Jinja and Flask syntax behind this site, each with a working demonstration.{% endblock %}
+{% block description %}The HTML, CSS, Jinja and Flask syntax behind this site, with a note on what each one does.{% endblock %}
 
-{% macro specimen(title, tag, syntax, what, seen_endpoint=None, seen_label=None, demo_note=None) %}
+{# One card. Called once per specimen below, with that specimen's text. #}
+{% macro specimen(title, tag, syntax, what, seen_endpoint=None, seen_label=None) %}
   <li class="specimen t-{{ tag }}">
     <article class="tile specimen-card">
 
@@ -47,14 +43,6 @@
         </div>
       </div>
 
-      {# caller() drops in whatever was written between {% raw %}{% call %}{% endraw %}
-         and {% raw %}{% endcall %}{% endraw %} at the point this macro was used. #}
-      <div class="demo">
-        <p class="demo-label">Try it</p>
-        {{ caller() }}
-        {% if demo_note %}<p class="demo-note">{{ demo_note }}</p>{% endif %}
-      </div>
-
     </article>
   </li>
 {% endmacro %}
@@ -69,9 +57,8 @@
     <p class="tile-kicker">What this is</p>
     <p class="lead">
       Every technique this site is built from, one card each: the syntax, what it
-      actually does, where it is used, and a working demonstration you can click.
-      Nothing here is a screenshot. Each demonstration is the real thing, running
-      in your browser as you read it.
+      actually does, and a link to the page where it is used. Written as notes to
+      myself while building the site, so I can find a thing again later.
     </p>
   </div>
 
@@ -121,196 +108,106 @@
     {# ====================== HTML ====================== #}
 
 
-    {% call specimen(
+    {{ specimen(
         "Validation the browser does for you",
         "html",
         '<input type="text" name="student_id"\n       pattern="\\d{9}"\n       maxlength="9" required>',
         "pattern holds a regular expression the value must match end to end. Together with
          required, min, max, step and maxlength it means the browser refuses a bad value
          before anything reaches the server, with no JavaScript written at all.",
-        "submit_profile", "every field on the profile form",
-        "Type fewer than nine digits and press the button. The browser stops you itself.") %}
-      <form class="demo-form" onsubmit="return false">
-        <label class="demo-label-sm" for="demo-id">Student ID, exactly nine digits</label>
-        <input class="demo-input" type="text" id="demo-id" pattern="\d{9}"
-               maxlength="9" required placeholder="202312345"
-               title="Exactly nine digits">
-        <button class="demo-btn" type="submit">Check it</button>
-      </form>
-    {% endcall %}
+        "submit_profile", "every field on the profile form") }}
 
-    {% call specimen(
+    {{ specimen(
         "popover: a panel with no JavaScript",
         "html",
         '<button popovertarget="panel">Open</button>\n\n<div id="panel" popover>\n  ...\n</div>',
         "The popover attribute makes an element hidden until something asks for it.
          A button carrying popovertarget does the asking. The browser handles showing,
-         hiding, Escape to close, and putting it on top of everything else.",
-        None, None,
-        "Press Escape to close it. Nothing on this page listens for that key: the browser does.") %}
-      <button class="demo-btn" type="button" popovertarget="demo-pop">Open the panel</button>
-      <div class="demo-pop" id="demo-pop" popover>
-        <p><strong>This is a popover.</strong></p>
-        <p>The mobile menu on this site is the same element with different styling.</p>
-        <button class="demo-btn demo-btn--quiet" type="button"
-                popovertarget="demo-pop" popovertargetaction="hide">Close</button>
-      </div>
-    {% endcall %}
+         hiding, Escape to close, and putting it on top of everything else.") }}
 
-    {% call specimen(
+    {{ specimen(
         "fieldset and legend: grouping that means something",
         "html",
         '<fieldset>\n  <legend>Expected graduation</legend>\n  <input type="radio" id="s" name="g" value="spring">\n  <label for="s">Spring</label>\n  ...\n</fieldset>',
         "Three radios are one question, not three. A fieldset says so, and the legend is the
          question itself. A screen reader reads the legend before each option, so the choice
          makes sense without seeing the layout.",
-        "submit_profile", "the graduation and internship questions") %}
-      <fieldset class="demo-fieldset">
-        <legend>Which version did you read?</legend>
-        <span class="demo-choice">
-          <input type="radio" id="demo-r1" name="demo-ver" checked>
-          <label for="demo-r1">Written by hand</label>
-        </span>
-        <span class="demo-choice">
-          <input type="radio" id="demo-r2" name="demo-ver">
-          <label for="demo-r2">Generated with AI</label>
-        </span>
-      </fieldset>
-    {% endcall %}
+        "submit_profile", "the graduation and internship questions") }}
 
     {# ====================== CSS ====================== #}
 
-    {% call specimen(
+    {{ specimen(
         "Design tokens on :root",
         "css",
         ':root {\n  --lilac: #6A56CF;\n  --ink:   #111113;\n}\n\n.button { background: var(--lilac); }',
         "Custom properties declared on :root are declared on the html element, and every
          element inherits from it. So one line changes the colour everywhere it is used.
-         This whole site has one set of these and nothing hardcodes a colour.",
-        None, None,
-        "These four swatches are painted with var(). They are the same values the rest of the site uses.") %}
-      <ul class="demo-swatches">
-        <li><span style="background: var(--lilac)"></span><code>--lilac</code></li>
-        <li><span style="background: var(--mint)"></span><code>--mint</code></li>
-        <li><span style="background: var(--yellow)"></span><code>--yellow</code></li>
-        <li><span style="background: var(--ink)"></span><code>--ink</code></li>
-      </ul>
-    {% endcall %}
+         This whole site has one set of these and nothing hardcodes a colour.") }}
 
-    {% call specimen(
+    {{ specimen(
         ":has() — the first selector that looks downward",
         "css",
         '.choice:has(input:checked) {\n  background: var(--lilac);\n}\n.choice:has(input:checked) label {\n  color: white;\n}',
         "Until :has() arrived, CSS could only style an element based on its ancestors.
          :has() styles a parent based on what is inside it. That is what lets a checkbox
          fill the pill around it without JavaScript and without replacing the real control.",
-        "submit_profile", "the skills and graduation pills",
-        "The real checkbox is still there. Tab to it and press Space: the pill reacts the same way.") %}
-      <div class="demo-choices">
-        <span class="demo-pill">
-          <input type="checkbox" id="demo-c1">
-          <label for="demo-c1">Programming</label>
-        </span>
-        <span class="demo-pill">
-          <input type="checkbox" id="demo-c2" checked>
-          <label for="demo-c2">Computer Networks</label>
-        </span>
-        <span class="demo-pill">
-          <input type="checkbox" id="demo-c3">
-          <label for="demo-c3">Signal Processing</label>
-        </span>
-      </div>
-    {% endcall %}
+        "submit_profile", "the skills and graduation pills") }}
 
-    {% call specimen(
+    {{ specimen(
         "Counters: numbering that maintains itself",
         "css",
         '.list  { counter-reset: item; }\n.list li { counter-increment: item; }\n.list li::before {\n  content: counter(item);\n}',
         "Three steps: reset on the parent, increment on each child, print in generated
          content. The numbers are never typed into the HTML, so inserting or deleting one
          renumbers the rest automatically.",
-        "submit_profile", "the five numbered form sections",
-        "The numbers below are not in the HTML. The list items are empty of digits.") %}
-      <ol class="demo-counter">
-        <li>Personal information</li>
-        <li>Academic information</li>
-        <li>Technical background</li>
-      </ol>
-    {% endcall %}
+        "submit_profile", "the five numbered form sections") }}
 
-    {% call specimen(
+    {{ specimen(
         "A grid that needs no media query",
         "css",
         'grid-template-columns:\n  repeat(auto-fit, minmax(min(14rem, 100%), 1fr));',
         "auto-fit makes as many columns as will fit and collapses the rest. minmax sets a
          floor and lets them share the leftover space. The min() wrapping the floor is the
          guard: without it, a screen narrower than the floor overflows sideways.",
-        "weekly", "the journal's two columns",
-        "Narrow this browser window. The boxes rearrange themselves, and not one media query is involved.") %}
-      <div class="demo-grid">
-        <span>auto</span><span>fit</span><span>min</span><span>max</span><span>1fr</span>
-      </div>
-    {% endcall %}
+        "weekly", "the journal's two columns") }}
 
-    {% call specimen(
+    {{ specimen(
         "clamp(): type that scales with the window",
         "css",
         'font-size: clamp(2.75rem, 8.5vw, 8rem);',
         "Three values: the smallest allowed, the preferred value, and the largest allowed.
          The middle one is usually tied to the viewport, so the text grows with the window
-         but is never smaller than the floor or larger than the ceiling.",
-        None, None,
-        "Resize the window and watch this line. It stops growing at the ceiling and stops shrinking at the floor.") %}
-      <p class="demo-clamp">Aa</p>
-    {% endcall %}
+         but is never smaller than the floor or larger than the ceiling.") }}
 
-    {% call specimen(
+    {{ specimen(
         "writing-mode: turning text on its side",
         "css",
         'writing-mode: vertical-rl;\nrotate: 180deg;',
         "vertical-rl stacks the letters top to bottom. Rotating the element a half turn flips
          that, so the line reads bottom to top the way a side tab normally does. The text is
-         still ordinary text: it can be selected, searched and read aloud.",
-        None, None,
-        "The menu down the left of every page is this and nothing else.") %}
-      <div class="demo-vertical">
-        <span>Internet</span><span>Web</span><span>Journal</span>
-      </div>
-    {% endcall %}
+         still ordinary text: it can be selected, searched and read aloud.") }}
 
-    {% call specimen(
+    {{ specimen(
         ":focus-within and accent-color",
         "css",
         '.field:focus-within > label { color: var(--lilac); }\n\ninput[type="checkbox"] { accent-color: var(--lilac); }',
         ":focus-within matches an element when the focus is on it OR anywhere inside it, so a
          whole group can react to one input being used. accent-color re-tints a native
          checkbox without rebuilding it, so it keeps every behaviour it had.",
-        "submit_profile", "every field on the profile form",
-        "Click into the box. The label above it changes colour, not just the box.") %}
-      <p class="demo-field">
-        <label for="demo-fw">Project title</label>
-        <input class="demo-input" type="text" id="demo-fw" placeholder="Click here">
-      </p>
-    {% endcall %}
+        "submit_profile", "every field on the profile form") }}
 
-    {% call specimen(
+    {{ specimen(
         ":user-invalid — errors with better timing",
         "css",
         'input:user-invalid  { border-color: #B3261E; }\ninput:user-valid    { border-color: #4F8A5B; }',
         "An empty required field is invalid from the moment the page loads, so :invalid paints
          a form red before anyone has done anything wrong. :user-invalid waits until the field
          has actually been used. Same rule, better moment.",
-        "submit_profile", "the whole profile form",
-        "Type one letter, then click away. Nothing was red until you had actually used it.") %}
-      <p class="demo-field">
-        <label for="demo-uv">An email address</label>
-        <input class="demo-input" type="email" id="demo-uv" placeholder="you@example.com">
-      </p>
-    {% endcall %}
+        "submit_profile", "the whole profile form") }}
 
     {# ====================== JavaScript ====================== #}
 
-    {% call specimen(
+    {{ specimen(
         "NodeList and HTMLCollection: live or a snapshot",
         "js",
         '// HTMLCollection, always live\nconst live = box.getElementsByClassName("chip");\nconst kids = box.children;\n\n// NodeList, a snapshot of this moment\nconst snap = box.querySelectorAll(".chip");\n\n// NodeList, but this one IS live\nconst nodes = box.childNodes;',
@@ -319,78 +216,11 @@
          HTMLCollection is always live, while querySelectorAll hands back a NodeList frozen at
          the moment it ran. Query the page again and you get a new snapshot; the live one
          updated by itself.",
-        "quiz", "the quiz stepper, which reads stepper.children",
-        "A live list in a counting loop is the classic trap. Removing an element takes it out of
-         the list too, so length shrinks while the counter grows and the loop quits halfway.") %}
-
-      <div class="demo-readout">
-        <div>
-          <span class="demo-readout-label">Live HTMLCollection</span>
-          <strong id="liveCount">4</strong>
-          <span class="demo-readout-src">getElementsByClassName</span>
-        </div>
-        <div>
-          <span class="demo-readout-label">Static NodeList</span>
-          <strong id="snapCount">4</strong>
-          <span class="demo-readout-src">querySelectorAll</span>
-        </div>
-      </div>
-
-      <div class="demo-chips" id="chipBox">
-        <span class="chip">chip 1</span>
-        <span class="chip">chip 2</span>
-        <span class="chip">chip 3</span>
-        <span class="chip">chip 4</span>
-      </div>
-
-      <div class="demo-actions">
-        <button class="demo-btn" type="button" id="chipAdd">Add a chip</button>
-        <button class="demo-btn demo-btn--quiet" type="button" id="chipKillLive">Remove all, live loop</button>
-        <button class="demo-btn demo-btn--quiet" type="button" id="chipKillSnap">Remove all, snapshot</button>
-        <button class="demo-btn demo-btn--quiet" type="button" id="chipReset">Reset</button>
-      </div>
-
-      <p class="demo-log" id="collLog" role="status">
-        Both lists were captured once, before you touched anything. Press
-        <strong>Add a chip</strong> and watch only one of the two numbers move.
-      </p>
-
-      {# The rest of the differences, which the demo above cannot show. #}
-      <dl class="demo-compare">
-        <dt>Comes from</dt>
-        <dd><code>getElementsByClassName</code>, <code>getElementsByTagName</code>,
-            <code>.children</code>, <code>document.forms</code> give an HTMLCollection.
-            <code>querySelectorAll</code> and <code>.childNodes</code> give a NodeList.</dd>
-
-        <dt>Live or static</dt>
-        <dd>Every HTMLCollection is live. A NodeList can be either:
-            <code>querySelectorAll</code> is a snapshot, <code>.childNodes</code> is live.
-            So "NodeList" does not mean "static".</dd>
-
-        <dd class="demo-compare-wide">That is why <code>.children</code> and
-            <code>.childNodes</code> are not the same thing twice. <code>.children</code>
-            skips text and comments; <code>.childNodes</code> keeps them, so the whitespace
-            between two tags in your HTML counts as a node.</dd>
-
-        <dt>Holds</dt>
-        <dd>An HTMLCollection holds elements only. A NodeList holds any node, including text
-            and comment nodes.</dd>
-
-        <dt>Looping</dt>
-        <dd>A NodeList has <code>forEach</code>. An HTMLCollection does not. Both work with
-            <code>for...of</code> and with a plain index, and neither has
-            <code>map</code> or <code>filter</code>: for those, convert first with
-            <code>Array.from(list)</code> or <code>[...list]</code>.</dd>
-
-        <dt>Lookup by name</dt>
-        <dd>An HTMLCollection can be reached by id or name as well as by number, so
-            <code>document.forms["profile"]</code> works. A NodeList is numbers only.</dd>
-      </dl>
-    {% endcall %}
+        "quiz", "the quiz stepper, which reads stepper.children") }}
 
     {# ====================== Jinja ====================== #}
 
-    {% call specimen(
+    {{ specimen(
         "Template inheritance",
         "jinja",
         '{% raw %}{# base.html #}
@@ -403,35 +233,20 @@
 {% block content %} ... {% endblock %}{% endraw %}',
         "The parent holds everything the pages share and marks the holes with block. A child
          names its parent with extends and fills the holes. The header, menu and footer on
-         this site exist in exactly one file.",
-        None, None,
-        "There is no demo for this one. It is why every page you are looking at has the same shell.") %}
-      <p class="demo-plain">base.html &rarr; history.html &rarr; internet-history.html</p>
-    {% endcall %}
+         this site exist in exactly one file.") }}
 
-    {% call specimen(
-        "Macros, call and caller()",
+    {{ specimen(
+        "Macros: write the markup once",
         "jinja",
-        '{% raw %}{% macro specimen(title) %}
-  <article>
-    <h2>{{ title }}</h2>
-    {{ caller() }}
-  </article>
-{% endmacro %}
-
-{% call specimen("Counters") %}
-  ...this markup becomes caller()...
-{% endcall %}{% endraw %}',
-        "A macro is a reusable chunk of template. call passes a block of markup INTO it, and
-         caller() is where that markup lands. It is a function with a body.",
-        None, None,
-        "Every card on this page is one macro. The demonstration you are reading is that card's caller().") %}
-      <p class="demo-plain">This box is the caller() of the card around it.</p>
-    {% endcall %}
+        "{% raw %}{% macro specimen(title, tag) %}\n  <article>\n    <span>{{ tag }}</span>\n    <h2>{{ title }}</h2>\n  </article>\n{% endmacro %}\n\n{{ specimen(\"Counters\", \"css\") }}{% endraw %}",
+        "A macro is a reusable piece of template with arguments, like a function that returns
+         markup. Every card on this page is one call to the same macro, so the card layout is
+         written once instead of sixteen times.",
+        "research", "every card on this page") }}
 
     {# ====================== Flask ====================== #}
 
-    {% call specimen(
+    {{ specimen(
         "url_for(): never type a path",
         "flask",
         '{% raw %}<a href="{{ url_for(\'weekly\') }}">Journal</a>
@@ -440,37 +255,19 @@
 <img src="{{ url_for(\'static\', filename=\'img/mark.webp\') }}">{% endraw %}',
         "url_for builds an address from a route's function name instead of a hardcoded path.
          Change the route later and every link follows it. Typed paths silently rot.",
-        "weekly", "every link on this site",
-        "This link was built by url_for, not typed.") %}
-      <p class="demo-plain"><a href="{{ url_for('weekly') }}">Go to the Journal</a></p>
-    {% endcall %}
+        "weekly", "every link on this site") }}
 
-    {% call specimen(
+    {{ specimen(
         "Reading a form: one value or a list",
         "flask",
         "data     = request.form.to_dict()\nskills   = request.form.getlist('skills')\nsoftware = request.form.getlist('software')",
         "A text box sends its name once, so to_dict() is right for it. A checkbox group and a
          multiple select can send the same name several times, and to_dict() would keep only
          one. getlist() returns every value.",
-        "submit_profile", "the profile form's handler",
-        "Tick both boxes and the name 'skills' is sent twice. That is why the server reads it with getlist.") %}
-      <div class="demo-choices">
-        <span class="demo-pill">
-          <input type="checkbox" id="demo-g1" checked>
-          <label for="demo-g1">skills = programming</label>
-        </span>
-        <span class="demo-pill">
-          <input type="checkbox" id="demo-g2" checked>
-          <label for="demo-g2">skills = networks</label>
-        </span>
-      </div>
-    {% endcall %}
+        "submit_profile", "the profile form's handler") }}
 
   </ol>
 
 </div>
 
-{# Drives the live-versus-snapshot demo only. Loaded last, so every
-   element it reaches for already exists. #}
-<script src="{{ static_url('research.js') }}"></script>
 {% endblock %}
