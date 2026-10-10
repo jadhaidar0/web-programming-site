@@ -164,13 +164,11 @@
   line-height: 1.4;
 }
 
-/* Required fields mark themselves. :has() looks forward from the label
-   to the control right after it and checks for the required attribute,
-   so no extra markup is needed and the two can never fall out of step.
-   The asterisk is decorative: `required` is what a screen reader
-   announces, and aria-hidden is not needed because generated content
-   like this is not exposed as text by assistive technology. */
-.field > label:has(+ :is(input, select, textarea)[required])::after {
+/* Required fields mark themselves: if the element right after the label
+   carries `required`, the label gets a star. No extra markup, and the
+   two can never fall out of step. The star is decoration -- `required`
+   is what a screen reader actually announces. */
+.field > label:has(+ [required])::after {
   content: " *";
   color: var(--lilac);
   font-weight: 800;

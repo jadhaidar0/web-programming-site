@@ -48,14 +48,18 @@
     log.textContent = message;
   }
 
-  function addChip() {
+  // The one place a chip is made. addChip() and reset() both use it.
+  function makeChip() {
     made = made + 1;
 
     const chip = document.createElement("span");
     chip.className = "chip";
     chip.textContent = "chip " + made;
     box.appendChild(chip);
+  }
 
+  function addChip() {
+    makeChip();
     render();
     say("Added one chip. The live collection reports " + live.length +
         " on its own. The snapshot still says " + snap.length +
@@ -102,7 +106,7 @@
     made = 0;
 
     for (let i = 0; i < 4; i++) {
-      addChipQuietly();
+      makeChip();
     }
 
     // Re-take the snapshot so the demonstration can be run again.
@@ -111,14 +115,6 @@
     render();
     say("Back to four chips, and the snapshot has been taken again. " +
         "Both now agree at " + live.length + ".");
-  }
-
-  function addChipQuietly() {
-    made = made + 1;
-    const chip = document.createElement("span");
-    chip.className = "chip";
-    chip.textContent = "chip " + made;
-    box.appendChild(chip);
   }
 
   document.getElementById("chipAdd").addEventListener("click", addChip);
