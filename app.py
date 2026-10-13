@@ -9,7 +9,14 @@ from urllib.parse import urlparse
 
 from flask import Flask, render_template, request, url_for
 
+from quiz_api import init_quiz
+
 app = Flask(__name__)
+
+# Week 7. quiz_api.py is provided and not edited. init_quiz() points the app at
+# the database and registers its own blueprint, which adds /live-quiz and the
+# two /api/... routes. Everything below this line is unaffected.
+init_quiz(app)
 
 
 # ---------------------------------------------------------------------------

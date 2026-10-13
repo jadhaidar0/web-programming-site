@@ -12,3 +12,9 @@ __pycache__/
 # Editor
 .vscode/
 .DS_Store
+
+# Local SQLite database created by seed_db.py (Week 7)
+quiz.db
+
+# Local note holding the Render database URL and password
+DATABASE_URL.local.txt
