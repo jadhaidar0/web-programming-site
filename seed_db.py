@@ -20,66 +20,100 @@ from quiz_api import db, Question, database_uri
 QUESTIONS = [
     {
         "question": "Which keyword declares a block-scoped variable that can later be reassigned?",
-        "choices": ["var", "let", "const", "def"],
+        "choices": ["var", "let", "const", "static"],
         "answer": 1,
-        "explanation": " let declares a block-scoped variable whose value may later be reassigned.",
+        "explanation": (
+            "let declares a block-scoped variable whose value may later be "
+            "reassigned. var is function-scoped, and const cannot be reassigned."
+        ),
     },
     {
-        "question": "Which operator tests strict equality (value AND type)?",
+        "question": "Which JavaScript operator tests strict equality?",
         "choices": ["=", "==", "===", "!="],
         "answer": 2,
-        "explanation": "=== compares both value and type.",
+        "explanation": (
+            "The === operator compares both value and type. == converts the types "
+            "first, so \"5\" == 5 is true while \"5\" === 5 is false."
+        ),
     },
     {
-        "question": "What does JSON.parse() do?",
+        "question": "Which property gives the number of elements in a JavaScript array?",
+        "choices": ["size", "count", "length", "total"],
+        "answer": 2,
+        "explanation": (
+            "The length property contains the number of elements in an array. It is a "
+            "property, not a method, so there are no brackets after it."
+        ),
+    },
+    {
+        "question": "What does the push() method do to an array?",
         "choices": [
-            "Converts an object to text",
-            "Converts JSON text into a JavaScript value",
-            "Downloads a file",
-            "Validates a form",
+            "Removes the last element",
+            "Adds an element to the end",
+            "Adds an element to the beginning",
+            "Sorts the array",
         ],
         "answer": 1,
-        "explanation": "JSON.parse turns a JSON string into a JavaScript object/value.",
+        "explanation": (
+            "push() adds one or more elements to the END of an array and returns the "
+            "new length. unshift() is the one that adds to the beginning."
+        ),
     },
     {
-        "question": "Which array method creates a new array by transforming each element?",
-        "choices": ["forEach", "map", "filter", "reduce"],
+        "question": "What is the value of typeof \"GIN446\"?",
+        "choices": ["\"text\"", "\"string\"", "\"String\"", "\"char\""],
         "answer": 1,
-        "explanation": "map returns a new array of transformed values.",
+        "explanation": (
+            "typeof returns a lower-case string naming the type. For text that string "
+            "is \"string\"."
+        ),
     },
     {
-        "question": "What does the await keyword do?",
-        "choices": [
-            "Pauses the whole browser",
-            "Waits for a promise to settle inside an async function",
-            "Creates a new thread",
-            "Declares a variable",
-        ],
-        "answer": 1,
-        "explanation": "await waits for a promise to resolve/reject inside an async function.",
+        "question": "Which loop is guaranteed to run its body at least once?",
+        "choices": ["for", "while", "do...while", "for...of"],
+        "answer": 2,
+        "explanation": (
+            "A do...while loop tests its condition AFTER running the body, so the "
+            "body always runs at least once. A while loop tests first and may never "
+            "run."
+        ),
     },
     {
-        "question": "After const r = await fetch(url), how do you read the JSON body?",
-        "choices": ["r.body", "await r.json()", "JSON.parse(r)", "r.text"],
-        "answer": 1,
-        "explanation": "response.json() returns a promise, so you await it.",
+        "question": "What does a function return when it has no return statement?",
+        "choices": ["0", "null", "undefined", "An error"],
+        "answer": 2,
+        "explanation": (
+            "A function with no return statement returns undefined. That is different "
+            "from null, which is a value you assign on purpose to mean \"nothing\"."
+        ),
     },
     {
-        "question": "Does fetch() reject the promise on an HTTP 404 response?",
-        "choices": [
-            "Yes, 404 throws automatically",
-            "No, you must check response.ok yourself",
-            "Only in Firefox",
-            "Only for POST requests",
-        ],
+        "question": "How do you read the property city from an object named student?",
+        "choices": ["student->city", "student.city", "student::city", "student:city"],
         "answer": 1,
-        "explanation": "fetch only rejects on network errors; check response.ok for HTTP errors.",
+        "explanation": (
+            "Dot notation, student.city, reads a property. Square brackets, "
+            "student[\"city\"], do the same and are needed when the name is in a "
+            "variable."
+        ),
     },
     {
-        "question": "Which block handles errors from an awaited fetch?",
-        "choices": ["if/else", "try/catch", "switch", "for"],
+        "question": "What does Math.round(4.5) return?",
+        "choices": ["4", "5", "4.5", "NaN"],
         "answer": 1,
-        "explanation": "try/catch catches errors thrown by awaited promises.",
+        "explanation": (
+            "Math.round() rounds to the nearest integer and rounds a .5 upwards, so "
+            "Math.round(4.5) is 5."
+        ),
+    },
+    {
+        "question": "Which string method joins two strings together?",
+        "choices": ["concat()", "join()", "merge()", "append()"],
+        "answer": 0,
+        "explanation": (
+            "concat() joins strings. join() belongs to arrays, and merge() and "
+            "append() are not JavaScript string methods at all."
+        ),
     },
 ]
 
