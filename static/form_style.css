@@ -466,3 +466,24 @@ input[type="color"] {
     border-radius: 0 0 0.7rem 0.7rem;
   }
 }
+
+.profile-form.is-hidden { display: none; }
+
+.review-panel { display: none; margin-top: 2rem; }
+.review-panel.is-open { display: block; }
+
+.review-list {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) 2fr;
+  gap: 0.75rem 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.review-list dt { font-weight: 700; color: var(--muted); }
+.review-list dd { margin: 0; overflow-wrap: anywhere; }
+.review-list ul { margin: 0; padding-left: 1.1rem; }
+
+@media (max-width: 40rem) {
+  .review-list { grid-template-columns: 1fr; gap: 0.25rem; }
+  .review-list dd { margin-bottom: 0.75rem; }
+}

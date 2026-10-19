@@ -12,8 +12,9 @@
   Every control has a <label for="..."> pointing at that control's id, so
   clicking the label focuses the control and a screen reader announces it.
 
-  Validation is done by the browser, from the HTML alone: required, pattern,
-  min / max / step and maxlength. No JavaScript.
+  Validation rules are in the HTML: required, pattern, min / max / step and
+  maxlength. form_review.js checks them on submit and shows a review panel
+  before anything is sent.
 #}
 {% extends "base.html" %}
 
@@ -458,5 +459,19 @@
   </fieldset>
 
 </form>
+
+<section class="tile review-panel" id="reviewPanel" aria-labelledby="reviewTitle">
+  <h2 id="reviewTitle">Review your profile</h2>
+  <p>Check your answers. Edit to change them, or confirm to send.</p>
+
+  <dl class="review-list" id="reviewList"></dl>
+
+  <div class="form-actions">
+    <button type="button" class="btn btn--quiet" id="editBtn">Edit</button>
+    <button type="button" class="btn btn--go" id="confirmBtn">Confirm &amp; Submit</button>
+  </div>
+</section>
+
+<script src="{{ static_url('form_review.js') }}"></script>
 
 {% endblock %}
