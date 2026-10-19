@@ -275,6 +275,25 @@ WEEKS = [
         ],
         "links": [("quiz", "The quiz")],
     },
+    {
+        "week": 6,
+        "title": "Checking the form before it is sent",
+        "tint": "mint",
+        "summary": "The profile form now stops on submit, checks itself, and shows "
+                   "a review of every answer before anything goes to the server.",
+        "built": [
+            "form_review.js, which catches the submit and validates the form.",
+            "A read-only review panel with Edit and Confirm & Submit buttons.",
+        ],
+        "learned": [
+            "preventDefault() stops the form from going to the server.",
+            "reportValidity() checks the rules already in the HTML and shows the warnings.",
+            "Radios, checkboxes and a multiple select are each read differently.",
+            "form.submit() sends the form without firing the submit event again, "
+            "so there is no loop.",
+        ],
+        "links": [("submit_profile", "The profile form")],
+    },
 ]
 
 
