@@ -294,6 +294,25 @@ WEEKS = [
         ],
         "links": [("submit_profile", "The profile form")],
     },
+    {
+        "week": 7,
+        "title": "Live Quiz with Fetch",
+        "url": "/live-quiz",
+        "tint": "sun",
+        "summary": "The quiz now gets its questions from the server one at a time "
+                   "instead of having them written into the JavaScript.",
+        "built": [
+            "A PostgreSQL database on Render holding the quiz questions.",
+            "live_quiz.html and live_quiz.js, which fetch the count and each question.",
+        ],
+        "learned": [
+            "fetch() returns a promise, and await waits for it to finish.",
+            "response.ok has to be checked, because fetch does not fail on a 404 or 500.",
+            "try/catch shows an error message instead of breaking the page.",
+            "A cache object stops the same question being fetched twice.",
+        ],
+        "links": [("quiz.quiz_page", "The live quiz")],
+    },
 ]
 
 
