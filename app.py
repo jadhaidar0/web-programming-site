@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 from flask import Flask, render_template, request, url_for
 
 from quiz_api import init_quiz
+from validators import validate_profile
 
 app = Flask(__name__)
 
@@ -313,6 +314,25 @@ WEEKS = [
         ],
         "links": [("quiz.quiz_page", "The live quiz")],
     },
+    {
+        "week": 8,
+        "title": "Server-Side Validation",
+        "url": "/profile-validated",
+        "tint": "pink",
+        "summary": "The server now checks every field of the profile form instead of "
+                   "trusting the browser.",
+        "built": [
+            "validators.py, with validate_profile(form) returning (errors, cleaned).",
+            "profile-form-validated.html, which shows each error next to its field "
+            "and keeps what was typed.",
+        ],
+        "learned": [
+            "Browser checks can be skipped with curl, so the server has to check everything.",
+            "Regex patterns, number ranges, dates and allow-lists each catch a different kind of bad input.",
+            "The profile is built from cleaned, never from the raw request.form.",
+        ],
+        "links": [("profile_validated", "The validated form")],
+    },
 ]
 
 
@@ -597,6 +617,26 @@ def submit_profile():
 
     # First visit (GET): just show the empty form.
     return render_template("profile-form.html")
+
+
+@app.route("/profile-validated", methods=["GET", "POST"])
+def profile_validated():
+    if request.method == "POST":
+        errors, cleaned = validate_profile(request.form)
+        if errors:
+            return render_template(
+                "profile-form-validated.html",
+                errors=errors,
+                data=request.form,
+                sel_skills=request.form.getlist("skills"),
+                sel_software=request.form.getlist("software"),
+            )
+        return render_template("profile_validated.html", data=cleaned,
+                               skills=cleaned.get("skills", []),
+                               software=cleaned.get("software", []))
+    return render_template("profile-form-validated.html",
+                           errors={}, data={}, sel_skills=[], sel_software=[])
+
 
 
 @app.errorhandler(404)
