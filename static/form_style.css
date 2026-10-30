@@ -487,3 +487,5 @@ input[type="color"] {
   .review-list { grid-template-columns: 1fr; gap: 0.25rem; }
   .review-list dd { margin-bottom: 0.75rem; }
 }
+
+.error { color: #B3261E; font-size: 0.8125rem; font-weight: 600; }
